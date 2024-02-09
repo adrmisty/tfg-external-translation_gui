@@ -1,4 +1,4 @@
-package main.java.gui.info;
+package main.java.gui.windows;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;

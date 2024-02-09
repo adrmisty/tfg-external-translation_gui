@@ -1,4 +1,4 @@
-package main.java.gui.translate;
+package main.java.gui.windows;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
