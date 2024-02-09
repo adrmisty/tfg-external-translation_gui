@@ -1,16 +1,13 @@
-package main.java.gui;
+package main.java.gui.translate;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import main.java.gui.info.InfoWindow;
-import main.java.gui.translate.StartTranslatingWindow;
+import main.java.gui.MainWindow;
 import main.java.utils.Utils;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.font.TextAttribute;
@@ -20,23 +17,17 @@ import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JSplitPane;
 import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.SystemColor;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
-public class MainWindow extends JFrame {
+public class StartTranslatingWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
 	private JPanel contentPane;
 	
-	
-	/**
-	 * --------------------------------- START PANEL
+	/*
+	 * Main Window
 	 */
-	
+	private JFrame main;
 	
 	/*
 	 * Panels
@@ -63,29 +54,21 @@ public class MainWindow extends JFrame {
 	private JButton leftButton;
 	private JButton rightButton;
 
-	
-	/*
-	 * Window types
-	 */
-	private enum WindowType {INFO, TRANSLATE};
-	private JFrame infoWindow;
-	private JFrame translateWindow;
-	
 	/**
 	 * Create the frame.
+	 * @param mainWindow 
 	 */
-	public MainWindow() {
-		setResizable(false);
-		setAutoRequestFocus(false);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/main/resources/icon.png")));
+	public StartTranslatingWindow(MainWindow mainWindow) {
+		this.main = mainWindow;
+		
+		setIconImage(Toolkit.getDefaultToolkit().getImage(StartTranslatingWindow.class.getResource("/main/resources/icon.png")));
 		setTitle("FileLingual");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setLocationRelativeTo(null);
 		setFont(Utils.getFont());
 		setBounds(100, 100, 600, 450);
-		this.setLocationRelativeTo(null);
-
+		
 		contentPane = new JPanel();
-		contentPane.setBackground(SystemColor.window);
 		contentPane.setBorder(null);
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -93,30 +76,15 @@ public class MainWindow extends JFrame {
 		contentPane.add(getDownPanel(), BorderLayout.CENTER);
 	}
 	
-	
 	/*
 	 * ##### GUI FLOW
 	 */
 	
-	private void openWindow(WindowType window) {
-		switch(window) {
-		case INFO:
-			this.setEnabled(false);
-			infoWindow = new InfoWindow(this);
-			infoWindow.setLocationRelativeTo(this);
-			infoWindow.setVisible(true);
-			break;
-			
-		case TRANSLATE:
-			this.setEnabled(false);
-			translateWindow = new StartTranslatingWindow(this);
-			translateWindow.setLocationRelativeTo(this);
-			translateWindow.setVisible(true);
-			break;
-			
-		default:
-			break;
-		}
+	private void goBack() {
+		this.main.setVisible(true);
+		this.main.setEnabled(true);
+		this.main.setLocationRelativeTo(null);
+		this.dispose();
 	}
 
 	
@@ -124,11 +92,12 @@ public class MainWindow extends JFrame {
 	/*
 	 * ##### DESIGN ELEMENTS
 	 */
+
+	
 	
 	private JPanel getNorthPanel() {
 		if (northPanel == null) {
 			northPanel = new JPanel();
-			northPanel.setBackground(SystemColor.window);
 			northPanel.setLayout(new BorderLayout(0, 0));
 			northPanel.add(getTitlePanel(), BorderLayout.NORTH);
 			northPanel.add(getSloganPanel(), BorderLayout.CENTER);
@@ -139,7 +108,6 @@ public class MainWindow extends JFrame {
 	private JPanel getDownPanel() {
 		if (downPanel == null) {
 			downPanel = new JPanel();
-			downPanel.setBackground(SystemColor.window);
 			downPanel.add(getSplitPane());
 		}
 		return downPanel;
@@ -148,7 +116,6 @@ public class MainWindow extends JFrame {
 	private JPanel getTitlePanel() {
 		if (titlePanel == null) {
 			titlePanel = new JPanel();
-			titlePanel.setBackground(SystemColor.window);
 			titlePanel.setLayout(new BorderLayout(0, 0));
 			titlePanel.add(getLblEmpty(), BorderLayout.NORTH);
 			titlePanel.add(getLblFileLingual());
@@ -176,7 +143,6 @@ public class MainWindow extends JFrame {
 	private JPanel getSloganPanel() {
 		if (sloganPanel == null) {
 			sloganPanel = new JPanel();
-			sloganPanel.setBackground(SystemColor.window);
 			sloganPanel.setLayout(new BorderLayout(0, 0));
 			sloganPanel.add(getLblSlogan1(), BorderLayout.CENTER);
 			sloganPanel.add(getLogoPanel(), BorderLayout.SOUTH);
@@ -187,7 +153,6 @@ public class MainWindow extends JFrame {
 	private JLabel getLblSlogan1() {
 		if (lblSlogan == null) {
 			lblSlogan = new JLabel("The automatic program translator");
-			lblSlogan.setBackground(SystemColor.window);
 			lblSlogan.setHorizontalAlignment(SwingConstants.CENTER);
 			lblSlogan.setFont(Utils.getFont().deriveFont(30f));
 		}
@@ -197,7 +162,6 @@ public class MainWindow extends JFrame {
 	private JPanel getLogoPanel() {
 		if (logoPanel == null) {
 			logoPanel = new JPanel();
-			logoPanel.setBackground(SystemColor.window);
 			logoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 			logoPanel.add(getLblForLogo());
 			logoPanel.add(getLblLogo());
@@ -216,7 +180,7 @@ public class MainWindow extends JFrame {
 	private JLabel getLblLogo() {
 		if (lblLogo == null) {
 			lblLogo = new JLabel("");
-			lblLogo.setIcon(new ImageIcon(MainWindow.class.getResource("/main/resources/openai-logo.png")));
+			lblLogo.setIcon(new ImageIcon(StartTranslatingWindow.class.getResource("/main/resources/openai-logo.png")));
 			lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
 		}
 		return lblLogo;
@@ -225,13 +189,6 @@ public class MainWindow extends JFrame {
 	private JButton getLeftButton() {
 		if (leftButton == null) {
 			leftButton = new JButton("Get started");
-			leftButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			leftButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					// Open translating window
-					openWindow(WindowType.TRANSLATE);
-				}
-			});
 			leftButton.setMnemonic('s');
 			leftButton.setFont(Utils.getFont().deriveFont(20f));
 		}
@@ -243,15 +200,9 @@ public class MainWindow extends JFrame {
 		if (rightButton == null) {
 			// Underlined text
 			rightButton = new JButton("Learn more");
-			rightButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					// Open information window
-					openWindow(WindowType.INFO);
-				}
-			});
 			rightButton.setFont(Utils.getFont().deriveFont(20f));
 			rightButton.setMnemonic('l');
-			rightButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			
 			Font font = rightButton.getFont();
 	        @SuppressWarnings("rawtypes")
 			Map attributes = font.getAttributes();
