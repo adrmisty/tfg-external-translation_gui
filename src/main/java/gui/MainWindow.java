@@ -48,7 +48,7 @@ public class MainWindow extends JFrame {
 	private JPanel contentPane;
 	private JPanel cardMain;
 	private JPanel cardInfo;
-	private JPanel cardTranslate;
+	private JPanel cardFileUpload;
 	
 	/*
 	 * Panels
@@ -136,19 +136,15 @@ public class MainWindow extends JFrame {
 		setFont(Utils.getFont());
 		setBounds(100, 100, 600, 450);
 		this.setLocationRelativeTo(null);
-
+		
+		// Card container
 		contentPane = new JPanel();
 		contentPane.setBackground(SystemColor.window);
 		contentPane.setBorder(null);
 		setContentPane(contentPane);
-		
-		// Cards
-		cardMain = getCardMain();
-		cardInfo = getCardInfo();
-
-		//Create the panel that contains the "cards".
 		contentPane.setLayout(new CardLayout());
 		contentPane.add(getCardMain()); contentPane.add(getCardInfo());
+		contentPane.add(getCardFileUpload());
 	}
 	
 	
@@ -188,6 +184,19 @@ public class MainWindow extends JFrame {
 		}
 		return cardInfo;
 	}
+	
+	private JPanel getCardFileUpload() {
+		if (cardFileUpload == null) {
+			cardFileUpload = new JPanel();
+			cardFileUpload.setVisible(false);
+			cardFileUpload.setLayout(new BorderLayout(0, 0));
+			cardFileUpload.add(getNorthPanel_Info(), BorderLayout.NORTH);
+			cardFileUpload.add(getDownPanel_Info(), BorderLayout.CENTER);
+			cardFileUpload.setVisible(false);
+		}
+		return cardFileUpload;
+	}
+
 
 	
 	
@@ -299,7 +308,7 @@ public class MainWindow extends JFrame {
 			leftButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					// Open translating window
-					moveCards(cardTranslate, cardMain);
+					moveCards(cardFileUpload, cardMain);
 				}
 			});
 			leftButton.setMnemonic('s');
