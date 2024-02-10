@@ -5,6 +5,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import main.java.gui.windows.FileUpload;
 import main.java.gui.windows.InfoWindow;
 import main.java.utils.Utils;
 
@@ -16,20 +17,35 @@ import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.font.TextAttribute;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 import java.awt.FlowLayout;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import javax.swing.ImageIcon;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.SystemColor;
@@ -41,11 +57,11 @@ public class MainWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	
-	
 	/**
 	 * --------------------------------- START PANEL
 	 */
 	private JPanel contentPane;
+	private JPanel currentCard;
 	private JPanel cardMain;
 	private JPanel cardInfo;
 	private JPanel cardFileUpload;
@@ -121,6 +137,45 @@ public class MainWindow extends JFrame {
 	private JPanel emptyPanel_7;
 	private JButton btnBack;
 	private JLabel lblBack;
+	
+	
+	/**
+	 * --------------------------------- FILE UPLOAD PANEL
+	 */
+
+	private JPanel northPanel_File;
+	private JPanel titlePanel_File;
+	private JPanel downPanel_file;
+	
+	/*
+	 * Labels
+	 */
+	private JLabel lblStartTranslating;
+	private JLabel lblEmpty_File;
+	private JLabel lblDragText;
+	private JPanel panelDrag;
+	private JLabel lblDrag;
+	private JTextField txtFilePath;
+	private JButton btnBrowse;
+	
+	/*
+	 * File drag and drop
+	 */
+	private String filePath;
+	private String fileName;
+	private JFileChooser fileChooser;
+	private JButton btnNext;
+	private JButton btnHelp;
+	private JPanel emptyPanel_file;
+	private JPanel emptyPanel_1_file;
+	private JPanel emptyPanel_2_file;
+	private JPanel emptyPanel_3_file;
+	private JPanel emptyPanel_4_file;
+	private JPanel emptyPanel_5_file;
+	private JPanel emptyPanel_6_file;
+	private JButton btnBack_file;
+	private JLabel lblBack_file;
+	private JPanel emptyPanel_7_file;
 
 	
 		
@@ -145,6 +200,7 @@ public class MainWindow extends JFrame {
 		contentPane.setLayout(new CardLayout());
 		contentPane.add(getCardMain()); contentPane.add(getCardInfo());
 		contentPane.add(getCardFileUpload());
+		currentCard = cardMain;
 	}
 	
 	
@@ -152,10 +208,16 @@ public class MainWindow extends JFrame {
 	 * ##### GUI FLOW
 	 */
 		
-	private void moveCards(JPanel cardTo, JPanel cardFrom) {
-		cardTo.setVisible(true); cardFrom.setVisible(false);
+	private void moveCards(JPanel newCard) {
+		currentCard.setVisible(false);
+		newCard.setVisible(true);
+		currentCard = newCard;
 	}
-
+	
+	private void saveFilePath(String path, String name) {
+		filePath = path; fileName = name;
+		txtFilePath.setText(name);
+	}
 
 	
 	/*
@@ -179,7 +241,7 @@ public class MainWindow extends JFrame {
 			cardInfo.setVisible(false);
 			cardInfo.setLayout(new BorderLayout(0, 0));
 			cardInfo.add(getNorthPanel_Info(), BorderLayout.NORTH);
-			cardInfo.add(getDownPanel_Info(), BorderLayout.CENTER);
+			cardInfo.add(getDownPanel_Info(), BorderLayout.SOUTH);
 			cardInfo.setVisible(false);
 		}
 		return cardInfo;
@@ -190,8 +252,9 @@ public class MainWindow extends JFrame {
 			cardFileUpload = new JPanel();
 			cardFileUpload.setVisible(false);
 			cardFileUpload.setLayout(new BorderLayout(0, 0));
-			cardFileUpload.add(getNorthPanel_Info(), BorderLayout.NORTH);
-			cardFileUpload.add(getDownPanel_Info(), BorderLayout.CENTER);
+			cardFileUpload.add(getNorthPanel_File(), BorderLayout.NORTH);
+			cardFileUpload.add(getPanelDrag(), BorderLayout.NORTH);
+			cardFileUpload.add(getDownPanel_File(), BorderLayout.CENTER);
 			cardFileUpload.setVisible(false);
 		}
 		return cardFileUpload;
@@ -308,7 +371,7 @@ public class MainWindow extends JFrame {
 			leftButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					// Open translating window
-					moveCards(cardFileUpload, cardMain);
+					moveCards(cardFileUpload);
 				}
 			});
 			leftButton.setMnemonic('s');
@@ -325,7 +388,7 @@ public class MainWindow extends JFrame {
 			rightButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					// Open information window
-					moveCards(cardInfo, cardMain);
+					moveCards(cardInfo);
 				}
 			});
 			rightButton.setFont(Utils.getFont().deriveFont(20f));
@@ -366,8 +429,7 @@ public class MainWindow extends JFrame {
 			northPanel_Info.add(getDescriptionPanel(), BorderLayout.CENTER);
 		}
 		return northPanel_Info;
-	}
-	
+	}	
 	private JPanel getDownPanel_Info() {
 		if (downPanel_Info == null) {
 			downPanel_Info = new JPanel();
@@ -384,7 +446,6 @@ public class MainWindow extends JFrame {
 		}
 		return downPanel_Info;
 	}
-	
 	private JPanel getTitlePanel_Info() {
 		if (titlePanel_Info == null) {
 			titlePanel_Info = new JPanel();
@@ -395,8 +456,7 @@ public class MainWindow extends JFrame {
 			titlePanel_Info.add(getUnioviPanel(), BorderLayout.WEST);
 		}
 		return titlePanel_Info;
-	}
-	
+	}	
 	private JLabel getLblProject() {
 		if (lblProject == null) {
 			lblProject = new JLabel("Final Degree Project");
@@ -406,7 +466,6 @@ public class MainWindow extends JFrame {
 		}
 		return lblProject;
 	}
-	
 	private JLabel getLblEmpty_Info() {
 		if (lblEmpty_Info == null) {
 			lblEmpty_Info = new JLabel(" ");
@@ -414,7 +473,6 @@ public class MainWindow extends JFrame {
 		}
 		return lblEmpty_Info;
 	}
-	
 	private JPanel getDescriptionPanel() {
 		if (descriptionPanel == null) {
 			descriptionPanel = new JPanel();
@@ -546,6 +604,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblEmpty_3_1;
 	}
+	
 	private JTextPane getTextDescription() {
 		if (textDescription == null) {
 			textDescription = new JTextPane();
@@ -562,6 +621,7 @@ public class MainWindow extends JFrame {
 		}
 		return textDescription;
 	}
+	
 	private JPanel getEmptyPanel() {
 		if (emptyPanel == null) {
 			emptyPanel = new JPanel();
@@ -621,12 +681,13 @@ public class MainWindow extends JFrame {
 		}
 		return emptyPanel_7;
 	}
+	
 	private JButton getBtnBack() {
 		if (btnBack == null) {
 			btnBack = new JButton("");
 			btnBack.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					moveCards(cardMain, cardInfo);
+					moveCards(cardMain);
 				}
 			});
 			btnBack.setBounds(21, 21, 31, 26);
@@ -638,6 +699,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnBack;
 	}
+	
 	private JLabel getLblBack() {
 		if (lblBack == null) {
 			lblBack = new JLabel("<");
@@ -653,5 +715,337 @@ public class MainWindow extends JFrame {
 		}
 		return lblBack;
 	}
+	
+				
+	/*
+	 * ##### DESIGN ELEMENTS
+	 */
+	
+	
+	
+	private JPanel getNorthPanel_File() {
+		if (northPanel_File == null) {
+			northPanel_File = new JPanel();
+			northPanel_File.setBounds(0, 0, 586, 98);
+			northPanel_File.setBackground(SystemColor.window);
+			northPanel_File.setLayout(new BorderLayout(0, 0));
+			northPanel_File.add(getTitlePanel_File(), BorderLayout.NORTH);
+		}
+		return northPanel_File;
+	}
+	
+	private JPanel getTitlePanel_File() {
+		if (titlePanel_File == null) {
+			titlePanel_File = new JPanel();
+			titlePanel_File.setBackground(SystemColor.window);
+			titlePanel_File.setLayout(new BorderLayout(0, 0));
+			titlePanel_File.add(getLblEmpty_File(), BorderLayout.NORTH);
+			titlePanel_File.add(getLblStartTranslating());
+		}
+		return titlePanel_File;
+	}
+	
+	private JLabel getLblStartTranslating() {
+		if (lblStartTranslating == null) {
+			lblStartTranslating = new JLabel("Start translating now!");
+			lblStartTranslating.setHorizontalAlignment(SwingConstants.CENTER);
+			lblStartTranslating.setFont(Utils.getFont().deriveFont(40f));
+		}
+		return lblStartTranslating;
+	}
+	
+	private JLabel getLblEmpty_File() {
+		if (lblEmpty_File == null) {
+			lblEmpty_File = new JLabel(" ");
+			lblEmpty_File.setFont(new Font("Tahoma", Font.PLAIN, 40));
+		}
+		return lblEmpty_File;
+	}
+	
+	private JLabel getLblDragText() {
+		if (lblDragText == null) {
+			lblDragText = new JLabel("Drag and drop");
+			lblDragText.setLabelFor(getLblDrag_1());
+			lblDragText.setHorizontalAlignment(SwingConstants.CENTER);
+			lblDragText.setBounds(30, 85, 282, 19);
+			lblDragText.setFont(Utils.getFont().deriveFont(15f));
+		}
+		return lblDragText;
+	}
+	
+	private JPanel getPanelDrag() {
+		if (panelDrag == null) {
+			panelDrag = new JPanel();
+			panelDrag.setBackground(SystemColor.window);
+			panelDrag.setBounds(117, 108, 354, 181);
+			panelDrag.setLayout(null);
+			panelDrag.add(getLblDragText());
+			panelDrag.add(getLblDrag_1());
+			panelDrag.add(getTxtFilePath());
+			panelDrag.add(getBtnBrowse());
+		}
+		return panelDrag;
+	}
+	
+	private JLabel getLblDrag_1() {
+		if (lblDrag == null) {
+			lblDrag = new JLabel("");
+			lblDrag.setBounds(20, 0, 311, 141);
+			lblDrag.setIcon(new ImageIcon(FileUpload.class.getResource("/main/resources/dnd.png")));
+			lblDrag.setToolTipText("Drag and drop a file here");
+			
+			// Drag and drop functionality
+			new DropTarget(lblDrag, new DnDListener());
+		}
+		return lblDrag;
+	}
+	
+	class DnDListener implements DropTargetListener {
+		
+		@Override
+		public void drop(DropTargetDropEvent event) {
+			// Copies
+			event.acceptDrop(1); // Action copy
+			
+			// Get dropped item data
+			Transferable tr = event.getTransferable();
+			DataFlavor[] formats = tr.getTransferDataFlavors();
+			boolean complete = false;
+			File f = null;
+			
+			// Only check for files
+			for (DataFlavor flavor: formats) {
+				try {
+					if (flavor.isFlavorJavaFileListType()) {
+						@SuppressWarnings("unchecked")
+						List<File> files = (List<File>) tr.getTransferData(flavor);
+						f = files.get(0);
+						complete = true; 
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if (f != null) {
+						saveFilePath(f.getPath(), f.getName());
+					}
+					event.dropComplete(complete);
+				}
+			}
+		}
+	
+		@Override
+		public void dragEnter(DropTargetDragEvent dtde) {			
+		}
+	
+		@Override
+		public void dragOver(DropTargetDragEvent dtde) {			
+		}
+	
+		@Override
+		public void dropActionChanged(DropTargetDragEvent dtde) {			
+		}
+	
+		@Override
+		public void dragExit(DropTargetEvent dte) {			
+		}
+	}
+	
+	private JTextField getTxtFilePath() {
+		if (txtFilePath == null) {
+			txtFilePath = new JTextField();
+			txtFilePath.addPropertyChangeListener(new PropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent evt) {
+					if (btnNext != null) {
+						if (!txtFilePath.getText().isBlank()) {
+							btnNext.setEnabled(true);
+						} else {
+							btnNext.setEnabled(false);
+						}
+					}
+				}
+			});
+			txtFilePath.setHorizontalAlignment(SwingConstants.CENTER);
+			txtFilePath.setFont(txtFilePath.getFont().deriveFont(14f));
+			txtFilePath.setEditable(false);
+			txtFilePath.setColumns(10);
+			txtFilePath.setBounds(30, 140, 178, 30);
+		}
+		return txtFilePath;
+	}
+	
+	private JFileChooser getFileChooser() {
+	    fileChooser = new JFileChooser("D:");
+	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+	        "Internationalization files", "properties");
+	    fileChooser.setFileFilter(filter);
+	    
+	    int returnVal = fileChooser.showOpenDialog(this);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	       saveFilePath(fileChooser.getSelectedFile().getPath(), fileChooser.getSelectedFile().getName());
+	    }
+	    return fileChooser;
+	}
+	
+	private JButton getBtnBrowse() {
+		if (btnBrowse == null) {
+			btnBrowse = new JButton("Browse...");
+			btnBrowse.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					getFileChooser();
+				}
+			});
+			btnBrowse.setMnemonic('b');
+			btnBrowse.setFont(btnBrowse.getFont().deriveFont(14f));
+			btnBrowse.setBounds(222, 147, 89, 23);
+		}
+		return btnBrowse;
+	}
+	
+	private JButton getBtnNext() {
+		if (btnNext == null) {
+			btnNext = new JButton("Next");
+			btnNext.setEnabled(false);
+			btnNext.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+			btnNext.setBounds(38, 11, 61, 33);
+			btnNext.setMnemonic('b');
+			btnNext.setFont(Utils.getFont().deriveFont(14f));
+		}
+		return btnNext;
+	}
+	
+	private JButton getBtnHelp() {
+			if (btnHelp == null) {
+				btnHelp = new JButton("");
+				btnHelp.setToolTipText("Drag and drop, or select the file you wish to translate - remember it must be a .properties localization file!");
+				btnHelp.setBounds(103, 11, 33, 33);
+				btnHelp.setBackground(SystemColor.window);
+				btnHelp.setIcon(new ImageIcon(FileUpload.class.getResource("/main/resources/help.png")));
+				btnHelp.setMnemonic('b');
+				btnHelp.setFont(Utils.getFont().deriveFont(14f));
+				
+				btnHelp.setBorder(null);
+			}
+			return btnHelp;
+		}
+
+	private JPanel getDownPanel_File() {
+			if (downPanel_file == null) {
+				downPanel_file = new JPanel();
+				downPanel_file.setBackground(SystemColor.window);
+				downPanel_file.setBounds(0, 300, 586, 111);
+				downPanel_file.setLayout(new GridLayout(2, 4, 0, 0));
+				downPanel_file.add(getEmptyPanel_file());
+				downPanel_file.add(getEmptyPanel_1_file());
+				downPanel_file.add(getEmptyPanel_2_file());
+				downPanel_file.add(getEmptyPanel_3_file());
+				downPanel_file.add(getEmptyPanel_4_file());
+				downPanel_file.add(getEmptyPanel_5_file());
+				downPanel_file.add(getEmptyPanel_6_file());
+				downPanel_file.add(getEmptyPanel_7_file());
+			}
+			return downPanel_file;
+		}
+		
+	private JPanel getEmptyPanel_file() {
+		if (emptyPanel_file == null) {
+			emptyPanel_file = new JPanel();
+			emptyPanel_file.setBackground(SystemColor.window);
+		}
+		return emptyPanel_file;
+	}
+	private JPanel getEmptyPanel_1_file() {
+		if (emptyPanel_1_file == null) {
+			emptyPanel_1_file = new JPanel();
+			emptyPanel_1_file.setBackground(SystemColor.window);
+		}
+		return emptyPanel_1_file;
+	}
+	private JPanel getEmptyPanel_2_file() {
+		if (emptyPanel_2_file == null) {
+			emptyPanel_2_file = new JPanel();
+			emptyPanel_2_file.setBackground(SystemColor.window);
+		}
+		return emptyPanel_2_file;
+	}
+	private JPanel getEmptyPanel_3_file() {
+		if (emptyPanel_3_file == null) {
+			emptyPanel_3_file = new JPanel();
+			emptyPanel_3_file.setBackground(SystemColor.window);
+		}
+		return emptyPanel_3_file;
+	}
+	private JPanel getEmptyPanel_4_file() {
+		if (emptyPanel_4_file == null) {
+			emptyPanel_4_file = new JPanel();
+			emptyPanel_4_file.setBackground(SystemColor.window);
+			emptyPanel_4_file.setLayout(null);
+			emptyPanel_4_file.add(getLblBack());
+			emptyPanel_4_file.add(getBtnBack());
+		}
+		return emptyPanel_4;
+	}
+	private JPanel getEmptyPanel_5_file() {
+		if (emptyPanel_5_file == null) {
+			emptyPanel_5_file = new JPanel();
+			emptyPanel_5_file.setBackground(SystemColor.window);
+		}
+		return emptyPanel_5_file;
+	}
+	private JPanel getEmptyPanel_6_file() {
+		if (emptyPanel_6_file == null) {
+			emptyPanel_6_file = new JPanel();
+			emptyPanel_6_file.setBackground(SystemColor.window);
+		}
+		return emptyPanel_6_file;
+	}
+	
+	private JButton getBtnBack_file() {
+		if (btnBack_file == null) {
+			btnBack_file = new JButton("");
+			btnBack_file.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					moveCards(cardMain);
+				}
+			});
+			btnBack_file.setBounds(21, 21, 31, 26);
+			btnBack_file.setSelectedIcon(new ImageIcon(InfoWindow.class.getResource("/main/resources/home-icon.png")));
+			btnBack_file.setMnemonic('h');
+			btnBack_file.setBackground(SystemColor.window);
+			btnBack_file.setIcon(new ImageIcon(InfoWindow.class.getResource("/main/resources/home-icon.png")));
+			btnBack_file.setBorder(null);
+		}
+		return btnBack_file;
+	}
+	
+	private JLabel getLblBack_file() {
+		if (lblBack_file == null) {
+			lblBack_file = new JLabel("<");
+			lblBack_file.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			lblBack_file.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					btnBack_file.doClick();
+				}
+			});
+			lblBack_file.setBounds(10, 21, 31, 26);
+			lblBack_file.setFont(lblBack.getFont().deriveFont(15f));
+		}
+		return lblBack_file;
+	}
+
+	
+	private JPanel getEmptyPanel_7_file() {
+			if (emptyPanel_7_file == null) {
+				emptyPanel_7_file = new JPanel();
+				emptyPanel_7_file.setBackground(SystemColor.window);
+				emptyPanel_7_file.setLayout(null);
+				emptyPanel_7_file.add(getBtnNext());
+				emptyPanel_7_file.add(getBtnHelp());
+			}
+			return emptyPanel_7_file;
+		}
 
 }
