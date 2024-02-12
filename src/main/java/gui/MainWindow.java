@@ -33,8 +33,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -70,6 +72,7 @@ public class MainWindow extends JFrame {
     private JPanel cardMain; // Start/Home window
     private JPanel cardInfo; // Information window
     private JPanel cardFile; // For uploading a file
+    private JPanel cardMode; // For choosing a translation mode
 
     /**
      * --------------------------------- START PANEL
@@ -151,13 +154,6 @@ public class MainWindow extends JFrame {
      */
 
     private JPanel northPanel_File;
-    private JPanel titlePanel_File;
-
-    /*
-     * Labels
-     */
-    private JLabel lblStartTranslating;
-    private JLabel lblEmpty_File;
     private JLabel lblDragText;
     private JPanel panelDrag;
     private JLabel lblDrag;
@@ -187,6 +183,38 @@ public class MainWindow extends JFrame {
     private JLabel lblDndWarning;
 
     /**
+     * --------------------------------- TRANSLATION MODE PANEL
+     */
+
+    private JPanel northPanel_Mode;
+
+    /*
+     * Labels
+     */
+    private JLabel lblChooseTranslation;
+    private JPanel downPanel_Mode;
+    private JPanel downPanelGrid_Mode;
+    private JPanel emptyPanel_Mode;
+    private JPanel emptyPanel_1_Mode;
+    private JPanel emptyPanel_2_Mode;
+    private JPanel emptyPanel_3_Mode;
+    private JPanel emptyPanel_4_Mode;
+    private JLabel lblBack_Mode;
+    private JButton btnBack_Mode;
+    private JPanel emptyPanel_5_Mode;
+    private JPanel emptyPanel_6_Mode;
+    private JPanel emptyPanel_7_Mode;
+    private JButton btnNext_Mode;
+    private JButton btnHelp_Mode;
+    private JPanel panelChoose_Mode;
+    private JButton btnManual_Mode;
+    private JButton btnAutomatic_Mode;
+    private JComboBox<String> comboBox;
+    private JLabel lblChoose;
+    private JLabel lblLanguage;
+    private JLabel lblStartTranslating;
+
+    /**
      * Create the frame.
      */
     public MainWindow() {
@@ -211,6 +239,7 @@ public class MainWindow extends JFrame {
 	contentPane.add(getCardMain());
 	contentPane.add(getCardInfo());
 	contentPane.add(getCardFile());
+	contentPane.add(getCardMode());
 	currentCard = cardMain;
     }
 
@@ -258,9 +287,9 @@ public class MainWindow extends JFrame {
 	if (cardInfo == null) {
 	    cardInfo = new JPanel();
 	    cardInfo.setVisible(false);
-	    cardInfo.setLayout(new BorderLayout(0, 0));
-	    cardInfo.add(getNorthPanel_Info(), BorderLayout.NORTH);
-	    cardInfo.add(getDownPanel_Info(), BorderLayout.CENTER);
+	    cardInfo.setLayout(null);
+	    cardInfo.add(getNorthPanel_Info());
+	    cardInfo.add(getDownPanel_Info());
 	    cardInfo.setVisible(false);
 	}
 	return cardInfo;
@@ -270,12 +299,24 @@ public class MainWindow extends JFrame {
 	if (cardFile == null) {
 	    cardFile = new JPanel();
 	    cardFile.setVisible(false);
-	    cardFile.setLayout(new BorderLayout(0, 0));
-	    cardFile.add(getNorthPanel_File(), BorderLayout.NORTH);
-	    cardFile.add(getPanelDrag(), BorderLayout.CENTER);
+	    cardFile.setLayout(null);
+	    cardFile.add(getNorthPanel_File());
+	    cardFile.add(getPanelDrag());
 	    cardFile.setVisible(false);
 	}
 	return cardFile;
+    }
+
+    private JPanel getCardMode() {
+	if (cardMode == null) {
+	    cardMode = new JPanel();
+	    cardMode.setBackground(SystemColor.window);
+	    cardMode.setLayout(null);
+	    cardMode.add(getNorthPanel_Mode());
+	    cardMode.add(getPanelChoose_Mode());
+	    cardMode.add(getDownPanel_Mode());
+	}
+	return cardMode;
     }
 
     /*
@@ -438,10 +479,11 @@ public class MainWindow extends JFrame {
     private JPanel getNorthPanel_Info() {
 	if (northPanel_Info == null) {
 	    northPanel_Info = new JPanel();
+	    northPanel_Info.setBounds(0, 0, 586, 310);
 	    northPanel_Info.setBackground(SystemColor.window);
-	    northPanel_Info.setLayout(new BorderLayout(0, 0));
-	    northPanel_Info.add(getTitlePanel_Info(), BorderLayout.NORTH);
-	    northPanel_Info.add(getDescriptionPanel(), BorderLayout.CENTER);
+	    northPanel_Info.setLayout(null);
+	    northPanel_Info.add(getTitlePanel_Info());
+	    northPanel_Info.add(getDescriptionPanel());
 	}
 	return northPanel_Info;
     }
@@ -449,6 +491,7 @@ public class MainWindow extends JFrame {
     private JPanel getDownPanel_Info() {
 	if (downPanel_Info == null) {
 	    downPanel_Info = new JPanel();
+	    downPanel_Info.setBounds(0, 310, 586, 103);
 	    downPanel_Info.setBackground(SystemColor.window);
 	    downPanel_Info.setLayout(new GridLayout(2, 4, 0, 0));
 	    downPanel_Info.add(getEmptyPanel());
@@ -466,6 +509,7 @@ public class MainWindow extends JFrame {
     private JPanel getTitlePanel_Info() {
 	if (titlePanel_Info == null) {
 	    titlePanel_Info = new JPanel();
+	    titlePanel_Info.setBounds(0, 0, 586, 142);
 	    titlePanel_Info.setBackground(SystemColor.window);
 	    titlePanel_Info.setLayout(new BorderLayout(0, 0));
 	    titlePanel_Info.add(getLblEmpty_Info(), BorderLayout.NORTH);
@@ -496,6 +540,7 @@ public class MainWindow extends JFrame {
     private JPanel getDescriptionPanel() {
 	if (descriptionPanel == null) {
 	    descriptionPanel = new JPanel();
+	    descriptionPanel.setBounds(0, 142, 586, 168);
 	    descriptionPanel.setBackground(SystemColor.window);
 	    descriptionPanel.setLayout(new BorderLayout(0, 0));
 	    descriptionPanel.add(getLblEmpty_2_1_1(), BorderLayout.NORTH);
@@ -733,7 +778,7 @@ public class MainWindow extends JFrame {
 		    show(cardMain);
 		}
 	    });
-	    btnBack.setBounds(21, 21, 31, 26);
+	    btnBack.setBounds(21, 11, 31, 37);
 	    btnBack.setSelectedIcon(new ImageIcon(InfoWindow.class
 		    .getResource("/main/resources/home-icon.png")));
 	    btnBack.setMnemonic('h');
@@ -755,7 +800,7 @@ public class MainWindow extends JFrame {
 		    btnBack.doClick();
 		}
 	    });
-	    lblBack.setBounds(10, 21, 31, 26);
+	    lblBack.setBounds(10, 11, 31, 37);
 	    lblBack.setFont(lblBack.getFont().deriveFont(15f));
 	}
 	return lblBack;
@@ -768,40 +813,22 @@ public class MainWindow extends JFrame {
     private JPanel getNorthPanel_File() {
 	if (northPanel_File == null) {
 	    northPanel_File = new JPanel();
-	    northPanel_File.setBounds(0, 0, 586, 98);
+	    northPanel_File.setBounds(0, 0, 586, 81);
 	    northPanel_File.setBackground(SystemColor.window);
-	    northPanel_File.setLayout(new BorderLayout(0, 0));
-	    northPanel_File.add(getTitlePanel_File(), BorderLayout.NORTH);
+	    northPanel_File.setLayout(null);
+	    northPanel_File.add(getLblStartTranslating());
 	}
 	return northPanel_File;
-    }
-
-    private JPanel getTitlePanel_File() {
-	if (titlePanel_File == null) {
-	    titlePanel_File = new JPanel();
-	    titlePanel_File.setBackground(SystemColor.window);
-	    titlePanel_File.setLayout(new BorderLayout(0, 0));
-	    titlePanel_File.add(getLblEmpty_File(), BorderLayout.NORTH);
-	    titlePanel_File.add(getLblStartTranslating());
-	}
-	return titlePanel_File;
     }
 
     private JLabel getLblStartTranslating() {
 	if (lblStartTranslating == null) {
 	    lblStartTranslating = new JLabel("Start translating now!");
+	    lblStartTranslating.setBounds(0, 0, 586, 80);
 	    lblStartTranslating.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblStartTranslating.setFont(Utils.getFont().deriveFont(40f));
 	}
 	return lblStartTranslating;
-    }
-
-    private JLabel getLblEmpty_File() {
-	if (lblEmpty_File == null) {
-	    lblEmpty_File = new JLabel(" ");
-	    lblEmpty_File.setFont(new Font("Tahoma", Font.PLAIN, 40));
-	}
-	return lblEmpty_File;
     }
 
     private JLabel getLblDragText() {
@@ -819,7 +846,7 @@ public class MainWindow extends JFrame {
 	if (panelDrag == null) {
 	    panelDrag = new JPanel();
 	    panelDrag.setBackground(SystemColor.window);
-	    panelDrag.setBounds(117, 108, 354, 181);
+	    panelDrag.setBounds(0, 81, 586, 332);
 	    panelDrag.setLayout(null);
 	    panelDrag.add(getLblDragText());
 	    panelDrag.add(getLblDrag_1());
@@ -967,7 +994,7 @@ public class MainWindow extends JFrame {
 	if (downPanel_File == null) {
 	    downPanel_File = new JPanel();
 	    downPanel_File.setBackground(SystemColor.window);
-	    downPanel_File.setBounds(0, 218, 586, 97);
+	    downPanel_File.setBounds(0, 237, 586, 97);
 	    downPanel_File.setLayout(new GridLayout(2, 4, 0, 0));
 	    downPanel_File.add(getEmptyPanel_File_1());
 	    downPanel_File.add(getEmptyPanel_1_File_1());
@@ -1036,7 +1063,7 @@ public class MainWindow extends JFrame {
 	    });
 
 	    lblBack_File.setFont(lblBack_File.getFont().deriveFont(15f));
-	    lblBack_File.setBounds(10, 21, 31, 26);
+	    lblBack_File.setBounds(10, 11, 31, 37);
 	}
 	return lblBack_File;
     }
@@ -1058,7 +1085,7 @@ public class MainWindow extends JFrame {
 	    btnBack_File.setMnemonic('h');
 	    btnBack_File.setBorder(null);
 	    btnBack_File.setBackground(SystemColor.window);
-	    btnBack_File.setBounds(21, 21, 31, 26);
+	    btnBack_File.setBounds(20, 11, 31, 37);
 	}
 	return btnBack_File;
     }
@@ -1093,6 +1120,12 @@ public class MainWindow extends JFrame {
     private JButton getBtnNext_1() {
 	if (btnNext == null) {
 	    btnNext = new JButton("Next");
+	    btnNext.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    show(cardMode);
+		}
+	    });
 	    btnNext.setMnemonic('b');
 	    btnNext.setFont(Utils.getFont().deriveFont(14f));
 	    btnNext.setEnabled(false);
@@ -1127,5 +1160,286 @@ public class MainWindow extends JFrame {
 	    lblDndWarning.setFont(Utils.getFont().deriveFont(14f));
 	}
 	return lblDndWarning;
+    }
+
+    private JPanel getNorthPanel_Mode() {
+	if (northPanel_Mode == null) {
+	    northPanel_Mode = new JPanel();
+	    northPanel_Mode.setBounds(0, 0, 586, 81);
+	    northPanel_Mode.setBackground(SystemColor.window);
+	    northPanel_Mode.setLayout(null);
+	    northPanel_Mode.add(getLblChooseTranslation());
+	}
+	return northPanel_Mode;
+    }
+
+    private JPanel getDownPanel_Mode() {
+	if (downPanel_Mode == null) {
+	    downPanel_Mode = new JPanel();
+	    downPanel_Mode.setBounds(0, 315, 586, 98);
+	    downPanel_Mode.setLayout(new BorderLayout(0, 0));
+	    downPanel_Mode.add(getDownPanel_Mode_1());
+	}
+	return downPanel_Mode;
+    }
+
+    private JPanel getDownPanel_Mode_1() {
+	if (downPanelGrid_Mode == null) {
+	    downPanelGrid_Mode = new JPanel();
+	    downPanelGrid_Mode.setBackground(SystemColor.window);
+	    downPanelGrid_Mode.setLayout(new GridLayout(2, 4, 0, 0));
+	    downPanelGrid_Mode.add(getEmptyPanel_Mode_1());
+	    downPanelGrid_Mode.add(getEmptyPanel_1_Mode_1());
+	    downPanelGrid_Mode.add(getEmptyPanel_2_Mode_1());
+	    downPanelGrid_Mode.add(getEmptyPanel_3_Mode_1());
+	    downPanelGrid_Mode.add(getEmptyPanel_4_Mode_1());
+	    downPanelGrid_Mode.add(getEmptyPanel_5_Mode_1());
+	    downPanelGrid_Mode.add(getEmptyPanel_6_Mode_1());
+	    downPanelGrid_Mode.add(getEmptyPanel_7_Mode_1());
+	}
+	return downPanelGrid_Mode;
+    }
+
+    private JPanel getEmptyPanel_Mode_1() {
+	if (emptyPanel_Mode == null) {
+	    emptyPanel_Mode = new JPanel();
+	    emptyPanel_Mode.setBackground(SystemColor.window);
+	}
+	return emptyPanel_Mode;
+    }
+
+    private JPanel getEmptyPanel_1_Mode_1() {
+	if (emptyPanel_1_Mode == null) {
+	    emptyPanel_1_Mode = new JPanel();
+	    emptyPanel_1_Mode.setBackground(SystemColor.window);
+	}
+	return emptyPanel_1_Mode;
+    }
+
+    private JPanel getEmptyPanel_2_Mode_1() {
+	if (emptyPanel_2_Mode == null) {
+	    emptyPanel_2_Mode = new JPanel();
+	    emptyPanel_2_Mode.setBackground(SystemColor.window);
+	}
+	return emptyPanel_2_Mode;
+    }
+
+    private JPanel getEmptyPanel_3_Mode_1() {
+	if (emptyPanel_3_Mode == null) {
+	    emptyPanel_3_Mode = new JPanel();
+	    emptyPanel_3_Mode.setBackground(SystemColor.window);
+	}
+	return emptyPanel_3_Mode;
+    }
+
+    private JPanel getEmptyPanel_4_Mode_1() {
+	if (emptyPanel_4_Mode == null) {
+	    emptyPanel_4_Mode = new JPanel();
+	    emptyPanel_4_Mode.setLayout(null);
+	    emptyPanel_4_Mode.setBackground(SystemColor.window);
+	    emptyPanel_4_Mode.add(getLblBack_Mode_1());
+	    emptyPanel_4_Mode.add(getBtnBack_Mode_1());
+	}
+	return emptyPanel_4_Mode;
+    }
+
+    private JLabel getLblBack_Mode_1() {
+	if (lblBack_Mode == null) {
+	    lblBack_Mode = new JLabel("<");
+	    lblBack_Mode.setFont(lblBack_Mode.getFont().deriveFont(15f));
+	    lblBack_Mode.setBounds(10, 11, 31, 37);
+
+	    lblBack_Mode.addMouseListener(new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		    btnBack_Mode.doClick();
+		}
+	    });
+
+	}
+	return lblBack_Mode;
+    }
+
+    private JButton getBtnBack_Mode_1() {
+	if (btnBack_Mode == null) {
+	    btnBack_Mode = new JButton("");
+	    btnBack_Mode.setIcon(new ImageIcon(MainWindow.class
+		    .getResource("/main/resources/home-icon.png")));
+	    btnBack_Mode.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    show(cardFile);
+		}
+	    });
+
+	    btnBack_Mode.setMnemonic('h');
+	    btnBack_Mode.setBorder(null);
+	    btnBack_Mode.setBackground(SystemColor.window);
+	    btnBack_Mode.setBounds(20, 11, 31, 37);
+	}
+	return btnBack_Mode;
+    }
+
+    private JPanel getEmptyPanel_5_Mode_1() {
+	if (emptyPanel_5_Mode == null) {
+	    emptyPanel_5_Mode = new JPanel();
+	    emptyPanel_5_Mode.setBackground(SystemColor.window);
+	}
+	return emptyPanel_5_Mode;
+    }
+
+    private JPanel getEmptyPanel_6_Mode_1() {
+	if (emptyPanel_6_Mode == null) {
+	    emptyPanel_6_Mode = new JPanel();
+	    emptyPanel_6_Mode.setBackground(SystemColor.window);
+	}
+	return emptyPanel_6_Mode;
+    }
+
+    private JPanel getEmptyPanel_7_Mode_1() {
+	if (emptyPanel_7_Mode == null) {
+	    emptyPanel_7_Mode = new JPanel();
+	    emptyPanel_7_Mode.setBackground(SystemColor.window);
+	    emptyPanel_7_Mode.setLayout(null);
+	    emptyPanel_7_Mode.add(getBtnNext_Mode_1());
+	    emptyPanel_7_Mode.add(getBtnHelp_Mode_1());
+	}
+	return emptyPanel_7_Mode;
+    }
+
+    private JButton getBtnNext_Mode_1() {
+	if (btnNext_Mode == null) {
+	    btnNext_Mode = new JButton("Next");
+	    btnNext_Mode.setBounds(10, 11, 83, 33);
+	    btnNext_Mode.setMnemonic('b');
+	    btnNext_Mode.setFont(btnNext_Mode.getFont().deriveFont(14f));
+	    btnNext_Mode.setEnabled(false);
+	}
+	return btnNext_Mode;
+    }
+
+    private JButton getBtnHelp_Mode_1() {
+	if (btnHelp_Mode == null) {
+	    btnHelp_Mode = new JButton("");
+	    btnHelp_Mode.setBounds(103, 11, 33, 33);
+	    btnHelp_Mode.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/main/resources/help.png")));
+	    btnHelp_Mode.setToolTipText(
+		    "As a translator, you can translate the file yourself or do it with OpenAI's chat completion model.");
+	    btnHelp_Mode.setMnemonic('b');
+	    btnHelp_Mode.setFont(btnHelp_Mode.getFont().deriveFont(14f));
+	    btnHelp_Mode.setBorder(null);
+	    btnHelp_Mode.setBackground(SystemColor.window);
+	}
+	return btnHelp_Mode;
+    }
+
+    private JPanel getPanelChoose_Mode() {
+	if (panelChoose_Mode == null) {
+	    panelChoose_Mode = new JPanel();
+	    panelChoose_Mode.setBounds(0, 80, 586, 236);
+	    panelChoose_Mode.setBackground(SystemColor.window);
+	    panelChoose_Mode.setLayout(null);
+	    panelChoose_Mode.add(getBtnManual_Mode());
+	    panelChoose_Mode.add(getBtnAutomatic_Mode());
+	    panelChoose_Mode.add(getComboBox());
+	    panelChoose_Mode.add(getLblChoose());
+	    panelChoose_Mode.add(getLblLanguage());
+	}
+	return panelChoose_Mode;
+    }
+
+    private JButton getBtnManual_Mode() {
+	if (btnManual_Mode == null) {
+	    btnManual_Mode = new JButton("Manual");
+	    btnManual_Mode.setFocusable(false);
+	    btnManual_Mode.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    btnManual_Mode.setSelected(true);
+		    btnAutomatic_Mode.setSelected(false);
+		    btnManual_Mode.setFocusable(true);
+		    btnAutomatic_Mode.setFocusable(false);
+		}
+	    });
+	    btnManual_Mode.setBounds(67, 77, 210, 52);
+	    btnManual_Mode.setFont(Utils.getFont().deriveFont(20f));
+	}
+	return btnManual_Mode;
+    }
+
+    private JButton getBtnAutomatic_Mode() {
+	if (btnAutomatic_Mode == null) {
+	    btnAutomatic_Mode = new JButton("Automatic");
+	    btnAutomatic_Mode.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    btnAutomatic_Mode.setSelected(true);
+		    btnManual_Mode.setSelected(false);
+		    btnAutomatic_Mode.setFocusable(true);
+		    btnManual_Mode.setFocusable(false);
+		}
+	    });
+	    btnAutomatic_Mode
+		    .setFont(btnAutomatic_Mode.getFont().deriveFont(20f));
+	    btnAutomatic_Mode.setBounds(305, 77, 210, 52);
+	}
+	return btnAutomatic_Mode;
+    }
+
+    private JComboBox<String> getComboBox() {
+	if (comboBox == null) {
+	    comboBox = new JComboBox<String>();
+	    comboBox.addPropertyChangeListener(new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+		    if (btnNext_Mode != null) {
+			if (comboBox.getSelectedIndex() == -1) {
+			    btnNext_Mode.setEnabled(false);
+			} else {
+			    btnNext_Mode.setEnabled(false);
+			}
+		    }
+		}
+	    });
+	    comboBox.setBounds(197, 185, 201, 32);
+	    comboBox.setModel(new DefaultComboBoxModel<String>(
+		    Utils.getSupportedLanguages().toArray(new String[0])));
+	    comboBox.setFont(Utils.getFont().deriveFont(15f));
+	}
+	return comboBox;
+    }
+
+    private JLabel getLblChoose() {
+	if (lblChoose == null) {
+	    lblChoose = new JLabel(
+		    "1) Do the translation yourself, or have AI do it!");
+	    lblChoose.setForeground(SystemColor.textHighlight);
+	    lblChoose.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblChoose.setBounds(131, 44, 327, 22);
+	    lblChoose.setFont(Utils.getFont().deriveFont(15f));
+	}
+	return lblChoose;
+    }
+
+    private JLabel getLblLanguage() {
+	if (lblLanguage == null) {
+	    lblLanguage = new JLabel("2) Choose the target language!");
+	    lblLanguage.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblLanguage.setForeground(SystemColor.textHighlight);
+	    lblLanguage.setFont(Utils.getFont().deriveFont(15f));
+	    lblLanguage.setBounds(131, 155, 327, 19);
+	}
+	return lblLanguage;
+    }
+
+    private JLabel getLblChooseTranslation() {
+	if (lblChooseTranslation == null) {
+	    lblChooseTranslation = new JLabel("Choose your translation mode");
+	    lblChooseTranslation.setBounds(0, 5, 586, 76);
+	    lblChooseTranslation.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblChooseTranslation.setFont(Utils.getFont().deriveFont(40f));
+	}
+	return lblChooseTranslation;
     }
 }
