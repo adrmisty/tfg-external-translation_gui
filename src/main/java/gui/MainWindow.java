@@ -20,6 +20,8 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
@@ -53,6 +55,7 @@ import javax.swing.text.StyledDocument;
 
 import main.java.gui.windows.FileUpload;
 import main.java.gui.windows.InfoWindow;
+import main.java.utils.BusyPanel;
 import main.java.utils.Utils;
 
 /**
@@ -137,6 +140,8 @@ public class MainWindow extends JFrame {
     private JLabel lblDrag;
     private JTextField txtFilePath;
     private JButton btnBrowse;
+    private JPanel backEmptyPanel_Info;
+    private JPanel backPanel_Info;
 
     /*
      * File drag and drop
@@ -152,15 +157,13 @@ public class MainWindow extends JFrame {
      */
 
     private JPanel northPanel_Mode;
-
-    /*
-     * Labels
-     */
-    private JLabel lblChooseTranslation;
     private JPanel downPanel_Mode;
     private JPanel centerPanel_Mode;
+
     private JButton btnManual_Mode;
     private JButton btnAutomatic_Mode;
+
+    private JLabel lblChooseTranslation;
     private JComboBox<String> comboBox;
     private JLabel lblChoose;
     private JLabel lblLanguage;
@@ -171,8 +174,6 @@ public class MainWindow extends JFrame {
     private JLabel lblForLogo;
     private JLabel lblLogo;
     private JLabel lblFileLingual;
-    private JPanel backEmptyPanel_Info;
-    private JPanel backPanel_Info;
     private JLabel lblBack;
     private JButton btnBack_Info;
     private JPanel downPanel_File;
@@ -188,6 +189,19 @@ public class MainWindow extends JFrame {
     private JButton btnBack_Mode;
     private JButton btnNext_Mode;
     private JButton btnHelp_Mode;
+    private JPanel cardAutomatic;
+    private JPanel centerPanel_Automatic;
+    private JButton btnSave_Auto;
+    private JButton btnReview_Auto;
+    private JLabel lblSave_Auto;
+    private JPanel northPanel_Auto;
+    private JLabel lblTitle_Auto;
+    private JPanel downPanel_Auto;
+    private JPanel backEmptyPanel_Auto;
+    private JPanel backPanel_Auto;
+    private JLabel lblBack_Auto;
+    private JButton btnBack_Auto;
+    private BusyPanel busyPanel;
 
     /**
      * Create the frame.
@@ -216,6 +230,7 @@ public class MainWindow extends JFrame {
 	contentPane.add(getCardInfo());
 	contentPane.add(getCardFile());
 	contentPane.add(getCardMode());
+	contentPane.add(getCardAutomatic());
 	currentCard = cardMain;
     }
 
@@ -308,7 +323,7 @@ public class MainWindow extends JFrame {
 	    northPanel.setBounds(0, 0, 586, 110);
 	    northPanel.setBackground(SystemColor.window);
 	    northPanel.setLayout(new BorderLayout(0, 0));
-	    northPanel.add(getLblFileLingual_1(), BorderLayout.SOUTH);
+	    northPanel.add(getLblFileLingual(), BorderLayout.SOUTH);
 	}
 	return northPanel;
     }
@@ -628,7 +643,7 @@ public class MainWindow extends JFrame {
 	if (lblDragText == null) {
 	    lblDragText = new JLabel("Drag and drop");
 	    lblDragText.setBounds(156, 84, 282, 19);
-	    lblDragText.setLabelFor(getLblDrag_1());
+	    lblDragText.setLabelFor(getLblDrag());
 	    lblDragText.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblDragText.setFont(Utils.getFont().deriveFont(15f));
 	}
@@ -642,7 +657,7 @@ public class MainWindow extends JFrame {
 	    centerPanel_File.setBounds(0, 81, 586, 235);
 	    centerPanel_File.setLayout(null);
 	    centerPanel_File.add(getLblDragText());
-	    centerPanel_File.add(getLblDrag_1());
+	    centerPanel_File.add(getLblDrag());
 	    centerPanel_File.add(getTxtFilePath());
 	    centerPanel_File.add(getBtnBrowse());
 	    centerPanel_File.add(getLblDndWarning());
@@ -650,7 +665,7 @@ public class MainWindow extends JFrame {
 	return centerPanel_File;
     }
 
-    private JLabel getLblDrag_1() {
+    private JLabel getLblDrag() {
 	if (lblDrag == null) {
 	    lblDrag = new JLabel("");
 	    lblDrag.setBounds(145, 11, 311, 141);
@@ -841,7 +856,7 @@ public class MainWindow extends JFrame {
     private boolean unlockNext() {
 	// Checks whether it is possible to enable the 'Next' button
 	if ((btnManual_Mode.isSelected() || btnAutomatic_Mode.isSelected())
-		&& comboBox.getSelectedIndex() != -1) {
+		&& comboBox.getSelectedIndex() > 0) {
 	    btnNext_Mode.setEnabled(true);
 	    return true;
 	} else {
@@ -886,9 +901,9 @@ public class MainWindow extends JFrame {
     private JComboBox<String> getComboBox() {
 	if (comboBox == null) {
 	    comboBox = new JComboBox<String>();
-	    comboBox.addPropertyChangeListener(new PropertyChangeListener() {
+	    comboBox.addItemListener(new ItemListener() {
 		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
+		public void itemStateChanged(ItemEvent e) {
 		    if (btnNext_Mode != null) {
 			unlockNext();
 		    }
@@ -943,7 +958,7 @@ public class MainWindow extends JFrame {
 	    centerPanel.setBounds(0, 110, 586, 136);
 	    centerPanel.setLayout(new BorderLayout(0, 0));
 	    centerPanel.add(getLblSlogan(), BorderLayout.NORTH);
-	    centerPanel.add(getLogoPanel_1());
+	    centerPanel.add(getLogoPanel());
 	}
 	return centerPanel;
     }
@@ -958,18 +973,18 @@ public class MainWindow extends JFrame {
 	return lblSlogan;
     }
 
-    private JPanel getLogoPanel_1() {
+    private JPanel getLogoPanel() {
 	if (logoPanel == null) {
 	    logoPanel = new JPanel();
 	    logoPanel.setBackground(SystemColor.window);
 	    logoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-	    logoPanel.add(getLblForLogo_1());
-	    logoPanel.add(getLblLogo_1());
+	    logoPanel.add(getLblForLogo());
+	    logoPanel.add(getLblLogo());
 	}
 	return logoPanel;
     }
 
-    private JLabel getLblForLogo_1() {
+    private JLabel getLblForLogo() {
 	if (lblForLogo == null) {
 	    lblForLogo = new JLabel("Powered by");
 	    lblForLogo.setFont(Utils.getFont().deriveFont(20f));
@@ -977,7 +992,7 @@ public class MainWindow extends JFrame {
 	return lblForLogo;
     }
 
-    private JLabel getLblLogo_1() {
+    private JLabel getLblLogo() {
 	if (lblLogo == null) {
 	    lblLogo = new JLabel("");
 	    lblLogo.setIcon(new ImageIcon(MainWindow.class
@@ -987,7 +1002,7 @@ public class MainWindow extends JFrame {
 	return lblLogo;
     }
 
-    private JLabel getLblFileLingual_1() {
+    private JLabel getLblFileLingual() {
 	if (lblFileLingual == null) {
 	    lblFileLingual = new JLabel("FileLingual");
 	    lblFileLingual.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1216,6 +1231,12 @@ public class MainWindow extends JFrame {
     private JButton getBtnNext_Mode() {
 	if (btnNext_Mode == null) {
 	    btnNext_Mode = new JButton("Next");
+	    btnNext_Mode.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    show(cardAutomatic);
+		}
+	    });
 	    btnNext_Mode.setBounds(448, 13, 86, 33);
 	    btnNext_Mode.setMnemonic('n');
 	    btnNext_Mode.setFont(Utils.getFont().deriveFont(14f));
@@ -1238,5 +1259,160 @@ public class MainWindow extends JFrame {
 	    btnHelp_Mode.setFocusable(false);
 	}
 	return btnHelp_Mode;
+    }
+
+    private JPanel getCardAutomatic() {
+	if (cardAutomatic == null) {
+	    cardAutomatic = new JPanel();
+	    cardAutomatic.setBackground(SystemColor.window);
+	    cardAutomatic.setLayout(null);
+	    cardAutomatic.add(getCenterPanel_Automatic());
+	    cardAutomatic.add(getNorthPanel_Auto());
+	    cardAutomatic.add(getDownPanel_Auto());
+	}
+	return cardAutomatic;
+    }
+
+    private JPanel getCenterPanel_Automatic() {
+	if (centerPanel_Automatic == null) {
+	    centerPanel_Automatic = new JPanel();
+	    centerPanel_Automatic.setBounds(0, 80, 586, 236);
+	    centerPanel_Automatic.setLayout(null);
+	    centerPanel_Automatic.setBackground(SystemColor.window);
+	    centerPanel_Automatic.add(getBusyPanel());
+	    centerPanel_Automatic.add(getBtnSave_Auto());
+	    centerPanel_Automatic.add(getBtnReview_Auto());
+	    centerPanel_Automatic.add(getLblSave_Auto());
+	}
+	return centerPanel_Automatic;
+    }
+
+    private BusyPanel getBusyPanel() {
+	if (busyPanel == null) {
+	    busyPanel = new BusyPanel();
+	    busyPanel.setLocation(260, 0);
+	    busyPanel.setSize(60, 60);
+	}
+	return busyPanel;
+    }
+
+    private JButton getBtnSave_Auto() {
+	if (btnSave_Auto == null) {
+	    btnSave_Auto = new JButton("Save & finish");
+	    btnSave_Auto.setIcon(new ImageIcon(MainWindow.class
+		    .getResource("/main/resources/save-icon.png")));
+	    btnSave_Auto.setEnabled(false);
+	    btnSave_Auto.setFont(btnSave_Auto.getFont().deriveFont(20f));
+	    btnSave_Auto.setFocusable(false);
+	    btnSave_Auto.setBounds(74, 158, 210, 52);
+	}
+	return btnSave_Auto;
+    }
+
+    private JButton getBtnReview_Auto() {
+	if (btnReview_Auto == null) {
+	    btnReview_Auto = new JButton("Review");
+	    btnReview_Auto.setEnabled(false);
+	    btnReview_Auto.setFont(btnReview_Auto.getFont().deriveFont(20f));
+	    btnReview_Auto.setBounds(305, 157, 210, 52);
+	}
+	return btnReview_Auto;
+    }
+
+    private JLabel getLblSave_Auto() {
+	if (lblSave_Auto == null) {
+	    lblSave_Auto = new JLabel("");
+	    lblSave_Auto.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblSave_Auto.setForeground(SystemColor.textHighlight);
+	    lblSave_Auto.setFont(lblSave_Auto.getFont().deriveFont(15f));
+	    lblSave_Auto.setBounds(131, 44, 327, 22);
+	}
+	return lblSave_Auto;
+    }
+
+    private JPanel getNorthPanel_Auto() {
+	if (northPanel_Auto == null) {
+	    northPanel_Auto = new JPanel();
+	    northPanel_Auto.setBackground(SystemColor.window);
+	    northPanel_Auto.setBounds(0, 0, 586, 81);
+	    northPanel_Auto.setLayout(null);
+	    northPanel_Auto.add(getLvlProgress_Auto_1());
+	}
+	return northPanel_Auto;
+    }
+
+    private JLabel getLvlProgress_Auto_1() {
+	if (lblTitle_Auto == null) {
+	    lblTitle_Auto = new JLabel("Translating your texts...");
+	    lblTitle_Auto.setBounds(0, 0, 586, 81);
+	    lblTitle_Auto.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblTitle_Auto.setForeground(Color.BLACK);
+	    lblTitle_Auto.setFont(Utils.getFont().deriveFont(40f));
+	}
+	return lblTitle_Auto;
+    }
+
+    private JPanel getDownPanel_Auto() {
+	if (downPanel_Auto == null) {
+	    downPanel_Auto = new JPanel();
+	    downPanel_Auto.setBounds(0, 315, 586, 98);
+	    downPanel_Auto.setLayout(new GridLayout(0, 1, 0, 0));
+	    downPanel_Auto.add(getBackEmptyPanel_Auto());
+	    downPanel_Auto.add(getBackPanel_Auto());
+	}
+	return downPanel_Auto;
+    }
+
+    private JPanel getBackEmptyPanel_Auto() {
+	if (backEmptyPanel_Auto == null) {
+	    backEmptyPanel_Auto = new JPanel();
+	    backEmptyPanel_Auto.setBackground(SystemColor.window);
+	}
+	return backEmptyPanel_Auto;
+    }
+
+    private JPanel getBackPanel_Auto() {
+	if (backPanel_Auto == null) {
+	    backPanel_Auto = new JPanel();
+	    backPanel_Auto.setLayout(null);
+	    backPanel_Auto.setBackground(SystemColor.window);
+	    backPanel_Auto.add(getLblBack_Auto());
+	    backPanel_Auto.add(getBtnBack_Auto());
+	}
+	return backPanel_Auto;
+    }
+
+    private JLabel getLblBack_Auto() {
+	if (lblBack_Auto == null) {
+	    lblBack_Auto = new JLabel("<");
+	    lblBack_Auto.addMouseListener(new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+		    btnBack_Auto.doClick();
+		}
+	    });
+	    lblBack_Auto.setFont(lblBack_Auto.getFont().deriveFont(15f));
+	    lblBack_Auto.setBounds(10, 11, 31, 37);
+	}
+	return lblBack_Auto;
+    }
+
+    private JButton getBtnBack_Auto() {
+	if (btnBack_Auto == null) {
+	    btnBack_Auto = new JButton("");
+	    btnBack_Auto.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    show(cardMode);
+		}
+	    });
+	    btnBack_Auto.setIcon(new ImageIcon(MainWindow.class
+		    .getResource("/main/resources/home-icon.png")));
+	    btnBack_Auto.setMnemonic('b');
+	    btnBack_Auto.setBorder(null);
+	    btnBack_Auto.setBackground(SystemColor.window);
+	    btnBack_Auto.setBounds(20, 11, 31, 37);
+	}
+	return btnBack_Auto;
     }
 }
