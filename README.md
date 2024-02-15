@@ -12,7 +12,9 @@ and Software Engineering at the University of Oviedo (Asturias, Spain).
 
 ### Frameworks
 * Swing
-* Jython binding for Python (logic) + Java (GUI)
+
+### APIs
+* OpenAI ChatCompletionsAPI (via the OpenAI service provided by https://github.com/TheoKanning/openai-java)
 
 ## 📅 Designs & wireframes
 <img width="374" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/1e6e9412-1052-4e8b-9f26-6095a291be97">

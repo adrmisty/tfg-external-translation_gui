@@ -4,8 +4,6 @@ import java.awt.EventQueue;
 
 import javax.swing.UIManager;
 
-import main.java.gui.MainWindow;
-
 public class Main {
 
 	/**
