@@ -1,4 +1,4 @@
-package main.java;
+package main.java.gui;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -55,8 +55,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import main.java.utils.BusyPanel;
-import main.java.utils.Utils;
+import main.java.api.Translator;
+import main.java.utils.ResourceLoader;
 
 /**
  * Main Window of the application, which consists of several different views
@@ -64,11 +64,14 @@ import main.java.utils.Utils;
  * Python-based service.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version 1.0 (February 2024)
+ * @version 2.0 (February 2024)
  */
 public class MainWindow extends JFrame {
 
     private static final long serialVersionUID = 1L;
+
+    // API access for translation
+    private Translator translator = new Translator();
 
     private JPanel contentPane;
     private JPanel currentCard; // Reference to the card being shown on screen
@@ -229,7 +232,7 @@ public class MainWindow extends JFrame {
 		MainWindow.class.getResource("/main/resources/icon.png")));
 	setTitle("FileLingual");
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	setFont(Utils.getFont());
+	setFont(ResourceLoader.getFont());
 	setBounds(100, 100, 600, 450);
 	this.setLocationRelativeTo(null);
 
@@ -431,7 +434,7 @@ public class MainWindow extends JFrame {
 		}
 	    });
 	    leftButton.setMnemonic('s');
-	    leftButton.setFont(Utils.getFont().deriveFont(20f));
+	    leftButton.setFont(ResourceLoader.getFont().deriveFont(20f));
 	}
 	return leftButton;
     }
@@ -448,7 +451,7 @@ public class MainWindow extends JFrame {
 		    show(cardInfo);
 		}
 	    });
-	    rightButton.setFont(Utils.getFont().deriveFont(20f));
+	    rightButton.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    rightButton.setMnemonic('l');
 	    rightButton
 		    .setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -515,7 +518,7 @@ public class MainWindow extends JFrame {
 	    lblProject = new JLabel("Final Degree Project");
 	    lblProject.setLabelFor(getLblUnioviLogo());
 	    lblProject.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblProject.setFont(Utils.getFont().deriveFont(40f));
+	    lblProject.setFont(ResourceLoader.getFont().deriveFont(40f));
 	}
 	return lblProject;
     }
@@ -561,7 +564,7 @@ public class MainWindow extends JFrame {
 	    lblUnioviLogo.setIcon(new ImageIcon(lblUnioviLogo.getClass()
 		    .getResource("/main/resources/uniovi-logo.png")));
 	    lblUnioviLogo.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblUnioviLogo.setFont(Utils.getFont().deriveFont(30f));
+	    lblUnioviLogo.setFont(ResourceLoader.getFont().deriveFont(30f));
 	}
 	return lblUnioviLogo;
     }
@@ -626,7 +629,7 @@ public class MainWindow extends JFrame {
 	    lblAuthor.setLabelFor(getLblEmail());
 	    lblAuthor.setBackground(SystemColor.window);
 	    lblAuthor.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblAuthor.setFont(Utils.getFont().deriveFont(15f));
+	    lblAuthor.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return lblAuthor;
     }
@@ -652,7 +655,7 @@ public class MainWindow extends JFrame {
 	    });
 	    lblEmail.setForeground(Color.BLUE.darker());
 	    lblEmail.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblEmail.setFont(Utils.getFont().deriveFont(15f));
+	    lblEmail.setFont(ResourceLoader.getFont().deriveFont(15f));
 	    lblEmail.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
 	return lblEmail;
@@ -682,7 +685,7 @@ public class MainWindow extends JFrame {
 	    textDescription.setEditable(false);
 	    textDescription.setText(
 		    "Externalized translation service for programs, \r\nusing the large language model ChatGPT 3.5 Turbo\r\nprovided by the OpenAI API");
-	    textDescription.setFont(Utils.getFont().deriveFont(20f));
+	    textDescription.setFont(ResourceLoader.getFont().deriveFont(20f));
 
 	    // Center text
 	    StyledDocument doc = textDescription.getStyledDocument();
@@ -713,7 +716,8 @@ public class MainWindow extends JFrame {
 	    lblStartTranslating = new JLabel("Start translating now!");
 	    lblStartTranslating.setBounds(0, 0, 586, 80);
 	    lblStartTranslating.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblStartTranslating.setFont(Utils.getFont().deriveFont(40f));
+	    lblStartTranslating
+		    .setFont(ResourceLoader.getFont().deriveFont(40f));
 	}
 	return lblStartTranslating;
     }
@@ -724,7 +728,7 @@ public class MainWindow extends JFrame {
 	    lblDragText.setBounds(156, 84, 282, 19);
 	    lblDragText.setLabelFor(getLblDrag());
 	    lblDragText.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblDragText.setFont(Utils.getFont().deriveFont(15f));
+	    lblDragText.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return lblDragText;
     }
@@ -749,7 +753,7 @@ public class MainWindow extends JFrame {
 	    lblDrag = new JLabel("");
 	    lblDrag.setBounds(145, 11, 311, 141);
 	    lblDrag.setIcon(new ImageIcon(
-		    lblDrag.getClass().getResource("/main/resources/dnd.png")));
+		    MainWindow.class.getResource("/main/resources/dnd.png")));
 	    lblDrag.setToolTipText("Drag and drop a file here");
 
 	    // Drag and drop functionality
@@ -838,7 +842,7 @@ public class MainWindow extends JFrame {
 		}
 	    });
 	    txtFilePath.setHorizontalAlignment(SwingConstants.CENTER);
-	    txtFilePath.setFont(Utils.getFont().deriveFont(14f));
+	    txtFilePath.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    txtFilePath.setEditable(false);
 	    txtFilePath.setColumns(10);
 	}
@@ -886,7 +890,7 @@ public class MainWindow extends JFrame {
 		}
 	    });
 	    btnBrowse.setMnemonic('b');
-	    btnBrowse.setFont(Utils.getFont().deriveFont(14f));
+	    btnBrowse.setFont(ResourceLoader.getFont().deriveFont(14f));
 	}
 	return btnBrowse;
     }
@@ -898,7 +902,7 @@ public class MainWindow extends JFrame {
 	    lblDndWarning.setForeground(new Color(220, 20, 60));
 	    lblDndWarning.setBounds(156, 200, 282, 14);
 	    lblDndWarning.setVisible(false);
-	    lblDndWarning.setFont(Utils.getFont().deriveFont(14f));
+	    lblDndWarning.setFont(ResourceLoader.getFont().deriveFont(14f));
 	}
 	return lblDndWarning;
     }
@@ -971,7 +975,7 @@ public class MainWindow extends JFrame {
 		}
 	    });
 	    btnManual_Mode.setBounds(67, 77, 210, 52);
-	    btnManual_Mode.setFont(Utils.getFont().deriveFont(20f));
+	    btnManual_Mode.setFont(ResourceLoader.getFont().deriveFont(20f));
 	}
 	return btnManual_Mode;
     }
@@ -986,7 +990,7 @@ public class MainWindow extends JFrame {
 		    unlockNext();
 		}
 	    });
-	    btnAutomatic_Mode.setFont(Utils.getFont().deriveFont(20f));
+	    btnAutomatic_Mode.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    btnAutomatic_Mode.setBounds(305, 77, 210, 52);
 	}
 	return btnAutomatic_Mode;
@@ -1004,9 +1008,9 @@ public class MainWindow extends JFrame {
 		}
 	    });
 	    comboBox.setBounds(197, 185, 201, 32);
-	    comboBox.setModel(new DefaultComboBoxModel<String>(
-		    Utils.getSupportedLanguages().toArray(new String[0])));
-	    comboBox.setFont(Utils.getFont().deriveFont(15f));
+	    comboBox.setModel(new DefaultComboBoxModel<String>(ResourceLoader
+		    .getSupportedLanguages().toArray(new String[0])));
+	    comboBox.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return comboBox;
     }
@@ -1018,7 +1022,7 @@ public class MainWindow extends JFrame {
 	    lblChoose.setForeground(SystemColor.textHighlight);
 	    lblChoose.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblChoose.setBounds(131, 44, 327, 22);
-	    lblChoose.setFont(Utils.getFont().deriveFont(15f));
+	    lblChoose.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return lblChoose;
     }
@@ -1029,7 +1033,7 @@ public class MainWindow extends JFrame {
 	    lblLanguage.setLabelFor(getComboBox());
 	    lblLanguage.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblLanguage.setForeground(SystemColor.textHighlight);
-	    lblLanguage.setFont(Utils.getFont().deriveFont(15f));
+	    lblLanguage.setFont(ResourceLoader.getFont().deriveFont(15f));
 	    lblLanguage.setBounds(131, 155, 327, 19);
 	}
 	return lblLanguage;
@@ -1040,7 +1044,8 @@ public class MainWindow extends JFrame {
 	    lblChooseTranslation = new JLabel("Choose your translation mode");
 	    lblChooseTranslation.setBounds(0, 5, 586, 76);
 	    lblChooseTranslation.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblChooseTranslation.setFont(Utils.getFont().deriveFont(40f));
+	    lblChooseTranslation
+		    .setFont(ResourceLoader.getFont().deriveFont(40f));
 	}
 	return lblChooseTranslation;
     }
@@ -1081,7 +1086,7 @@ public class MainWindow extends JFrame {
     private JLabel getLblForLogo() {
 	if (lblForLogo == null) {
 	    lblForLogo = new JLabel("Powered by");
-	    lblForLogo.setFont(Utils.getFont().deriveFont(20f));
+	    lblForLogo.setFont(ResourceLoader.getFont().deriveFont(20f));
 	}
 	return lblForLogo;
     }
@@ -1100,7 +1105,7 @@ public class MainWindow extends JFrame {
 	if (lblFileLingual == null) {
 	    lblFileLingual = new JLabel("FileLingual");
 	    lblFileLingual.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblFileLingual.setFont(Utils.getFont().deriveFont(50f));
+	    lblFileLingual.setFont(ResourceLoader.getFont().deriveFont(50f));
 	}
 	return lblFileLingual;
     }
@@ -1134,7 +1139,7 @@ public class MainWindow extends JFrame {
 		    btnBack_Info.doClick();
 		}
 	    });
-	    lblBack.setFont(Utils.getFont().deriveFont(15f));
+	    lblBack.setFont(ResourceLoader.getFont().deriveFont(15f));
 	    lblBack.setBounds(10, 11, 31, 37);
 	}
 	return lblBack;
@@ -1202,7 +1207,7 @@ public class MainWindow extends JFrame {
 		    btnBack_File.doClick();
 		}
 	    });
-	    lblBack_File.setFont(Utils.getFont().deriveFont(15f));
+	    lblBack_File.setFont(ResourceLoader.getFont().deriveFont(15f));
 	    lblBack_File.setBounds(10, 11, 31, 37);
 	}
 	return lblBack_File;
@@ -1233,11 +1238,19 @@ public class MainWindow extends JFrame {
 	    btnNext_File.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    show(cardMode);
+
+		    try {
+			translator.input(filePath);
+			show(cardMode);
+		    } catch (Exception ex) {
+			JOptionPane.showMessageDialog(contentPane,
+				ex.getMessage(), "Error",
+				JOptionPane.ERROR_MESSAGE);
+		    }
 		}
 	    });
 	    btnNext_File.setMnemonic('b');
-	    btnNext_File.setFont(Utils.getFont().deriveFont(14f));
+	    btnNext_File.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_File.setEnabled(false);
 	    btnNext_File.setBounds(448, 13, 86, 33);
 	}
@@ -1298,7 +1311,7 @@ public class MainWindow extends JFrame {
 		}
 	    });
 	    lblBack_Mode.setBounds(10, 11, 31, 37);
-	    lblBack_Mode.setFont(Utils.getFont().deriveFont(15f));
+	    lblBack_Mode.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return lblBack_Mode;
     }
@@ -1328,12 +1341,15 @@ public class MainWindow extends JFrame {
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    if (btnAutomatic_Mode.isSelected()) {
+
+		    }
 		    show(cardAutomatic);
 		}
 	    });
 	    btnNext_Mode.setBounds(448, 13, 86, 33);
 	    btnNext_Mode.setMnemonic('n');
-	    btnNext_Mode.setFont(Utils.getFont().deriveFont(14f));
+	    btnNext_Mode.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_Mode.setEnabled(false);
 	}
 	return btnNext_Mode;
@@ -1347,7 +1363,7 @@ public class MainWindow extends JFrame {
 	    btnHelp_Mode.setBounds(537, 7, 49, 41);
 	    btnHelp_Mode.setToolTipText(
 		    "As a translator, you can translate the file yourself or do it with OpenAI's chat completion model.");
-	    btnHelp_Mode.setFont(Utils.getFont().deriveFont(14f));
+	    btnHelp_Mode.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnHelp_Mode.setBorder(null);
 	    btnHelp_Mode.setBackground(SystemColor.window);
 	    btnHelp_Mode.setFocusable(false);
@@ -1444,7 +1460,7 @@ public class MainWindow extends JFrame {
 	    lblTitle_Auto.setBounds(0, 38, 586, 52);
 	    lblTitle_Auto.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblTitle_Auto.setForeground(Color.BLACK);
-	    lblTitle_Auto.setFont(Utils.getFont().deriveFont(30f));
+	    lblTitle_Auto.setFont(ResourceLoader.getFont().deriveFont(30f));
 	}
 	return lblTitle_Auto;
     }
@@ -1570,7 +1586,7 @@ public class MainWindow extends JFrame {
 	    leftButton_End.setIcon(new ImageIcon(MainWindow.class
 		    .getResource("/main/resources/translate.png")));
 	    leftButton_End.setMnemonic('s');
-	    leftButton_End.setFont(Utils.getFont().deriveFont(15f));
+	    leftButton_End.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return leftButton_End;
     }
@@ -1587,7 +1603,7 @@ public class MainWindow extends JFrame {
 	    rightButton_End.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/main/resources/exit.png")));
 	    rightButton_End.setMnemonic('l');
-	    rightButton_End.setFont(Utils.getFont().deriveFont(15f));
+	    rightButton_End.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return rightButton_End;
     }
@@ -1658,7 +1674,7 @@ public class MainWindow extends JFrame {
 	    lblFileSave = new JLabel(
 		    "Your translated file has been saved as: " + savedFileName);
 	    lblFileSave.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblFileSave.setFont(Utils.getFont().deriveFont(17f));
+	    lblFileSave.setFont(ResourceLoader.getFont().deriveFont(17f));
 	    lblFileSave.setForeground(Color.BLUE.darker());
 	    lblFileSave.setBounds(10, 0, 576, 25);
 	}

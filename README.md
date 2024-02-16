@@ -7,6 +7,13 @@ _externalized translation service for programs_, using the large language model 
 Developed by **Adriana Rodríguez Flórez**, undergraduate student at the BSc in Computer Science
 and Software Engineering at the University of Oviedo (Asturias, Spain).
 
+### To-Do's
+* Integrar la API de OpenAI con la propia interfaz gráfica.
+
+¡IMPORTANTE!
+* Añadir exception handling: no tirar las excepciones y capturarlas en el mismo sitio.
+* Refactorizar el código, ordenarlo...
+
 
 ## 🏛️ Architecture
 
