@@ -8,11 +8,10 @@ Developed by **Adriana Rodríguez Flórez**, undergraduate student at the BSc in
 and Software Engineering at the University of Oviedo (Asturias, Spain).
 
 ### To-Do's
-* Integrar la API de OpenAI con la propia interfaz gráfica.
-
 ¡IMPORTANTE!
 * Añadir exception handling: no tirar las excepciones y capturarlas en el mismo sitio.
 * Refactorizar el código, ordenarlo...
+* Analizar cómo responde a distintos inputs.
 
 
 ## 🏛️ Architecture
