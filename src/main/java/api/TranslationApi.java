@@ -1,12 +1,13 @@
 package main.java.api;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-import com.theokanning.openai.completion.CompletionChoice;
-import com.theokanning.openai.completion.CompletionRequest;
-import com.theokanning.openai.completion.CompletionResult;
+import com.theokanning.openai.completion.chat.ChatCompletionChoice;
+import com.theokanning.openai.completion.chat.ChatCompletionRequest;
+import com.theokanning.openai.completion.chat.ChatCompletionResult;
+import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 
 import main.java.utils.ResourceLoader;
@@ -26,26 +27,25 @@ public class TranslationApi {
      * has given as input) into a specific language also specified in the
      * prompt.
      * 
-     * @param prompt: translation command + localization texts + source and
-     *                target languages
+     * @param messages: user role translation command + localization texts +
+     *                  source and target languages
      * 
      * @return localization texts in the target language
      */
-    public String translate(String prompt) {
-	CompletionRequest completionRequest = CompletionRequest.builder()
-		.temperature(getTemperature()).model(getModel())
-		.maxTokens(getMaxTokens()).prompt("prompt").echo(true).build();
+    public String translate(List<ChatMessage> messages) {
+	ChatCompletionRequest completionRequest = ChatCompletionRequest
+		.builder().model(getModel()).temperature(getTemperature())
+		.maxTokens(getMaxTokens()).messages(messages).build();
 
-	CompletionResult completionRes = service
-		.createCompletion(completionRequest);
+	ChatCompletionResult completionRes = service
+		.createChatCompletion(completionRequest);
 
 	// Response cost
-	getResponseCost(completionRes);
+	// getResponseCost(completionRes);
 
 	// Return translation
-	CompletionChoice result = service.createCompletion(completionRequest)
-		.getChoices().get(0);
-	return result.getText().strip();
+	ChatCompletionChoice result = completionRes.getChoices().get(0);
+	return result.getMessage().getContent();
     }
 
     /**
@@ -58,21 +58,20 @@ public class TranslationApi {
      * @return prompt: string containing all texts to translate
      * @throws Exception in case of empty properties or API error
      */
-    public String setPrompt(Properties properties, String sourceLang,
+    public List<ChatMessage> setPrompt(Properties properties, String sourceLang,
 	    String targetLang) throws Exception {
 
-	String prompt;
+	List<ChatMessage> messages = new ArrayList<>();
 
 	// Build the respective prompt
 	if (!properties.isEmpty()) {
-	    prompt = buildPrompt(properties, sourceLang, targetLang);
-	    checkRequestTokens(prompt);
+	    messages = buildPrompt(properties, sourceLang, targetLang);
 	} else {
 	    throw new Exception(
 		    "No properties content has been indicated in the specified file.");
 	}
 
-	return prompt;
+	return messages;
 
     }
 
@@ -98,14 +97,14 @@ public class TranslationApi {
      * 
      * @param
      */
-    private double getResponseCost(CompletionResult response) {
+    private double getResponseCost(ChatCompletionResult response) {
 	long responseTokens = response.getUsage().getCompletionTokens();
 
 	double responsePricing = getPrice(responseTokens);
 	System.out
-		.println(String.format("# Response cost: %d", responsePricing));
+		.println(String.format("# Response cost: %f", responsePricing));
 	System.out.println(
-		String.format("# Response tokens: %d", responseTokens));
+		String.format("# Response tokens: %o", responseTokens));
 
 	return responsePricing;
     }
@@ -116,10 +115,12 @@ public class TranslationApi {
      * @param properties: file containing localization properties for a program
      * @param sourceLang: language from which user is translating
      * @param targetLang: language to which user is translating
-     * @return prompt: string containing all texts to translate
+     * @return list of chat messages (role: user -> content: prompt of the
+     *         translation command)
+     * @throws Exception
      */
-    private String buildPrompt(Properties properties, String sourceLang,
-	    String targetLang) {
+    private List<ChatMessage> buildPrompt(Properties properties,
+	    String sourceLang, String targetLang) throws Exception {
 	String command = String.format(
 		"Translate the following texts from %s into %s with the same separation format as given",
 		sourceLang, targetLang);
@@ -131,7 +132,9 @@ public class TranslationApi {
 		prompt.append((String) value + "\n");
 	    }
 
-	    return prompt.toString();
+	    checkRequestTokens(prompt.toString());
+
+	    return buildMessages(prompt.toString());
 	}
 	return null;
     }
@@ -140,12 +143,16 @@ public class TranslationApi {
      * Builds user message to send to the service when doing a request.
      * 
      * @param prompt: textual prompt with the user's command + text to translate
-     * @return dictionary of user messages (role, prompt)
+     * @return list of user messages (role, prompt)
      */
-    private Map<String, String> buildMessages(String prompt) {
-	Map<String, String> userMessage = new HashMap<>();
-	userMessage.put("role", "user");
-	userMessage.put("content", prompt);
+    private List<ChatMessage> buildMessages(String prompt) {
+	List<ChatMessage> userMessage = new ArrayList<>();
+
+	ChatMessage msgRole = new ChatMessage();
+	msgRole.setContent(prompt);
+	msgRole.setRole("user");
+
+	userMessage.add(msgRole);
 	return userMessage;
     }
 

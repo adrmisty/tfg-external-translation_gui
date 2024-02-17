@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,14 +23,21 @@ import java.util.logging.Logger;
  */
 public class ResourceLoader {
 
+    public static Optional<String> getFileExtension(String path) {
+	return Optional.ofNullable(path).filter(f -> f.contains("."))
+		.map(f -> f.substring(path.lastIndexOf(".") + 1));
+    }
+
     public static List<String> getSupportedLanguages() {
 	try {
-	    URL res = ResourceLoader.class.getResource("/main/resources/languages.txt");
+	    URL res = ResourceLoader.class
+		    .getResource("/main/resources/languages.txt");
 	    File f = new File(res.toURI());
 	    List<String> list = Files.readAllLines(f.toPath());
 	    return list;
 	} catch (URISyntaxException | IOException ex) {
-	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE,
+		    null, ex);
 	    return null;
 	}
     }
@@ -41,7 +49,8 @@ public class ResourceLoader {
 	    Font font = Font.createFont(Font.TRUETYPE_FONT, is);
 	    return font;
 	} catch (FontFormatException | IOException ex) {
-	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE,
+		    null, ex);
 	    return null;
 	}
     }
@@ -54,11 +63,12 @@ public class ResourceLoader {
 	    pr.load(is);
 	    return pr;
 	} catch (FileNotFoundException fnfe) {
-	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE, null,
-		    fnfe);
+	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE,
+		    null, fnfe);
 	    return null;
 	} catch (IOException io) {
-	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE, null, io);
+	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE,
+		    null, io);
 	    return null;
 	}
     }
@@ -71,11 +81,12 @@ public class ResourceLoader {
 	    pr.load(is);
 	    return pr.getProperty("API_KEY");
 	} catch (FileNotFoundException fnfe) {
-	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE, null,
-		    fnfe);
+	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE,
+		    null, fnfe);
 	    return null;
 	} catch (IOException io) {
-	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE, null, io);
+	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE,
+		    null, io);
 	    return null;
 	}
     }

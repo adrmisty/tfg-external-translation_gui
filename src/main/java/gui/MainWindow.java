@@ -34,7 +34,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -45,7 +44,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -148,15 +146,13 @@ public class MainWindow extends JFrame {
     private JPanel backPanel_Info;
 
     /*
-     * File drag and drop
+     * File drag and drop + File save
      */
     private String filePath = "";
     private String fileName = "";
     private String savedFilePath = "";
-    private String savedFileName = "";
     boolean savedDroppedFile = false;
     private JFileChooser fileChooser;
-    private JLabel lblDndWarning;
 
     /**
      * --------------------------------- TRANSLATION MODE PANEL
@@ -207,7 +203,6 @@ public class MainWindow extends JFrame {
     private JLabel lblBack_Auto;
     private JButton btnBack_Auto;
     private BusyPanel busyPanel;
-    private JProgressBar progressBar;
     private JPanel northPanel_End;
     private JPanel downPanel_End;
     private JSplitPane splitPane_End;
@@ -220,6 +215,7 @@ public class MainWindow extends JFrame {
     private JLabel lblForLogo_End;
     private JLabel lblLogo_End;
     private JLabel lblFileSave;
+    private JLabel lblDndWarning;
 
     /**
      * Create the frame.
@@ -263,6 +259,18 @@ public class MainWindow extends JFrame {
 	currentCard = newCard;
     }
 
+    private void startTranslationProcess() throws Exception {
+	if (btnAutomatic_Mode.isSelected()) {
+	    show(cardAutomatic);
+	    do {
+		translator.translateTo((String) comboBox.getSelectedItem());
+	    } while (!translator.isDone());
+	    busyPanel.stop();
+	    btnReview_Auto.setEnabled(true);
+	    btnSave_Auto.setEnabled(true);
+	}
+    }
+
     private void saveFilePath(String path, String name) {
 	filePath = path;
 	fileName = name;
@@ -270,16 +278,14 @@ public class MainWindow extends JFrame {
 	btnNext_File.setEnabled(true);
     }
 
-    private void saveSavedFilePath(String path, String name) {
+    private void saveSavedFilePath(String path) {
 	savedFilePath = path;
-	savedFileName = name;
     }
 
     private void resetFileValues() {
 	filePath = "";
 	fileName = "";
 	savedFilePath = "";
-	savedFileName = "";
 	txtFilePath.setText("");
 	lblDndWarning.setVisible(false);
 	btnNext_File.setEnabled(false);
@@ -561,7 +567,7 @@ public class MainWindow extends JFrame {
     private JLabel getLblUnioviLogo() {
 	if (lblUnioviLogo == null) {
 	    lblUnioviLogo = new JLabel("");
-	    lblUnioviLogo.setIcon(new ImageIcon(lblUnioviLogo.getClass()
+	    lblUnioviLogo.setIcon(new ImageIcon(MainWindow.class
 		    .getResource("/main/resources/uniovi-logo.png")));
 	    lblUnioviLogo.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblUnioviLogo.setFont(ResourceLoader.getFont().deriveFont(30f));
@@ -764,11 +770,6 @@ public class MainWindow extends JFrame {
 
     class DnDListener implements DropTargetListener {
 
-	private Optional<String> getFileExtension(String path) {
-	    return Optional.ofNullable(path).filter(f -> f.contains("."))
-		    .map(f -> f.substring(path.lastIndexOf(".") + 1));
-	}
-
 	@Override
 	public void drop(DropTargetDropEvent event) {
 	    // Get dropped item data
@@ -790,8 +791,8 @@ public class MainWindow extends JFrame {
 			complete = true;
 
 			if (f != null) {
-			    if (getFileExtension(f.getPath()).get()
-				    .equals("properties")) {
+			    if (ResourceLoader.getFileExtension(f.getPath())
+				    .get().equals("properties")) {
 				saveFilePath(f.getPath(), f.getName());
 				savedDroppedFile = true;
 			    } else {
@@ -864,16 +865,19 @@ public class MainWindow extends JFrame {
 	return fileChooser;
     }
 
-    private boolean getSaveFileChooser() {
-	if (!savedFilePath.isBlank() && !savedFileName.isBlank()) {
+    private boolean getSaveFileChooser() throws IOException {
+	if (!savedFilePath.isBlank()) {
 	    return true;
 	}
-	// #TODO poner automático el nombre localizado de la file
+
 	fileChooser = new JFileChooser("D:");
+	fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	int returnVal = fileChooser.showSaveDialog(this);
+
 	if (returnVal == JFileChooser.APPROVE_OPTION) {
-	    saveSavedFilePath(fileChooser.getSelectedFile().getPath(),
-		    fileChooser.getSelectedFile().getName());
+	    translator.save(fileChooser.getSelectedFile().getAbsolutePath());
+	    lblFileSave.setText("Your translated file has been saved as: "
+		    + translator.getSavedFileName());
 	    return true;
 	}
 	return false;
@@ -1341,10 +1345,11 @@ public class MainWindow extends JFrame {
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    if (btnAutomatic_Mode.isSelected()) {
-
+		    try {
+			startTranslationProcess();
+		    } catch (Exception e1) {
+			e1.printStackTrace();
 		    }
-		    show(cardAutomatic);
 		}
 	    });
 	    btnNext_Mode.setBounds(448, 13, 86, 33);
@@ -1392,8 +1397,6 @@ public class MainWindow extends JFrame {
 	    centerPanel_Automatic.add(getBtnSave_Auto());
 	    centerPanel_Automatic.add(getBtnReview_Auto());
 	    centerPanel_Automatic.add(getLvlProgress_Auto_1());
-	    centerPanel_Automatic.add(getProgressBar());
-	    centerPanel_Automatic.add(getProgressBar());
 	    centerPanel_Automatic.add(getBusyPanel());
 	}
 	return centerPanel_Automatic;
@@ -1410,11 +1413,17 @@ public class MainWindow extends JFrame {
     private JButton getBtnSave_Auto() {
 	if (btnSave_Auto == null) {
 	    btnSave_Auto = new JButton("Save & finish");
+	    btnSave_Auto.setEnabled(false);
 	    btnSave_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    if (getSaveFileChooser()) {
-			show(cardEnd);
+		    try {
+			if (getSaveFileChooser()) {
+			    show(cardEnd);
+			}
+		    } catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		    }
 		}
 	    });
@@ -1430,11 +1439,17 @@ public class MainWindow extends JFrame {
     private JButton getBtnReview_Auto() {
 	if (btnReview_Auto == null) {
 	    btnReview_Auto = new JButton("Review");
+	    btnReview_Auto.setEnabled(false);
 	    btnReview_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    if (getSaveFileChooser()) {
-			openIDE(savedFilePath);
+		    try {
+			if (getSaveFileChooser()) {
+			    openIDE(savedFilePath);
+			}
+		    } catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		    }
 		}
 	    });
@@ -1529,15 +1544,6 @@ public class MainWindow extends JFrame {
 	return btnBack_Auto;
     }
 
-    private JProgressBar getProgressBar() {
-	if (progressBar == null) {
-	    progressBar = new JProgressBar();
-	    progressBar.setBackground(SystemColor.textHighlight);
-	    progressBar.setBounds(158, 11, 270, 22);
-	}
-	return progressBar;
-    }
-
     private JPanel getNorthPanel_End() {
 	if (northPanel_End == null) {
 	    northPanel_End = new JPanel();
@@ -1580,6 +1586,9 @@ public class MainWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    resetFileValues();
+		    comboBox.setSelectedIndex(0);
+		    btnManual_Mode.setSelected(false);
+		    btnAutomatic_Mode.setSelected(false);
 		    show(cardFile);
 		}
 	    });
@@ -1671,8 +1680,7 @@ public class MainWindow extends JFrame {
 
     private JLabel getLblFileSave() {
 	if (lblFileSave == null) {
-	    lblFileSave = new JLabel(
-		    "Your translated file has been saved as: " + savedFileName);
+	    lblFileSave = new JLabel();
 	    lblFileSave.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblFileSave.setFont(ResourceLoader.getFont().deriveFont(17f));
 	    lblFileSave.setForeground(Color.BLUE.darker());
