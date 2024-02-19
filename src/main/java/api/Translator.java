@@ -2,75 +2,57 @@ package main.java.api;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 
 import com.theokanning.openai.completion.chat.ChatMessage;
 
-import main.java.utils.LocaleFile;
-import main.java.utils.LocaleParser;
+import main.java.utils.LocaleFileManager;
 
 /**
- * Provides access to OpenAI's ChatCompletions API, which will be used for
- * translating a given .properties file.
+ * Translates a given input .properties file into another one in the specified
+ * target language, via OpenAI's ChatCompletions API.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version 1.0 (February 2024)
+ * @version 2.0 (February 2024)
  */
 public class Translator {
 
     private static TranslationApi api;
-    private static Map<String, Locale> map;
-
-    // Parsed information from file
-    private Properties properties;
-    private String filePath = "";
-    private String sourceLanguage = ""; // "English, United States"
-    private String bundleName = "";
-
-    // Translation process
-    private String targetLanguage = ""; // "lGerman, Germany"
-    private String targetCode = ""; // "de_DE"
-    private String results = "";
+    private static LocaleFileManager file;
+    private String results;
 
     public Translator() {
 	api = new TranslationApi();
-	map = LocaleParser.getMap();
+	file = new LocaleFileManager();
 	reset();
     }
 
-    public void reset() {
-	this.filePath = "";
-	this.properties = null;
-	this.sourceLanguage = ""; // "English, United States"
-	this.targetLanguage = ""; // "German, Germany"
-	this.targetCode = ""; // "de_DE"
-	this.bundleName = "";
-	this.results = "";
-    }
-
-    public boolean isDone() {
-	return !results.isBlank();
+    /**
+     * Executes the translation process, from a given input file: establishes
+     * target language, accesses API to carry out translation and saves the
+     * results as text.
+     * 
+     * @param targetLang, target language (format: "English, United States")
+     * @return translated texts as a string
+     * @throws Exception if there is an error with the API
+     */
+    public void translateTo(String target) throws Exception {
+	file.setTargetLanguage(target);
+	this.results = apiTranslate(file.getProperties(),
+		file.getSourceLanguage(), file.getTargetLanguage());
     }
 
     /**
      * Inputs the file that the user wishes to translate, which must be
-     * compliant with i18n format. If not, an exception is thrown.
+     * compliant with i18n format. If not, an exception is thrown. Otherwise,
+     * the file is parsed and its relevant information saved for further
+     * processing.
      * 
-     * @param path to the file
-     * @throws exception if file is not format-compliant
+     * @param (absolute path to the file)
+     * @throws Exception if file is not format-compliant
      */
     public void input(String path) throws Exception {
-	Map<String, Object> parsed = LocaleFile.parse(path);
-
-	// If no error happens...
-	saveAllFileInfo(parsed);
-	this.filePath = path;
-    }
-
-    public String getSavedFileName() {
-	return bundleName + "_" + targetCode + ".properties";
+	file.parse(path);
     }
 
     /**
@@ -79,27 +61,42 @@ public class Translator {
      * @param filepath (absolute directory path where file should be saved)
      * @throws IOException
      */
-    public void save(String filepath) throws IOException {
-	LocaleFile.write(filepath, bundleName, targetCode, results,
-		properties.keys());
+    public void save(String path) throws IOException {
+	file.write(path, this.results);
+    }
+
+    /*
+     * ######################## AUXILIARY METHODS #############################
+     */
+
+    /**
+     * Resets all file-related information (to [re-]start process).
+     */
+    public void reset() {
+	this.results = "";
+	file.reset();
     }
 
     /**
-     * Executes the translation process, from a given input filePath: -
-     * establishes target language - accesses API to build the specific prompt -
-     * retrieves result as a String
-     * 
-     * @param targetLang, target language (format: "English, United States")
-     * @return translated texts as a string
-     * @throws Exception
+     * @return boolean true if translation process is over successfully, false
+     *         otherwise
      */
-    public String translateTo(String target) throws Exception {
-	saveTargetLanguage(target);
-	String texts = translateThruApi(this.properties, this.sourceLanguage,
-		this.targetLanguage);
-	this.results = texts;
+    public boolean isDone() {
+	return !results.isBlank();
+    }
 
-	return texts;
+    /**
+     * @return saved file path of the newly-translated file
+     */
+    public String getSavedFilePath() {
+	return file.getSavedFilePath();
+    }
+
+    /**
+     * @return saved file name of the newly-translated file
+     */
+    public String getSavedFileName() {
+	return file.getSavedFileName();
     }
 
     /**
@@ -113,40 +110,11 @@ public class Translator {
      * @return translated texts as a string
      * @throws Exception
      */
-    private String translateThruApi(Properties properties, String sourceLang,
+    private String apiTranslate(Properties properties, String sourceLang,
 	    String targetLang) throws Exception {
 	List<ChatMessage> messages = api.setPrompt(properties, sourceLang,
 		targetLang);
 	return api.translate(messages);
-    }
-
-    /**
-     * Saves the chosen target language (country-specific) both as a tag/code
-     * and as the display name of the language.
-     * 
-     * @param targetLanguage, format: "English, United States"
-     * @throws Exception
-     */
-    private void saveTargetLanguage(String targetLanguage) throws Exception {
-	Locale target = LocaleParser.extract(map, targetLanguage);
-	this.targetLanguage = target.getDisplayLanguage();
-	this.targetCode = target.getLanguage() + "-" + target.getCountry();
-    }
-
-    /**
-     * From a dictionary-like object, saves all info for further procressing:
-     * properties in file, source language, bundle name of the file.
-     * 
-     * @param Map<String,Object> parsed, information parsed from file
-     */
-    private void saveAllFileInfo(Map<String, Object> parsed) {
-	this.properties = (Properties) parsed.get("properties");
-
-	@SuppressWarnings("unchecked")
-	Map<String, String> fileInfo = (Map<String, String>) parsed
-		.get("fileInfo");
-	this.sourceLanguage = LocaleParser.getLanguage(fileInfo.get("locales"));
-	this.bundleName = fileInfo.get("bundleName");
     }
 
 }

@@ -31,7 +31,7 @@ public class ResourceLoader {
     public static List<String> getSupportedLanguages() {
 	try {
 	    URL res = ResourceLoader.class
-		    .getResource("/main/resources/languages.txt");
+		    .getResource("/main/resources/other/languages.txt");
 	    File f = new File(res.toURI());
 	    List<String> list = Files.readAllLines(f.toPath());
 	    return list;
@@ -45,7 +45,7 @@ public class ResourceLoader {
     public static Font getFont() {
 	try {
 	    InputStream is = ResourceLoader.class
-		    .getResourceAsStream("/main/resources/sf-pro.otf");
+		    .getResourceAsStream("/main/resources/other/sf-pro.otf");
 	    Font font = Font.createFont(Font.TRUETYPE_FONT, is);
 	    return font;
 	} catch (FontFormatException | IOException ex) {
@@ -57,8 +57,8 @@ public class ResourceLoader {
 
     public static Properties getApiSettings() {
 	try {
-	    InputStream is = ResourceLoader.class
-		    .getResourceAsStream("/main/resources/api.properties");
+	    InputStream is = ResourceLoader.class.getResourceAsStream(
+		    "/main/resources/properties/api.properties");
 	    Properties pr = new Properties();
 	    pr.load(is);
 	    return pr;
@@ -75,8 +75,8 @@ public class ResourceLoader {
 
     public static String getApiKey() {
 	try {
-	    InputStream is = ResourceLoader.class
-		    .getResourceAsStream("/main/resources/config.properties");
+	    InputStream is = ResourceLoader.class.getResourceAsStream(
+		    "/main/resources/properties/config.properties");
 	    Properties pr = new Properties();
 	    pr.load(is);
 	    return pr.getProperty("API_KEY");

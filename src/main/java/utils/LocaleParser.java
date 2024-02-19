@@ -4,8 +4,20 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Localization alpha-2 codes and names parser.
+ * 
+ * @author Adriana R.F.
+ * @version 1.0 (February 2024)
+ */
 public class LocaleParser {
 
+    /**
+     * Builds a mapping between all currently-supported languages, with the
+     * format "language-country" being the key.
+     * 
+     * @return map between language-country and its Locale object
+     */
     public static Map<String, Locale> getMap() {
 	Map<String, Locale> map = new HashMap<String, Locale>();
 	String key;
@@ -18,12 +30,11 @@ public class LocaleParser {
 	return map;
     }
 
-    /*
+    /**
      * From an input of the format "German, Germany", extract the locale codes,
      * i.e. "de_DE".
      * 
      * @param string containing "language, Country"
-     * 
      * @return locale object representing the input
      */
     public static Locale extract(Map<String, Locale> map, String input)
@@ -45,7 +56,7 @@ public class LocaleParser {
      * From an input of the format "de_DE", extract the language name.
      * 
      * @param string containing "langCode_COUNTRYCODE"
-     * @return String
+     * @return String representing the display language of a given alpha-2 code
      */
     public static String getLanguage(String input) {
 
@@ -58,6 +69,14 @@ public class LocaleParser {
 	return languageName;
     }
 
+    /**
+     * From a given filepath, extracts the bundle name and specific locale
+     * alpha-2 code.
+     * 
+     * @param filepath (absolute path to file)
+     * @return string[] (containing bundle name and language-country alpha-2
+     *         code)
+     */
     public static String[] extractLocaleFromFile(String filepath) {
 	int extension = filepath.lastIndexOf('.');
 	int name = filepath.lastIndexOf("\\");
