@@ -38,7 +38,6 @@ public class CardAuto extends JPanel {
      * Labels & text
      */
     private JButton btnSave_Auto;
-    private JButton btnReview_Auto;
     private JLabel lblTitle_Auto;
     private JPanel backEmptyPanel_Auto;
     private JLabel lblBack_Auto;
@@ -56,14 +55,24 @@ public class CardAuto extends JPanel {
 
     }
 
+    public void showTranslation() throws Exception {
+	busyPanel.start();
+	btnSave_Auto.setIcon(new ImageIcon(MainWindow.class
+		.getResource("/main/resources/img/save-icon.png")));
+	btnSave_Auto.setText("Save & finish");
+	btnSave_Auto.setEnabled(true);
+	root.autoTranslate();
+	busyPanel.stop();
+    }
+
     public void stopLoading() {
 	busyPanel.stop();
-	btnReview_Auto.setEnabled(true);
 	btnSave_Auto.setEnabled(true);
+	lblTitle_Auto.setText("Translation successfully completed!");
     }
 
     private boolean getSaveFileChooser() throws IOException {
-	if (!root.choseDirectory()) {
+	if (root.choseDirectory()) {
 	    return true;
 	}
 
@@ -86,7 +95,6 @@ public class CardAuto extends JPanel {
 	    centerPanel_Automatic.setLayout(null);
 	    centerPanel_Automatic.setBackground(SystemColor.window);
 	    centerPanel_Automatic.add(getBtnSave_Auto());
-	    centerPanel_Automatic.add(getBtnReview_Auto());
 	    centerPanel_Automatic.add(getLvlProgress_Auto_1());
 	    centerPanel_Automatic.add(getBusyPanel());
 	}
@@ -103,14 +111,18 @@ public class CardAuto extends JPanel {
 
     private JButton getBtnSave_Auto() {
 	if (btnSave_Auto == null) {
-	    btnSave_Auto = new JButton("Save & finish");
-	    btnSave_Auto.setEnabled(false);
+	    btnSave_Auto = new JButton("Start");
 	    btnSave_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
-			if (getSaveFileChooser()) {
-			    root.show("end");
+			if (btnSave_Auto.getText().equals("Save & finish")) {
+			    if (getSaveFileChooser()) {
+				root.save();
+				root.show("end");
+			    }
+			} else {
+			    showTranslation();
 			}
 		    } catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -118,36 +130,11 @@ public class CardAuto extends JPanel {
 		    }
 		}
 	    });
-	    btnSave_Auto.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/save-icon.png")));
 	    btnSave_Auto.setFont(btnSave_Auto.getFont().deriveFont(20f));
 	    btnSave_Auto.setFocusable(false);
-	    btnSave_Auto.setBounds(74, 158, 210, 52);
+	    btnSave_Auto.setBounds(192, 158, 210, 52);
 	}
 	return btnSave_Auto;
-    }
-
-    private JButton getBtnReview_Auto() {
-	if (btnReview_Auto == null) {
-	    btnReview_Auto = new JButton("Review");
-	    btnReview_Auto.setEnabled(false);
-	    btnReview_Auto.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    try {
-			if (getSaveFileChooser()) {
-			    root.editFile();
-			}
-		    } catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		    }
-		}
-	    });
-	    btnReview_Auto.setFont(ResourceLoader.getFont().deriveFont(20f));
-	    btnReview_Auto.setBounds(305, 157, 210, 52);
-	}
-	return btnReview_Auto;
     }
 
     private JPanel getNorthPanel_Auto() {
@@ -163,7 +150,7 @@ public class CardAuto extends JPanel {
     private JLabel getLvlProgress_Auto_1() {
 	if (lblTitle_Auto == null) {
 	    lblTitle_Auto = new JLabel("Translating your texts...");
-	    lblTitle_Auto.setBounds(0, 38, 586, 52);
+	    lblTitle_Auto.setBounds(10, 24, 586, 52);
 	    lblTitle_Auto.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblTitle_Auto.setForeground(Color.BLACK);
 	    lblTitle_Auto.setFont(ResourceLoader.getFont().deriveFont(30f));

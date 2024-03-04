@@ -48,12 +48,15 @@ public class BusyPanel extends JPanel {
 		repaint();
 	    }
 	});
-	this.timer.start();
     }
 
     @Override
     public Dimension getPreferredSize() {
 	return new Dimension(50, 50);
+    }
+
+    public void start() {
+	this.timer.start();
     }
 
     public void stop() {

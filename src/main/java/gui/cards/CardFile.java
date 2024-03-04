@@ -15,8 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
 
@@ -238,11 +236,6 @@ public class CardFile extends JPanel {
     private JButton getBtnHelp_File() {
 	if (btnHelp_File == null) {
 	    btnHelp_File = new JButton("");
-	    btnHelp_File.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		}
-	    });
 	    btnHelp_File.setIcon(new ImageIcon(MainWindow.class
 		    .getResource("/main/resources/img/help.png")));
 	    btnHelp_File.setToolTipText(
@@ -284,6 +277,7 @@ public class CardFile extends JPanel {
 				    .get().equals("properties")) {
 				root.chooseFile(f.getPath());
 				txtFilePath.setText(f.getName());
+				btnNext_File.setEnabled(true);
 				savedDroppedFile = true;
 			    } else {
 				root.resetFileValues();
@@ -323,18 +317,6 @@ public class CardFile extends JPanel {
 	if (txtFilePath == null) {
 	    txtFilePath = new JTextField();
 	    txtFilePath.setBounds(156, 163, 178, 30);
-	    txtFilePath.addPropertyChangeListener(new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-		    if (btnNext_File != null) {
-			if (!txtFilePath.getText().isBlank()) {
-			    btnNext_File.setEnabled(true);
-			} else {
-			    btnNext_File.setEnabled(false);
-			}
-		    }
-		}
-	    });
 	    txtFilePath.setHorizontalAlignment(SwingConstants.CENTER);
 	    txtFilePath.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    txtFilePath.setEditable(false);

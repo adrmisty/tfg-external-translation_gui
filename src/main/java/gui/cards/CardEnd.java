@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -105,7 +106,7 @@ public class CardEnd extends JPanel {
 		}
 	    });
 	    leftButton_End.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/translate.png")));
+		    .getResource("/main/resources/img/translate.png")));
 	    leftButton_End.setMnemonic('s');
 	    leftButton_End.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
@@ -121,8 +122,8 @@ public class CardEnd extends JPanel {
 		    System.exit(0);
 		}
 	    });
-	    rightButton_End.setIcon(new ImageIcon(
-		    MainWindow.class.getResource("/main/resources/exit.png")));
+	    rightButton_End.setIcon(new ImageIcon(MainWindow.class
+		    .getResource("/main/resources/img/exit.png")));
 	    rightButton_End.setMnemonic('l');
 	    rightButton_End.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
@@ -184,7 +185,7 @@ public class CardEnd extends JPanel {
 	if (lblLogo_End == null) {
 	    lblLogo_End = new JLabel("");
 	    lblLogo_End.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/openai-logo.png")));
+		    .getResource("/main/resources/img/openai-logo.png")));
 	    lblLogo_End.setHorizontalAlignment(SwingConstants.CENTER);
 	}
 	return lblLogo_End;
@@ -201,7 +202,7 @@ public class CardEnd extends JPanel {
 	return lblFileSave;
     }
 
-    public void setSavedFileName(String name) {
+    public void setSavedFileName(String name) throws IOException {
 	lblFileSave.setText("Your translated file has been saved as: " + name);
     }
 

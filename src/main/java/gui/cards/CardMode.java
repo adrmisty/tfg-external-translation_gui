@@ -271,7 +271,7 @@ public class CardMode extends JPanel {
 		    try {
 			if (btnAutomatic_Mode.isSelected()) {
 			    root.show("automatic");
-			    root.autoTranslate(
+			    root.setLanguage(
 				    (String) comboBox.getSelectedItem());
 			}
 		    } catch (Exception e1) {

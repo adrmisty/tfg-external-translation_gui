@@ -3,6 +3,7 @@ package main.java.gui;
 import java.awt.CardLayout;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -35,15 +36,16 @@ public class MainWindow extends JFrame {
     private JPanel contentPane;
     private JPanel currentCard; // Reference to the card being shown on screen
     private JPanel cardMain; // Start/Home window
-    private JPanel cardInfo; // Information window
-    private JPanel cardFile; // For uploading a file
-    private JPanel cardMode; // For choosing a translation mode
-    private JPanel cardEnd; // For ending the app
-    private JPanel cardAuto;
+    private CardInfo cardInfo; // Information window
+    private CardFile cardFile; // For uploading a file
+    private CardMode cardMode; // For choosing a translation mode
+    private CardEnd cardEnd; // For ending the app
+    private CardAuto cardAuto;
 
-    // Files
-    private String inputFilePath;
-    private String directoryPath;
+    // Files & translation
+    private String inputFilePath = "";
+    private String directoryPath = "";
+    private String language = "";
 
     /**
      * Create the frame.
@@ -99,24 +101,32 @@ public class MainWindow extends JFrame {
 	case "mode":
 	    currentCard = cardMode;
 	    break;
-	case "auto":
+	case "automatic":
 	    currentCard = cardAuto;
 	    break;
 	case "end":
 	    currentCard = cardEnd;
-	    ((CardEnd) cardEnd).setSavedFileName(translator.getSavedFileName());
+	    cardEnd.setSavedFileName(translator.getSavedFileName());
 	    break;
 	default:
 	    throw new Exception(
-		    "That card you want to show is not recognised: " + newCard);
+		    "That card you want to show is not recognised: <" + newCard
+			    + ">");
 	}
 
 	currentCard.setVisible(true);
     }
 
-    public void autoTranslate(String language) throws Exception {
-	translator.translateTo(language);
-	// cardAuto.stopLoading();
+    public void save() throws IOException {
+	translator.save(directoryPath);
+    }
+
+    public void autoTranslate() throws Exception {
+	translator.translateTo(this.language);
+    }
+
+    public void setLanguage(String language) {
+	this.language = language;
     }
 
     public void chooseFile(String path) {
@@ -132,7 +142,8 @@ public class MainWindow extends JFrame {
     }
 
     public void editFile() {
-	IDE.open(contentPane, translator.getSavedFileName());
+	IDE.open(contentPane,
+		this.directoryPath + translator.getSavedFileName());
     }
 
     public void inputFile() throws Exception {
@@ -141,10 +152,11 @@ public class MainWindow extends JFrame {
 
     public void resetFileValues() {
 	this.inputFilePath = "";
+	this.directoryPath = "";
     }
 
     public void resetModeValues() {
-	((CardMode) cardMode).reset();
+	cardMode.reset();
     }
 
     /*
@@ -193,7 +205,7 @@ public class MainWindow extends JFrame {
 
     private JPanel getCardEnd() {
 	if (cardEnd == null) {
-	    cardEnd = new JPanel();
+	    cardEnd = new CardEnd(this);
 	    cardEnd.setVisible(false);
 	}
 	return cardEnd;
