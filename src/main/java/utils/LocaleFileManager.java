@@ -21,7 +21,7 @@ import java.util.Properties;
  * languages).
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version 1.0 (February 2024)
+ * @version February 2024
  */
 public class LocaleFileManager {
 
@@ -36,9 +36,8 @@ public class LocaleFileManager {
 
     // Current file information
     private Properties properties; // Information in file
-    private String bundleName; // Bundle name for the program's .properties
-			       // files
-    private String savedFilePath; // Filepath to newly-translated file
+    private String bundleName; // Bundle name for the app's .properties files
+    private String savedFilePath; // Absolute file path to translated file
     private String savedFileName; // Bundle name + new locale code for file
 
     public LocaleFileManager() {
@@ -54,7 +53,7 @@ public class LocaleFileManager {
      * retrieves file information such as bundle name and locale codes and saves
      * it.
      * 
-     * @param filepath of the specified file
+     * @param file path of the specified file
      * @throws Exception if file cannot be found, there is an error in
      *                   processing or the file does not comply with the desired
      *                   format
@@ -82,9 +81,8 @@ public class LocaleFileManager {
      */
     public void write(String path, String text) throws IOException {
 
-	this.savedFileName = bundleName + "_" + targetLanguage.toLanguageTag()
-		+ ".properties";
-	this.savedFilePath = path + "/" + this.savedFileName;
+	setSavedFileName();
+	setSavedFilePath(path);
 
 	BufferedWriter writer = new BufferedWriter(
 		new FileWriter(savedFilePath));
@@ -109,6 +107,18 @@ public class LocaleFileManager {
      */
     public String getSavedFilePath() {
 	return savedFilePath;
+    }
+
+    private void setSavedFilePath(String path) {
+	this.savedFilePath = path + "/" + this.savedFileName;
+    }
+
+    private void setSavedFileName() {
+	this.savedFileName = bundleName + "_" + targetLanguage.toLanguageTag()
+		+ ".properties";
+
+	this.savedFileName.replace("Latn-", "");
+	this.savedFileName.replace("Cyrl-", "");
     }
 
     /**
@@ -174,11 +184,14 @@ public class LocaleFileManager {
 	String[] sentences = text.split("\n");
 	String p = "";
 
+	writer.write("# " + this.getTargetLanguage() + "\n");
 	int i = 0;
 	Enumeration<Object> keys = properties.keys();
+
 	while (keys.hasMoreElements()) {
 	    p = ((String) keys.nextElement()) + "=" + sentences[i];
 	    writer.write(p + "\n");
+	    i++;
 	}
     }
 
@@ -230,7 +243,7 @@ public class LocaleFileManager {
 
 	try (FileInputStream fileStream = new FileInputStream(
 		file.getAbsolutePath())) {
-	    props.load(fileStream);
+	    props.load(fileStream); // Ignores comments, etc
 	} catch (FileNotFoundException fnfe) {
 	    throw new Exception(fnfe.getMessage());
 	} catch (IOException io) {

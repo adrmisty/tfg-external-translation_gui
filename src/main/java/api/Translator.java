@@ -22,9 +22,9 @@ public class Translator {
     private String results;
 
     public Translator() {
-	api = new TranslationApi();
-	file = new LocaleFileManager();
-	reset();
+	api = new TranslationApi(); // API access
+	file = new LocaleFileManager(); // Localization file manager
+	reset(); // File initialization
     }
 
     /**
@@ -58,7 +58,7 @@ public class Translator {
     /**
      * Writes results into chosen file path.
      * 
-     * @param filepath (absolute directory path where file should be saved)
+     * @param file path (absolute directory path where file should be saved)
      * @throws IOException
      */
     public void save(String path) throws IOException {
@@ -70,7 +70,26 @@ public class Translator {
      */
 
     /**
-     * Resets all file-related information (to [re-]start process).
+     * Accesses API to translate a set of properties from a source language to a
+     * target language.
+     * 
+     * @param properties:    Properties object containing i18n localization
+     *                       settings with texts in a given language
+     * @param sourceLanguage (i.e. "English")
+     * @param targetLanguage (i.e. "German")
+     * @return translated texts as a string
+     * @throws Exception
+     */
+    private String apiTranslate(Properties properties, String sourceLang,
+	    String targetLang) throws Exception {
+	List<ChatMessage> messages = api.setPrompt(properties, sourceLang,
+		targetLang);
+	return api.translate(messages);
+    }
+
+    /**
+     * Resets all remaining file-related information, to [re-]start the
+     * translation process.
      */
     public void reset() {
 	this.results = "";
@@ -97,24 +116,6 @@ public class Translator {
      */
     public String getSavedFileName() {
 	return file.getSavedFileName();
-    }
-
-    /**
-     * Accesses API to translate a set of properties from a source language to a
-     * target language.
-     * 
-     * @param properties:    Properties object containing i18n localization
-     *                       settings with texts in a given language
-     * @param sourceLanguage (i.e. "English")
-     * @param targetLanguage (i.e. "German")
-     * @return translated texts as a string
-     * @throws Exception
-     */
-    private String apiTranslate(Properties properties, String sourceLang,
-	    String targetLang) throws Exception {
-	List<ChatMessage> messages = api.setPrompt(properties, sourceLang,
-		targetLang);
-	return api.translate(messages);
     }
 
 }

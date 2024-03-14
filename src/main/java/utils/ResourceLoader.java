@@ -19,19 +19,34 @@ import java.util.logging.Logger;
  * Access to resources of interest to the app and its GUI.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version 1.0 (February 2024)
+ * @version March 2024
  */
 public class ResourceLoader {
 
+    /**
+     * File paths to respective resources
+     */
+    private final static String SUPPORTED_LANGUAGES_FILE = "/main/resources/other/languages.txt";
+    private final static String FONT_FILE = "/main/resources/other/sf-pro.otf";
+    private final static String API_PROPERTIES_FILE = "/main/resources/properties/api.properties";
+    private final static String CONFIG_FILE = "/main/resources/properties/config.properties";
+
+    /**
+     * @param path: absolute path to a file
+     * @return file extension of the file, if it exists
+     */
     public static Optional<String> getFileExtension(String path) {
 	return Optional.ofNullable(path).filter(f -> f.contains("."))
 		.map(f -> f.substring(path.lastIndexOf(".") + 1));
     }
 
+    /**
+     * @return list of all supported languages and localization of the program
+     */
     public static List<String> getSupportedLanguages() {
 	try {
 	    URL res = ResourceLoader.class
-		    .getResource("/main/resources/other/languages.txt");
+		    .getResource(SUPPORTED_LANGUAGES_FILE);
 	    File f = new File(res.toURI());
 	    List<String> list = Files.readAllLines(f.toPath());
 	    return list;
@@ -42,10 +57,13 @@ public class ResourceLoader {
 	}
     }
 
+    /**
+     * @return default font for the GUI of the program
+     */
     public static Font getFont() {
 	try {
 	    InputStream is = ResourceLoader.class
-		    .getResourceAsStream("/main/resources/other/sf-pro.otf");
+		    .getResourceAsStream(FONT_FILE);
 	    Font font = Font.createFont(Font.TRUETYPE_FONT, is);
 	    return font;
 	} catch (FontFormatException | IOException ex) {
@@ -57,8 +75,8 @@ public class ResourceLoader {
 
     public static Properties getApiSettings() {
 	try {
-	    InputStream is = ResourceLoader.class.getResourceAsStream(
-		    "/main/resources/properties/api.properties");
+	    InputStream is = ResourceLoader.class
+		    .getResourceAsStream(API_PROPERTIES_FILE);
 	    Properties pr = new Properties();
 	    pr.load(is);
 	    return pr;
@@ -75,8 +93,8 @@ public class ResourceLoader {
 
     public static String getApiKey() {
 	try {
-	    InputStream is = ResourceLoader.class.getResourceAsStream(
-		    "/main/resources/properties/config.properties");
+	    InputStream is = ResourceLoader.class
+		    .getResourceAsStream(CONFIG_FILE);
 	    Properties pr = new Properties();
 	    pr.load(is);
 	    return pr.getProperty("API_KEY");

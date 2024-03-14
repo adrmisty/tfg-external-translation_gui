@@ -5,10 +5,10 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Localization alpha-2 codes and names parser.
+ * Localization alpha-2 codes and names parser for files.
  * 
- * @author Adriana R.F.
- * @version 1.0 (February 2024)
+ * @author Adriana R.F. (uo282798@uniovi.es)
+ * @version February 2024
  */
 public class LocaleParser {
 
@@ -70,10 +70,10 @@ public class LocaleParser {
     }
 
     /**
-     * From a given filepath, extracts the bundle name and specific locale
+     * From a given file path, extracts the bundle name and specific locale
      * alpha-2 code.
      * 
-     * @param filepath (absolute path to file)
+     * @param file path (absolute path to file)
      * @return string[] (containing bundle name and language-country alpha-2
      *         code)
      */
