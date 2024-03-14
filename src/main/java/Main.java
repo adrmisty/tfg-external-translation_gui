@@ -19,11 +19,11 @@ public class Main {
 	EventQueue.invokeLater(new Runnable() {
 	    @Override
 	    public void run() {
-		MainWindow frame = new MainWindow();
 		try {
 		    Locale.setDefault(Locale.US);
 		    UIManager.setLookAndFeel(
 			    "com.formdev.flatlaf.themes.FlatMacLightLaf");
+		    MainWindow frame = new MainWindow();
 		    frame.setVisible(true);
 		} catch (Exception e) {
 		    // Log error

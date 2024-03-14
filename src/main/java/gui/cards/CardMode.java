@@ -264,8 +264,8 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    if (btnAutomatic_Mode.isSelected()) {
-			root.show("automatic");
 			root.setLanguage((String) comboBox.getSelectedItem());
+			root.show("automatic");
 		    }
 		}
 	    });

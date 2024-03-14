@@ -1,5 +1,6 @@
 package main.java.api;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -16,9 +17,11 @@ public class TranslationApi {
 
     private static Properties settings;
     private static OpenAiService service;
+    private final static int TIMEOUT = 90;
 
     public TranslationApi() {
-	service = new OpenAiService(ResourceLoader.getApiKey());
+	service = new OpenAiService(ResourceLoader.getApiKey(),
+		Duration.ofSeconds(TIMEOUT));
 	settings = ResourceLoader.getApiSettings();
     }
 

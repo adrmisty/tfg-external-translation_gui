@@ -104,6 +104,7 @@ public class MainWindow extends JFrame {
 	    break;
 	case "automatic":
 	    currentCard = cardAuto;
+	    cardAuto.executeAutomaticTranslation();
 	    break;
 	case "end":
 	    currentCard = cardEnd;

@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Arc2D;
@@ -89,7 +90,7 @@ public class BusyPanel extends JPanel {
 	BasicStroke stroke = new BasicStroke(4, BasicStroke.CAP_BUTT,
 		BasicStroke.JOIN_ROUND);
 	g2d.setStroke(stroke);
-	g2d.setColor(Color.BLUE.darker());
+	g2d.setColor(SystemColor.textHighlight);
 	g2d.draw(arc);
 	g2d.dispose();
     }

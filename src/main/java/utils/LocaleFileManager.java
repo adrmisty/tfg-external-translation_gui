@@ -117,8 +117,8 @@ public class LocaleFileManager {
 	this.savedFileName = bundleName + "_" + targetLanguage.toLanguageTag()
 		+ ".properties";
 
-	this.savedFileName.replace("Latn-", "");
-	this.savedFileName.replace("Cyrl-", "");
+	this.savedFileName = this.savedFileName.replace("Latn-", "")
+		.replace("Cyrl-", "");
     }
 
     /**

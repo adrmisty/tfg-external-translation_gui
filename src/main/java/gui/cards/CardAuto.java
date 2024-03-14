@@ -1,6 +1,7 @@
 package main.java.gui.cards;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -14,6 +15,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import main.java.gui.MainWindow;
 import main.java.gui.other.BusyPanel;
@@ -43,6 +45,7 @@ public class CardAuto extends JPanel {
     private JButton btnBack_Auto;
 
     private JFileChooser fileChooser;
+    private JLabel lblTime;
 
     public CardAuto(MainWindow root) {
 	this.root = root;
@@ -51,23 +54,40 @@ public class CardAuto extends JPanel {
 	this.add(getNorthPanel_Auto());
 	this.add(getCenterPanel_Auto());
 	this.add(getDownPanel_Auto());
-
     }
 
-    public void showTranslation() throws Exception {
+    public void executeAutomaticTranslation() {
 	busyPanel.start();
-	btnSave_Auto.setIcon(new ImageIcon(MainWindow.class
-		.getResource("/main/resources/img/save-icon.png")));
-	btnSave_Auto.setText("Save & finish");
-	btnSave_Auto.setEnabled(true);
-	root.autoTranslate();
-	busyPanel.stop();
+
+	new Thread(new Runnable() {
+	    @Override
+	    public void run() {
+		try {
+		    // Task execution
+		    root.autoTranslate();
+		    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+		    // Task finished, stop the busy panel
+		    SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+			    stopLoading();
+			}
+		    });
+		} catch (Exception ex) {
+		    root.showErrorMessage(ex.getMessage());
+		}
+	    }
+	}).start();
+
     }
 
     public void stopLoading() {
 	busyPanel.stop();
+	setCursor(Cursor.getDefaultCursor());
 	btnSave_Auto.setEnabled(true);
 	lblTitle_Auto.setText("Translation successfully completed!");
+	lblTime.setText("Seems like we are done :)");
     }
 
     private boolean getSaveFileChooser() {
@@ -96,6 +116,7 @@ public class CardAuto extends JPanel {
 	    centerPanel_Automatic.add(getBtnSave_Auto());
 	    centerPanel_Automatic.add(getLvlProgress_Auto_1());
 	    centerPanel_Automatic.add(getBusyPanel());
+	    centerPanel_Automatic.add(getLblTime());
 	}
 	return centerPanel_Automatic;
     }
@@ -103,40 +124,34 @@ public class CardAuto extends JPanel {
     private BusyPanel getBusyPanel() {
 	if (busyPanel == null) {
 	    busyPanel = new BusyPanel();
-	    busyPanel.setBounds(264, 87, 60, 60);
+	    busyPanel.setBounds(265, 63, 60, 60);
 	}
 	return busyPanel;
     }
 
     private JButton getBtnSave_Auto() {
 	if (btnSave_Auto == null) {
-	    btnSave_Auto = new JButton("Start");
+	    btnSave_Auto = new JButton("Save & finish");
+	    btnSave_Auto.setIcon(new ImageIcon(CardAuto.class
+		    .getResource("/main/resources/img/save-icon.png")));
+	    btnSave_Auto.setEnabled(false);
 	    btnSave_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    if (btnSave_Auto.getText().equals("Save & finish")) {
-			if (getSaveFileChooser()) {
-			    try {
-				root.save();
-				root.show("end");
-			    } catch (Exception e1) {
-				root.showErrorMessage(e1,
-					"There has been an issue while saving the translation.");
-			    }
-			}
-		    } else {
+		    if (getSaveFileChooser()) {
 			try {
-			    showTranslation();
-			} catch (Exception e2) {
-			    root.showErrorMessage(e2,
-				    "There has been an issue while showing the translation.");
+			    root.save();
+			    root.show("end");
+			} catch (Exception e1) {
+			    root.showErrorMessage(e1,
+				    "There has been an issue while saving the translation.");
 			}
 		    }
 		}
 	    });
 	    btnSave_Auto.setFont(btnSave_Auto.getFont().deriveFont(20f));
 	    btnSave_Auto.setFocusable(false);
-	    btnSave_Auto.setBounds(192, 158, 210, 52);
+	    btnSave_Auto.setBounds(193, 176, 210, 52);
 	}
 	return btnSave_Auto;
     }
@@ -154,7 +169,7 @@ public class CardAuto extends JPanel {
     private JLabel getLvlProgress_Auto_1() {
 	if (lblTitle_Auto == null) {
 	    lblTitle_Auto = new JLabel("Translating your texts...");
-	    lblTitle_Auto.setBounds(10, 24, 586, 52);
+	    lblTitle_Auto.setBounds(10, 0, 586, 52);
 	    lblTitle_Auto.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblTitle_Auto.setForeground(Color.BLACK);
 	    lblTitle_Auto.setFont(ResourceLoader.getFont().deriveFont(30f));
@@ -226,4 +241,14 @@ public class CardAuto extends JPanel {
 	return btnBack_Auto;
     }
 
+    private JLabel getLblTime() {
+	if (lblTime == null) {
+	    lblTime = new JLabel("This might take some time... Hang on!");
+	    lblTime.setForeground(SystemColor.textHighlight);
+	    lblTime.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblTime.setBounds(173, 120, 256, 32);
+	    lblTime.setFont(ResourceLoader.getFont().deriveFont(15f));
+	}
+	return lblTime;
+    }
 }
