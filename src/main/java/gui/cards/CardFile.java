@@ -22,7 +22,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -220,8 +219,8 @@ public class CardFile extends JPanel {
 			root.inputFile();
 			root.show("mode");
 		    } catch (Exception ex) {
-			JOptionPane.showMessageDialog(root, ex.getMessage(),
-				"Error", JOptionPane.ERROR_MESSAGE);
+			root.showErrorMessage(ex,
+				"There has been an issue with the selected file.");
 		    }
 		}
 	    });

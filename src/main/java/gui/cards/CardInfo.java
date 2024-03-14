@@ -19,7 +19,6 @@ import java.net.URISyntaxException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
@@ -245,10 +244,8 @@ public class CardInfo extends JPanel {
 			String url = "mailto:" + email;
 			Desktop.getDesktop().browse(new URI(url));
 		    } catch (IOException | URISyntaxException err) {
-			JOptionPane.showMessageDialog(e.getComponent(),
-				"Could not open the hyperlink. Error: "
-					+ err.getMessage(),
-				"Error", JOptionPane.ERROR_MESSAGE);
+			root.showErrorMessage(err,
+				"Email service not available at the moment!");
 		    }
 		}
 	    });
@@ -336,12 +333,7 @@ public class CardInfo extends JPanel {
 	    btnBack_Info.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			root.show("main");
-		    } catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		    }
+		    root.show("main");
 		}
 	    });
 	    btnBack_Info.setIcon(new ImageIcon(MainWindow.class

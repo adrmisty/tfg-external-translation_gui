@@ -7,7 +7,6 @@ import java.awt.FlowLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,6 +20,7 @@ import main.java.utils.ResourceLoader;
 
 public class CardEnd extends JPanel {
 
+    private static final long serialVersionUID = 1L;
     private MainWindow root;
 
     /*
@@ -97,12 +97,7 @@ public class CardEnd extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 		    root.resetFileValues();
 		    root.resetModeValues();
-		    try {
-			root.show("file");
-		    } catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		    }
+		    root.show("file");
 		}
 	    });
 	    leftButton_End.setIcon(new ImageIcon(MainWindow.class
@@ -202,7 +197,7 @@ public class CardEnd extends JPanel {
 	return lblFileSave;
     }
 
-    public void setSavedFileName(String name) throws IOException {
+    public void setSavedFileName(String name) {
 	lblFileSave.setText("Your translated file has been saved as: " + name);
     }
 

@@ -244,12 +244,7 @@ public class CardMode extends JPanel {
 	    btnBack_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			root.show("file");
-		    } catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		    }
+		    root.show("file");
 		}
 	    });
 	    btnBack_Mode.setIcon(new ImageIcon(MainWindow.class
@@ -268,14 +263,9 @@ public class CardMode extends JPanel {
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			if (btnAutomatic_Mode.isSelected()) {
-			    root.show("automatic");
-			    root.setLanguage(
-				    (String) comboBox.getSelectedItem());
-			}
-		    } catch (Exception e1) {
-			e1.printStackTrace();
+		    if (btnAutomatic_Mode.isSelected()) {
+			root.show("automatic");
+			root.setLanguage((String) comboBox.getSelectedItem());
 		    }
 		}
 	    });

@@ -6,6 +6,7 @@ import java.awt.Toolkit;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import main.java.api.Translator;
@@ -85,7 +86,7 @@ public class MainWindow extends JFrame {
      * @param String identificating the new card to show
      * @throws Exception if the card to show is not recognised
      */
-    public void show(String newCard) throws Exception {
+    public void show(String newCard) {
 	currentCard.setVisible(false);
 
 	switch (newCard) {
@@ -109,12 +110,32 @@ public class MainWindow extends JFrame {
 	    cardEnd.setSavedFileName(translator.getSavedFileName());
 	    break;
 	default:
-	    throw new Exception(
-		    "That card you want to show is not recognised: <" + newCard
-			    + ">");
+	    showErrorMessage(
+		    "The selected screen to be shown is not supported.");
 	}
 
 	currentCard.setVisible(true);
+    }
+
+    /**
+     * Shows an error message on the screen explaining the malfunction.
+     * 
+     * @param message: explanation of the error
+     */
+    public void showErrorMessage(String message) {
+	JOptionPane.showMessageDialog(this, message, "FileLingual: error",
+		JOptionPane.ERROR_MESSAGE);
+    }
+
+    /**
+     * Shows an error message on the screen explaining the malfunction.
+     * 
+     * @param additional message to add to error visualization
+     * @param Exception  thrown by a lower-level function
+     */
+    public void showErrorMessage(Exception e, String message) {
+	JOptionPane.showMessageDialog(this, message + " " + e.getMessage(),
+		"FileLingual: error", JOptionPane.ERROR_MESSAGE);
     }
 
     public void save() throws IOException {

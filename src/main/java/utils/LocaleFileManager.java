@@ -184,7 +184,7 @@ public class LocaleFileManager {
 	String[] sentences = text.split("\n");
 	String p = "";
 
-	writer.write("# " + this.getTargetLanguage() + "\n");
+	writer.write("# " + this.getTargetLanguage() + "\n\n");
 	int i = 0;
 	Enumeration<Object> keys = properties.keys();
 

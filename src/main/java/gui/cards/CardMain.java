@@ -87,13 +87,7 @@ public class CardMain extends JPanel {
 	    leftButton.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    // Open translating window
-		    try {
-			root.show("file");
-		    } catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		    }
+		    root.show("file");
 		}
 	    });
 	    leftButton.setMnemonic('s');
@@ -111,12 +105,7 @@ public class CardMain extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    // Open information window
-		    try {
-			root.show("info");
-		    } catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		    }
+		    root.show("info");
 		}
 	    });
 	    rightButton.setFont(ResourceLoader.getFont().deriveFont(20f));

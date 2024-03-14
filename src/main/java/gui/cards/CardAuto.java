@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -71,7 +70,7 @@ public class CardAuto extends JPanel {
 	lblTitle_Auto.setText("Translation successfully completed!");
     }
 
-    private boolean getSaveFileChooser() throws IOException {
+    private boolean getSaveFileChooser() {
 	if (root.choseDirectory()) {
 	    return true;
 	}
@@ -115,18 +114,23 @@ public class CardAuto extends JPanel {
 	    btnSave_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			if (btnSave_Auto.getText().equals("Save & finish")) {
-			    if (getSaveFileChooser()) {
+		    if (btnSave_Auto.getText().equals("Save & finish")) {
+			if (getSaveFileChooser()) {
+			    try {
 				root.save();
 				root.show("end");
+			    } catch (Exception e1) {
+				root.showErrorMessage(e1,
+					"There has been an issue while saving the translation.");
 			    }
-			} else {
-			    showTranslation();
 			}
-		    } catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		    } else {
+			try {
+			    showTranslation();
+			} catch (Exception e2) {
+			    root.showErrorMessage(e2,
+				    "There has been an issue while showing the translation.");
+			}
 		    }
 		}
 	    });
@@ -209,12 +213,7 @@ public class CardAuto extends JPanel {
 	    btnBack_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			root.show("mode");
-		    } catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		    }
+		    root.show("mode");
 		}
 	    });
 	    btnBack_Auto.setIcon(new ImageIcon(MainWindow.class
