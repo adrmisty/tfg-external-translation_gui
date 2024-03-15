@@ -56,13 +56,30 @@ public class Translator {
     }
 
     /**
-     * Writes results into chosen file path.
+     * Saves results into chosen file path.
      * 
      * @param file path (absolute directory path where file should be saved)
      * @throws IOException
      */
     public void save(String path) throws IOException {
-	file.write(path, this.results);
+	if (!file.isFileTemporary()) {
+	    file.write(path, this.results);
+	} else {
+	    file.saveReview(path);
+	}
+    }
+
+    /**
+     * Writes the results into a temporary file to be used for reviewing and
+     * editing the translation. Once the user chooses to, the file will be saved
+     * to a specific path.
+     * 
+     * @param file path (absolute directory path where file should be saved)
+     * @return path to temporary file as a string
+     * @throws IOException
+     */
+    public String review() throws IOException {
+	return file.tempWrite(this.results);
     }
 
     /*

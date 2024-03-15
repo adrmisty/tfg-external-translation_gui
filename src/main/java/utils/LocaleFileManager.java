@@ -6,6 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -39,6 +42,10 @@ public class LocaleFileManager {
     private String bundleName; // Bundle name for the app's .properties files
     private String savedFilePath; // Absolute file path to translated file
     private String savedFileName; // Bundle name + new locale code for file
+
+    // Temporary file information
+    private Path temporaryFile;
+    private boolean isFileTemporary = false;
 
     public LocaleFileManager() {
 	map = LocaleParser.getMap();
@@ -80,7 +87,6 @@ public class LocaleFileManager {
      * @throws IOException
      */
     public void write(String path, String text) throws IOException {
-
 	setSavedFileName();
 	setSavedFilePath(path);
 
@@ -88,6 +94,33 @@ public class LocaleFileManager {
 		new FileWriter(savedFilePath));
 	writeProperties(writer, text);
 	writer.close();
+    }
+
+    /**
+     * From the temporary file that was used during reviewing, save these
+     * results onto the specified directory.
+     * 
+     * @param path: directory specification onto which the file should be saved
+     * @throws IOException
+     */
+    public void saveReview(String path) throws IOException {
+	setSavedFilePath(path);
+	Path destination = Paths.get(this.savedFilePath);
+	Files.move(temporaryFile, destination);
+    }
+
+    /**
+     * For reviewing the translation: writes the results into a temporary file
+     * which, if the user wants, can be disposed of. Otherwise, they can save
+     * the results into a specific directory.
+     * 
+     * @param text: results of the translation to be written onto the file
+     * @return path to temporary file
+     * @throws IOException
+     */
+    public String tempWrite(String text) throws IOException {
+	setSavedFileName();
+	return writeTempProperties(text).toAbsolutePath().toString();
     }
 
     /*
@@ -111,6 +144,8 @@ public class LocaleFileManager {
 
     private void setSavedFilePath(String path) {
 	this.savedFilePath = path + "/" + this.savedFileName;
+	this.savedFilePath = this.savedFilePath.replaceAll("\\d", ""); // no
+								       // numbers
     }
 
     private void setSavedFileName() {
@@ -152,6 +187,14 @@ public class LocaleFileManager {
 	return this.sourceLanguage;
     }
 
+    /**
+     * @return boolean true if the contents from the temporary file should be
+     *         saved onto the chosen path, or if this is a new file
+     */
+    public boolean isFileTemporary() {
+	return isFileTemporary;
+    }
+
     /*
      * ######################## AUXILIARY METHODS #############################
      */
@@ -166,6 +209,8 @@ public class LocaleFileManager {
 	this.sourceLanguage = "";
 	this.targetLanguage = null;
 	this.bundleName = "";
+	this.temporaryFile = null;
+	this.isFileTemporary = false;
     }
 
     /**
@@ -180,18 +225,50 @@ public class LocaleFileManager {
      */
     private void writeProperties(BufferedWriter writer, String text)
 	    throws IOException {
-	String[] sentences = text.split("\n");
-	String p = "";
+	String properties = getWrittenResults(text).toString();
+	writer.write(properties);
+	writer.close();
+    }
 
-	writer.write("# " + this.getTargetLanguage() + "\n\n");
+    /**
+     * 
+     * @param text
+     * @return
+     * @throws IOException
+     */
+    private Path writeTempProperties(String text) throws IOException {
+	String name = this.savedFileName.substring(0,
+		this.savedFileName.indexOf("."));
+	this.temporaryFile = Files.createTempFile(name, ".properties");
+	Files.writeString(temporaryFile, getWrittenResults(text));
+	this.isFileTemporary = true;
+
+	return temporaryFile;
+    }
+
+    /**
+     * From the texts given as results, build the .properties-like text to be
+     * written onto the file.
+     * 
+     * @param text: different translations returned by the translator
+     * @return complete text in the specific format
+     */
+    private StringBuilder getWrittenResults(String text) {
+	String[] sentences = text.split("\n");
+	StringBuilder sb = new StringBuilder("");
+	sb.append("# " + this.getTargetLanguage() + "\n\n");
+
 	int i = 0;
+	String p;
 	Enumeration<Object> keys = properties.keys();
 
 	while (keys.hasMoreElements()) {
 	    p = ((String) keys.nextElement()) + "=" + sentences[i];
-	    writer.write(p + "\n");
+	    sb.append(p + "\n");
 	    i++;
 	}
+
+	return sb;
     }
 
     /**

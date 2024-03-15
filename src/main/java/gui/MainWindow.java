@@ -147,6 +147,10 @@ public class MainWindow extends JFrame {
 	translator.translateTo(this.language);
     }
 
+    public void review() throws IOException {
+	IDE.open(contentPane, translator.review());
+    }
+
     public void setLanguage(String language) {
 	this.language = language;
     }

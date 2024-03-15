@@ -79,40 +79,6 @@ public class TranslationApi {
     }
 
     /**
-     * The OpenAI API is not free to use, and has a given price depending on the
-     * number of tokens used by the application:
-     * 
-     * https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-
-     * to-count-them
-     * 
-     * Engine used in the project is 'gpt-3.5-turbo': $0.0010 / 1K tokens,
-     * information found in https://openai.com/pricing
-     * 
-     * @param tokens, in request/response
-     */
-    private double getPrice(long tokens) {
-	return Math.round(
-		(tokens * getPricing() * Math.pow(10, 4) / Math.pow(10, 4)));
-    }
-
-    /**
-     * For **debug** purposes, in order to compare pricing for input and output.
-     * 
-     * @param
-     */
-    private double getResponseCost(ChatCompletionResult response) {
-	long responseTokens = response.getUsage().getCompletionTokens();
-
-	double responsePricing = getPrice(responseTokens);
-	System.out
-		.println(String.format("# Response cost: %f", responsePricing));
-	System.out.println(
-		String.format("# Response tokens: %o", responseTokens));
-
-	return responsePricing;
-    }
-
-    /**
      * Builds a prompt for the AI service based on a properties file.
      * 
      * @param properties: file containing localization properties for a program
@@ -196,10 +162,6 @@ public class TranslationApi {
 
     private String getModel() {
 	return settings.getProperty("_ENGINE");
-    }
-
-    private double getPricing() {
-	return Double.valueOf(settings.getProperty("_PRICE"));
     }
 
     private double getTemperature() {

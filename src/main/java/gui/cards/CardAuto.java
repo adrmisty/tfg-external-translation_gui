@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -46,6 +47,7 @@ public class CardAuto extends JPanel {
 
     private JFileChooser fileChooser;
     private JLabel lblTime;
+    private JButton btnReview_Auto;
 
     public CardAuto(MainWindow root) {
 	this.root = root;
@@ -86,8 +88,17 @@ public class CardAuto extends JPanel {
 	busyPanel.stop(false);
 	setCursor(Cursor.getDefaultCursor());
 	btnSave_Auto.setEnabled(true);
+	btnReview_Auto.setEnabled(true);
 	lblTitle_Auto.setText("Translation successfully completed!");
 	lblTime.setText("Seems like we are done :)");
+    }
+
+    public void reset() {
+	busyPanel.stop(true);
+	btnSave_Auto.setEnabled(false);
+	btnReview_Auto.setEnabled(false);
+	lblTitle_Auto.setText("Translating your texts...");
+	lblTime.setText("This might take some time... Hang on!");
     }
 
     private boolean getSaveFileChooser() {
@@ -117,6 +128,7 @@ public class CardAuto extends JPanel {
 	    centerPanel_Automatic.add(getLvlProgress_Auto_1());
 	    centerPanel_Automatic.add(getBusyPanel());
 	    centerPanel_Automatic.add(getLblTime());
+	    centerPanel_Automatic.add(getBtnReview_Auto());
 	}
 	return centerPanel_Automatic;
     }
@@ -131,7 +143,7 @@ public class CardAuto extends JPanel {
 
     private JButton getBtnSave_Auto() {
 	if (btnSave_Auto == null) {
-	    btnSave_Auto = new JButton("Save & finish");
+	    btnSave_Auto = new JButton("Save");
 	    btnSave_Auto.setIcon(new ImageIcon(CardAuto.class
 		    .getResource("/main/resources/img/save-icon.png")));
 	    btnSave_Auto.setEnabled(false);
@@ -151,7 +163,7 @@ public class CardAuto extends JPanel {
 	    });
 	    btnSave_Auto.setFont(btnSave_Auto.getFont().deriveFont(20f));
 	    btnSave_Auto.setFocusable(false);
-	    btnSave_Auto.setBounds(193, 176, 210, 52);
+	    btnSave_Auto.setBounds(308, 163, 153, 42);
 	}
 	return btnSave_Auto;
     }
@@ -228,7 +240,7 @@ public class CardAuto extends JPanel {
 	    btnBack_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    busyPanel.stop(true);
+		    reset();
 		    root.show("mode");
 		}
 	    });
@@ -251,5 +263,30 @@ public class CardAuto extends JPanel {
 	    lblTime.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return lblTime;
+    }
+
+    private JButton getBtnReview_Auto() {
+	if (btnReview_Auto == null) {
+	    btnReview_Auto = new JButton("Review");
+	    btnReview_Auto.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    try {
+			root.review();
+		    } catch (IOException e1) {
+			// TODO Auto-generated catch block
+			root.showErrorMessage(
+				"It is not possible to review the translation at the moment! :(");
+		    }
+		}
+	    });
+	    btnReview_Auto.setIcon(new ImageIcon(CardAuto.class
+		    .getResource("/main/resources/img/review-icon.png")));
+	    btnReview_Auto.setFont(btnReview_Auto.getFont().deriveFont(20f));
+	    btnReview_Auto.setFocusable(false);
+	    btnReview_Auto.setEnabled(false);
+	    btnReview_Auto.setBounds(131, 163, 153, 42);
+	}
+	return btnReview_Auto;
     }
 }
