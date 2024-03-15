@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +30,6 @@ public class ResourceLoader {
     /**
      * File paths to respective resources
      */
-    private final static String SUPPORTED_LANGUAGES_FILE = "/main/resources/other/languages.txt";
     private final static String FONT_FILE = "/main/resources/other/sf-pro.otf";
     private final static String API_PROPERTIES_FILE = "/main/resources/properties/api.properties";
     private final static String CONFIG_FILE = "/main/resources/properties/config.properties";
@@ -77,10 +77,10 @@ public class ResourceLoader {
     /**
      * @return list of all supported languages and localization of the program
      */
-    public static List<String> getSupportedLanguages() {
+    public static List<String> getSupportedLanguages(ResourceBundle messages) {
 	try {
 	    URL res = ResourceLoader.class
-		    .getResource(SUPPORTED_LANGUAGES_FILE);
+		    .getResource(messages.getString("file.languages"));
 	    File f = new File(res.toURI());
 	    List<String> list = Files.readAllLines(f.toPath());
 	    return list;

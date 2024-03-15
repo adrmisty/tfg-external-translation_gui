@@ -91,7 +91,8 @@ public class CardEnd extends JPanel {
 
     private JButton getLeftButton_End() {
 	if (leftButton_End == null) {
-	    leftButton_End = new JButton("Translate more!");
+	    leftButton_End = new JButton(
+		    root.getMessages().getString("label.more"));
 	    leftButton_End.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -110,7 +111,8 @@ public class CardEnd extends JPanel {
 
     private JButton getRightButton_End() {
 	if (rightButton_End == null) {
-	    rightButton_End = new JButton("Exit");
+	    rightButton_End = new JButton(
+		    root.getMessages().getString("label.exit"));
 	    rightButton_End.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -138,7 +140,8 @@ public class CardEnd extends JPanel {
 
     private JLabel getLblThanks() {
 	if (lblThanks == null) {
-	    lblThanks = new JLabel("Thanks for using");
+	    lblThanks = new JLabel(
+		    root.getMessages().getString("label.thanks"));
 	    lblThanks.setBounds(0, 11, 586, 37);
 	    lblThanks.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblThanks.setFont(lblThanks.getFont().deriveFont(30f));
@@ -148,7 +151,7 @@ public class CardEnd extends JPanel {
 
     private JLabel getLblSlogan_End() {
 	if (lblSlogan_End == null) {
-	    lblSlogan_End = new JLabel("FileLingual!");
+	    lblSlogan_End = new JLabel("FileLingual");
 	    lblSlogan_End.setBounds(0, 50, 586, 72);
 	    lblSlogan_End.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblSlogan_End.setFont(lblSlogan_End.getFont().deriveFont(50f));
@@ -170,7 +173,8 @@ public class CardEnd extends JPanel {
 
     private JLabel getLblForLogo_End() {
 	if (lblForLogo_End == null) {
-	    lblForLogo_End = new JLabel("Powered by");
+	    lblForLogo_End = new JLabel(
+		    root.getMessages().getString("label.poweredby"));
 	    lblForLogo_End.setFont(lblForLogo_End.getFont().deriveFont(20f));
 	}
 	return lblForLogo_End;
@@ -198,7 +202,8 @@ public class CardEnd extends JPanel {
     }
 
     public void setSavedFileName(String name) {
-	lblFileSave.setText("Your translated file has been saved as: " + name);
+	lblFileSave.setText(
+		root.getMessages().getString("label.translated") + " " + name);
     }
 
 }

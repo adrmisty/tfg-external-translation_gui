@@ -108,7 +108,8 @@ public class CardManual extends JPanel {
 
     private JButton getBtnTranslate_Manual() {
 	if (btnTranslate_Manual == null) {
-	    btnTranslate_Manual = new JButton("Translate");
+	    btnTranslate_Manual = new JButton(
+		    root.getMessages().getString("button.translate"));
 	    btnTranslate_Manual.setIcon(new ImageIcon(CardManual.class
 		    .getResource("/main/resources/img/save-icon.png")));
 	    btnTranslate_Manual.setEnabled(false);
@@ -119,7 +120,7 @@ public class CardManual extends JPanel {
 			root.manualTranslate();
 		    } catch (Exception e1) {
 			root.showErrorMessage(
-				"There has been an error while processing the manual translation.");
+				root.getMessages().getString("error.manual"));
 		    }
 		}
 	    });
@@ -143,7 +144,8 @@ public class CardManual extends JPanel {
 
     private JLabel getLvlProgress_Auto_1() {
 	if (lblTitle_Manual == null) {
-	    lblTitle_Manual = new JLabel("Do the translation yourself!");
+	    lblTitle_Manual = new JLabel(
+		    root.getMessages().getString("label.manual.title"));
 	    lblTitle_Manual.setBounds(10, 0, 586, 52);
 	    lblTitle_Manual.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblTitle_Manual.setForeground(Color.BLACK);
@@ -220,7 +222,8 @@ public class CardManual extends JPanel {
 
     private JLabel getLblLanguage() {
 	if (lblLanguage == null) {
-	    lblLanguage = new JLabel("Target language");
+	    lblLanguage = new JLabel(
+		    root.getMessages().getString("label.manual.language"));
 	    lblLanguage.setForeground(SystemColor.textHighlight);
 	    lblLanguage.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblLanguage.setBounds(46, 63, 199, 32);
@@ -231,7 +234,8 @@ public class CardManual extends JPanel {
 
     private JLabel getLblFileLocation() {
 	if (lblFileLocation == null) {
-	    lblFileLocation = new JLabel("File location");
+	    lblFileLocation = new JLabel(
+		    root.getMessages().getString("label.manual.file"));
 	    lblFileLocation.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblFileLocation.setForeground(SystemColor.textHighlight);
 	    lblFileLocation.setFont(ResourceLoader.getFont().deriveFont(15f));
@@ -242,7 +246,8 @@ public class CardManual extends JPanel {
 
     private JButton getBtnNext_Manual() {
 	if (btnNext_Manual == null) {
-	    btnNext_Manual = new JButton("Next");
+	    btnNext_Manual = new JButton(
+		    root.getMessages().getString("button.next"));
 	    btnNext_Manual.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -261,7 +266,7 @@ public class CardManual extends JPanel {
 	if (txtPath == null) {
 	    txtPath = new JTextField();
 	    txtPath.setHorizontalAlignment(SwingConstants.CENTER);
-	    txtPath.setFont(txtPath.getFont().deriveFont(14f));
+	    txtPath.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    txtPath.setEditable(false);
 	    txtPath.setColumns(10);
 	    txtPath.setBounds(222, 100, 178, 30);
@@ -271,7 +276,8 @@ public class CardManual extends JPanel {
 
     private JButton getBtnBrowse() {
 	if (btnBrowse == null) {
-	    btnBrowse = new JButton("Browse...");
+	    btnBrowse = new JButton(
+		    root.getMessages().getString("button.browse"));
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {

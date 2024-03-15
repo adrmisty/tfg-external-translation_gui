@@ -116,7 +116,8 @@ public class CardMode extends JPanel {
 
     private JButton getBtnManual_Mode() {
 	if (btnManual_Mode == null) {
-	    btnManual_Mode = new JButton("Manual");
+	    btnManual_Mode = new JButton(
+		    root.getMessages().getString("button.mode.manual"));
 	    btnManual_Mode.setFocusable(false);
 	    btnManual_Mode.addActionListener(new ActionListener() {
 		@Override
@@ -133,7 +134,8 @@ public class CardMode extends JPanel {
 
     private JButton getBtnAutomatic_Mode() {
 	if (btnAutomatic_Mode == null) {
-	    btnAutomatic_Mode = new JButton("Automatic");
+	    btnAutomatic_Mode = new JButton(
+		    root.getMessages().getString("button.mode.auto"));
 	    btnAutomatic_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -159,8 +161,9 @@ public class CardMode extends JPanel {
 		}
 	    });
 	    comboBox.setBounds(197, 185, 201, 32);
-	    comboBox.setModel(new DefaultComboBoxModel<String>(ResourceLoader
-		    .getSupportedLanguages().toArray(new String[0])));
+	    comboBox.setModel(new DefaultComboBoxModel<String>(
+		    ResourceLoader.getSupportedLanguages(root.getMessages())
+			    .toArray(new String[0])));
 	    comboBox.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return comboBox;
@@ -169,7 +172,7 @@ public class CardMode extends JPanel {
     private JLabel getLblChoose() {
 	if (lblChoose == null) {
 	    lblChoose = new JLabel(
-		    "1) Do the translation yourself, or have AI do it!");
+		    root.getMessages().getString("label.mode.type"));
 	    lblChoose.setForeground(SystemColor.textHighlight);
 	    lblChoose.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblChoose.setBounds(131, 44, 327, 22);
@@ -180,7 +183,8 @@ public class CardMode extends JPanel {
 
     private JLabel getLblLanguage() {
 	if (lblLanguage == null) {
-	    lblLanguage = new JLabel("2) Choose the target language!");
+	    lblLanguage = new JLabel(
+		    root.getMessages().getString("label.mode.language"));
 	    lblLanguage.setLabelFor(getComboBox());
 	    lblLanguage.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblLanguage.setForeground(SystemColor.textHighlight);
@@ -192,7 +196,8 @@ public class CardMode extends JPanel {
 
     private JLabel getLblChooseTranslation() {
 	if (lblChooseTranslation == null) {
-	    lblChooseTranslation = new JLabel("Choose your translation mode");
+	    lblChooseTranslation = new JLabel(
+		    root.getMessages().getString("label.mode.title"));
 	    lblChooseTranslation.setBounds(0, 5, 586, 76);
 	    lblChooseTranslation.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblChooseTranslation
@@ -259,7 +264,8 @@ public class CardMode extends JPanel {
 
     private JButton getBtnNext_Mode() {
 	if (btnNext_Mode == null) {
-	    btnNext_Mode = new JButton("Next");
+	    btnNext_Mode = new JButton(
+		    root.getMessages().getString("button.next"));
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -286,7 +292,7 @@ public class CardMode extends JPanel {
 		    .getResource("/main/resources/img/help.png")));
 	    btnHelp_Mode.setBounds(537, 7, 49, 41);
 	    btnHelp_Mode.setToolTipText(
-		    "As a translator, you can translate the file yourself or do it with OpenAI's chat completion model.");
+		    root.getMessages().getString("tooltip.mode"));
 	    btnHelp_Mode.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnHelp_Mode.setBorder(null);
 	    btnHelp_Mode.setBackground(SystemColor.window);

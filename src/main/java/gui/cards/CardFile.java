@@ -86,7 +86,8 @@ public class CardFile extends JPanel {
 
     private JLabel getLblStartTranslating() {
 	if (lblStartTranslating == null) {
-	    lblStartTranslating = new JLabel("Start translating now!");
+	    lblStartTranslating = new JLabel(
+		    root.getMessages().getString("label.file.title"));
 	    lblStartTranslating.setBounds(0, 0, 586, 80);
 	    lblStartTranslating.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblStartTranslating
@@ -97,7 +98,8 @@ public class CardFile extends JPanel {
 
     private JLabel getLblDragText() {
 	if (lblDragText == null) {
-	    lblDragText = new JLabel("Drag and drop");
+	    lblDragText = new JLabel(
+		    root.getMessages().getString("label.file.dnd"));
 	    lblDragText.setBounds(156, 84, 282, 19);
 	    lblDragText.setLabelFor(getLblDrag());
 	    lblDragText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -127,7 +129,8 @@ public class CardFile extends JPanel {
 	    lblDrag.setBounds(145, 11, 311, 141);
 	    lblDrag.setIcon(new ImageIcon(MainWindow.class
 		    .getResource("/main/resources/img/dnd.png")));
-	    lblDrag.setToolTipText("Drag and drop a file here");
+	    lblDrag.setToolTipText(
+		    root.getMessages().getString("tooltip.file"));
 
 	    // Drag and drop functionality
 	    new DropTarget(lblDrag, new DnDListener());
@@ -210,7 +213,8 @@ public class CardFile extends JPanel {
 
     private JButton getBtnNext_File() {
 	if (btnNext_File == null) {
-	    btnNext_File = new JButton("Next");
+	    btnNext_File = new JButton(
+		    root.getMessages().getString("button.next"));
 	    btnNext_File.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -220,7 +224,7 @@ public class CardFile extends JPanel {
 			root.show("mode");
 		    } catch (Exception ex) {
 			root.showErrorMessage(ex,
-				"There has been an issue with the selected file.");
+				root.getMessages().getString("error.file"));
 		    }
 		}
 	    });
@@ -238,7 +242,7 @@ public class CardFile extends JPanel {
 	    btnHelp_File.setIcon(new ImageIcon(MainWindow.class
 		    .getResource("/main/resources/img/help.png")));
 	    btnHelp_File.setToolTipText(
-		    "Drag and drop, or select the file you wish to translate - remember it must be a .properties localization file!");
+		    root.getMessages().getString("tooltip.file"));
 	    btnHelp_File.setMnemonic('b');
 	    btnHelp_File.setFont(btnHelp_File.getFont().deriveFont(14f));
 	    btnHelp_File.setBorder(null);
@@ -328,7 +332,7 @@ public class CardFile extends JPanel {
 	fileChooser = new JFileChooser("D:");
 
 	FileNameExtensionFilter filter = new FileNameExtensionFilter(
-		"Internationalization files", "properties");
+		root.getMessages().getString("label.filter"), "properties");
 	fileChooser.setFileFilter(filter);
 
 	int returnVal = fileChooser.showOpenDialog(this);
@@ -349,7 +353,8 @@ public class CardFile extends JPanel {
 
     private JButton getBtnBrowse() {
 	if (btnBrowse == null) {
-	    btnBrowse = new JButton("Browse...");
+	    btnBrowse = new JButton(
+		    root.getMessages().getString("button.browse"));
 	    btnBrowse.setBounds(349, 166, 89, 23);
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
@@ -366,7 +371,7 @@ public class CardFile extends JPanel {
     private JLabel getLblDndWarning() {
 	if (lblDndWarning == null) {
 	    lblDndWarning = new JLabel(
-		    "Oops! You tried to drop a non-valid file.");
+		    root.getMessages().getString("label.file.wrong"));
 	    lblDndWarning.setForeground(new Color(220, 20, 60));
 	    lblDndWarning.setBounds(156, 200, 282, 14);
 	    lblDndWarning.setVisible(false);

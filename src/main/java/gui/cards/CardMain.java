@@ -81,7 +81,8 @@ public class CardMain extends JPanel {
 
     private JButton getLeftButton() {
 	if (leftButton == null) {
-	    leftButton = new JButton("Get started");
+	    leftButton = new JButton(
+		    root.getMessages().getString("button.start"));
 	    leftButton
 		    .setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	    leftButton.addActionListener(new ActionListener() {
@@ -100,7 +101,8 @@ public class CardMain extends JPanel {
     private JButton getRightButton() {
 	if (rightButton == null) {
 	    // Underlined text
-	    rightButton = new JButton("Learn more");
+	    rightButton = new JButton(
+		    root.getMessages().getString("button.learn"));
 	    rightButton.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -144,7 +146,8 @@ public class CardMain extends JPanel {
 
     private JLabel getLblSlogan() {
 	if (lblSlogan == null) {
-	    lblSlogan = new JLabel("The automatic program translator");
+	    lblSlogan = new JLabel(
+		    root.getMessages().getString("label.slogan"));
 	    lblSlogan.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblSlogan.setFont(ResourceLoader.getFont().deriveFont(30f));
 	    lblSlogan.setBackground(SystemColor.window);
@@ -165,7 +168,8 @@ public class CardMain extends JPanel {
 
     private JLabel getLblForLogo() {
 	if (lblForLogo == null) {
-	    lblForLogo = new JLabel("Powered by");
+	    lblForLogo = new JLabel(
+		    root.getMessages().getString("label.poweredby"));
 	    lblForLogo.setFont(ResourceLoader.getFont().deriveFont(20f));
 	}
 	return lblForLogo;

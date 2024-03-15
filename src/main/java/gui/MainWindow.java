@@ -4,6 +4,8 @@ import java.awt.CardLayout;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -34,6 +36,9 @@ public class MainWindow extends JFrame {
     // API access for translation
     private Translator translator = new Translator();
 
+    // Locale
+    private ResourceBundle messages;
+
     // Card layout
     private JPanel contentPane;
     private JPanel currentCard; // Reference to the card being shown on screen
@@ -54,6 +59,8 @@ public class MainWindow extends JFrame {
      * Create the frame.
      */
     public MainWindow() {
+	localize(Locale.getDefault());
+
 	setBackground(SystemColor.window);
 	setResizable(false);
 	setAutoRequestFocus(false);
@@ -195,6 +202,14 @@ public class MainWindow extends JFrame {
 
     public void resetModeValues() {
 	cardMode.reset();
+    }
+
+    public void localize(Locale locale) {
+	this.messages = ResourceBundle.getBundle("Messages", locale);
+    }
+
+    public ResourceBundle getMessages() {
+	return this.messages;
     }
 
     /*

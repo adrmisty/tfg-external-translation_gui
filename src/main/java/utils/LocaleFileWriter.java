@@ -68,7 +68,76 @@ public class LocaleFileWriter {
 	this.bundleName = fileInfo.get("bundleName");
     }
 
+    /**
+     * Writes an i18n compliant file with translated properties into a given
+     * language.
+     * 
+     * @param path       (absolute path of the file to write, containing alpha-2
+     *                   code)
+     * @param localeCode (alpha-2 code identification of the Language_Country as
+     *                   "ll_CC")
+     * @param text       (translated textual properties)
+     * 
+     * @return true if writing process has been executed correctly
+     * @throws IOException
+     */
+    public void write(String path, String text) throws IOException {
+	setSavedFileName();
+	setSavedFilePath(path);
+	BufferedWriter writer = new BufferedWriter(
+		new FileWriter(savedFilePath));
+	writeResults(writer, text);
+	writer.close();
+    }
+
+    /**
+     * For manual translation: upon choosing the directory where to save the
+     * manual translation, they are prompted to write their translation onto the
+     * new .properties file.
+     * 
+     * @param path: path of the directory onto which to write their translation
+     * @return file path of the translation file in the specific directory
+     * @throws IOException
+     */
+    public String manualWrite(String path) throws IOException {
+	setSavedFileName();
+	setSavedFilePath(path);
+	BufferedWriter writer = new BufferedWriter(
+		new FileWriter(savedFilePath));
+	writeKeys(writer);
+	writer.close();
+	return this.savedFilePath;
+    }
+
+    /**
+     * From the temporary file that was used during reviewing, save these
+     * results onto the specified directory.
+     * 
+     * @param path: directory specification onto which the file should be saved
+     * @throws IOException
+     */
+    public void saveReview(String path) throws IOException {
+	setSavedFilePath(path);
+	Path destination = Paths.get(this.savedFilePath);
+	Files.move(temporaryFile, destination);
+    }
+
+    /**
+     * For reviewing the translation: writes the results into a temporary file
+     * which, if the user wants, can be disposed of. Otherwise, they can save
+     * the results into a specific directory.
+     * 
+     * @param text: results of the translation to be written onto the file
+     * @return path to temporary file
+     * @throws IOException
+     */
+    public String tempWrite(String text) throws IOException {
+	setSavedFileName();
+	return writeTempResults(text).toAbsolutePath().toString();
+    }
+
     /*
+     * SETTERS & GETTERS
      * ########################################################################
      */
 
@@ -156,74 +225,6 @@ public class LocaleFileWriter {
     /*
      * ######################## AUXILIARY METHODS #############################
      */
-
-    /**
-     * Writes an i18n compliant file with translated properties into a given
-     * language.
-     * 
-     * @param path       (absolute path of the file to write, containing alpha-2
-     *                   code)
-     * @param localeCode (alpha-2 code identification of the Language_Country as
-     *                   "ll_CC")
-     * @param text       (translated textual properties)
-     * 
-     * @return true if writing process has been executed correctly
-     * @throws IOException
-     */
-    public void write(String path, String text) throws IOException {
-	setSavedFileName();
-	setSavedFilePath(path);
-	BufferedWriter writer = new BufferedWriter(
-		new FileWriter(savedFilePath));
-	writeResults(writer, text);
-	writer.close();
-    }
-
-    /**
-     * For manual translation: upon choosing the directory where to save the
-     * manual translation, they are prompted to write their translation onto the
-     * new .properties file.
-     * 
-     * @param path: path of the directory onto which to write their translation
-     * @return file path of the translation file in the specific directory
-     * @throws IOException
-     */
-    public String manualWrite(String path) throws IOException {
-	setSavedFileName();
-	setSavedFilePath(path);
-	BufferedWriter writer = new BufferedWriter(
-		new FileWriter(savedFilePath));
-	writeKeys(writer);
-	writer.close();
-	return this.savedFilePath;
-    }
-
-    /**
-     * From the temporary file that was used during reviewing, save these
-     * results onto the specified directory.
-     * 
-     * @param path: directory specification onto which the file should be saved
-     * @throws IOException
-     */
-    public void saveReview(String path) throws IOException {
-	setSavedFilePath(path);
-	Path destination = Paths.get(this.savedFilePath);
-	Files.move(temporaryFile, destination);
-    }
-
-    /**
-     * For reviewing the translation: writes the results into a temporary file
-     * which, if the user wants, can be disposed of. Otherwise, they can save
-     * the results into a specific directory.
-     * 
-     * @param text: results of the translation to be written onto the file
-     * @return path to temporary file
-     * @throws IOException
-     */
-    public String tempWrite(String text) throws IOException {
-	setSavedFileName();
-	return writeTempResults(text).toAbsolutePath().toString();
-    }
 
     /**
      * From a given set of translated sentences (that represent the property

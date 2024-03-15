@@ -113,7 +113,7 @@ public class CardInfo extends JPanel {
 
     private JLabel getLblProject() {
 	if (lblProject == null) {
-	    lblProject = new JLabel("Final Degree Project");
+	    lblProject = new JLabel(root.getMessages().getString("label.tfg"));
 	    lblProject.setLabelFor(getLblUnioviLogo());
 	    lblProject.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblProject.setFont(ResourceLoader.getFont().deriveFont(40f));
@@ -223,7 +223,8 @@ public class CardInfo extends JPanel {
 
     private JLabel getLblAuthor() {
 	if (lblAuthor == null) {
-	    lblAuthor = new JLabel("Developed by Adriana Rodríguez Flórez");
+	    lblAuthor = new JLabel(
+		    root.getMessages().getString("label.tfg.author"));
 	    lblAuthor.setLabelFor(getLblEmail());
 	    lblAuthor.setBackground(SystemColor.window);
 	    lblAuthor.setHorizontalAlignment(SwingConstants.CENTER);
@@ -236,7 +237,8 @@ public class CardInfo extends JPanel {
 	if (lblEmail == null) {
 	    lblEmail = new JLabel("uo282798@uniovi.es");
 	    lblEmail.setBackground(SystemColor.window);
-	    lblEmail.setToolTipText("Send an email!");
+	    lblEmail.setToolTipText(
+		    root.getMessages().getString("label.tfg.email"));
 	    lblEmail.addMouseListener(new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -245,7 +247,7 @@ public class CardInfo extends JPanel {
 			Desktop.getDesktop().browse(new URI(url));
 		    } catch (IOException | URISyntaxException err) {
 			root.showErrorMessage(err,
-				"Email service not available at the moment!");
+				root.getMessages().getString("error.email"));
 		    }
 		}
 	    });
@@ -280,7 +282,7 @@ public class CardInfo extends JPanel {
 	    textDescription.setBackground(SystemColor.window);
 	    textDescription.setEditable(false);
 	    textDescription.setText(
-		    "Externalized translation service for programs, \r\nusing the large language model ChatGPT 3.5 Turbo\r\nprovided by the OpenAI API");
+		    root.getMessages().getString("label.tfg.description"));
 	    textDescription.setFont(ResourceLoader.getFont().deriveFont(20f));
 
 	    // Center text
