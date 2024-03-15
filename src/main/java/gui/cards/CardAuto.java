@@ -83,7 +83,7 @@ public class CardAuto extends JPanel {
     }
 
     public void stopLoading() {
-	busyPanel.stop();
+	busyPanel.stop(false);
 	setCursor(Cursor.getDefaultCursor());
 	btnSave_Auto.setEnabled(true);
 	lblTitle_Auto.setText("Translation successfully completed!");
@@ -228,6 +228,7 @@ public class CardAuto extends JPanel {
 	    btnBack_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    busyPanel.stop(true);
 		    root.show("mode");
 		}
 	    });

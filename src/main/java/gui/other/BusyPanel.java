@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Arc2D;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -20,15 +22,18 @@ import javax.swing.Timer;
 public class BusyPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
+
+    // Busy panel building
     private double angle;
     private double extent;
-
     private double angleDelta = -1;
     private double extentDelta = -5;
-
     private boolean flip = false;
 
+    // Main elements
     private Timer timer;
+    private JLabel lblImage;
+    private Graphics2D g2d;
 
     public BusyPanel() {
 	setBackground(Color.WHITE);
@@ -49,6 +54,7 @@ public class BusyPanel extends JPanel {
 		repaint();
 	    }
 	});
+	add(getLblImage());
     }
 
     @Override
@@ -60,14 +66,17 @@ public class BusyPanel extends JPanel {
 	this.timer.start();
     }
 
-    public void stop() {
+    public void stop(boolean reset) {
 	this.timer.stop();
+	this.lblImage.setVisible(!reset);
+	this.g2d.setColor(Color.WHITE);
+	this.g2d.dispose();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
 	super.paintComponent(g);
-	Graphics2D g2d = (Graphics2D) g.create();
+	this.g2d = (Graphics2D) g.create();
 	g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
 		RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 	g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -95,4 +104,13 @@ public class BusyPanel extends JPanel {
 	g2d.dispose();
     }
 
+    private JLabel getLblImage() {
+	if (lblImage == null) {
+	    lblImage = new JLabel("");
+	    lblImage.setIcon(new ImageIcon(BusyPanel.class
+		    .getResource("/main/resources/img/done-icon.png")));
+	    lblImage.setVisible(false);
+	}
+	return lblImage;
+    }
 }

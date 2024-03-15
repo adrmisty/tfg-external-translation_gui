@@ -114,11 +114,10 @@ public class LocaleFileManager {
     }
 
     private void setSavedFileName() {
-	this.savedFileName = bundleName + "_" + targetLanguage.toLanguageTag()
+	String localName = bundleName + "_" + targetLanguage.toLanguageTag()
 		+ ".properties";
 
-	this.savedFileName = this.savedFileName.replace("Latn-", "")
-		.replace("Cyrl-", "");
+	this.savedFileName = LocaleParser.removeAlphabetType(localName);
     }
 
     /**

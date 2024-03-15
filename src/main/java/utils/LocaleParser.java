@@ -3,6 +3,8 @@ package main.java.utils;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Localization alpha-2 codes and names parser for files.
@@ -95,6 +97,23 @@ public class LocaleParser {
 	}
 
 	return new String[] { null, null };
+    }
+
+    /**
+     * Using regular expressions, eliminate those instances in locale filenames
+     * of the type: "-Latn", "-Cyrl"...
+     * 
+     * @param filename to remove the possible substring from
+     * @return filename without that alphabet indication
+     */
+    public static String removeAlphabetType(String filename) {
+	Pattern pattern = Pattern.compile("-[A-Za-z]+(?=-[A-Za-z]{2})");
+	Matcher matcher = pattern.matcher(filename);
+
+	// Replace matched instances with an empty string
+	String result = matcher.replaceAll("");
+
+	return result;
     }
 
 }

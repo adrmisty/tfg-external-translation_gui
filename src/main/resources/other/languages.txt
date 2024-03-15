@@ -69,6 +69,7 @@ Sindhi, Pakistan
 Sinhala, Sri Lanka
 Slovak, Slovakia
 Slovenian, Slovenia
+Spanish, Spain
 Ukrainian, Ukraine
 Urdu, Pakistan
 Uzbek, Uzbekistan
