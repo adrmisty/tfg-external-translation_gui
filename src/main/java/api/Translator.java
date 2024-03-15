@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import com.theokanning.openai.completion.chat.ChatMessage;
 
-import main.java.utils.LocaleFileManager;
+import main.java.utils.LocaleFileWriter;
 
 /**
  * Translates a given input .properties file into another one in the specified
@@ -18,12 +18,12 @@ import main.java.utils.LocaleFileManager;
 public class Translator {
 
     private static TranslationApi api;
-    private static LocaleFileManager file;
+    private static LocaleFileWriter file;
     private String results;
 
     public Translator() {
 	api = new TranslationApi(); // API access
-	file = new LocaleFileManager(); // Localization file manager
+	file = new LocaleFileWriter(); // Localization file manager
 	reset(); // File initialization
     }
 

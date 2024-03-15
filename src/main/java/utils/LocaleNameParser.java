@@ -7,12 +7,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Localization alpha-2 codes and names parser for files.
+ * Localization alpha-2 codes and names parser for files. Includes
+ * functionalities to extract/derive language-country mappings, locale names for
+ * i18n files and other processing functionalities in terms of file names.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version February 2024
+ * @version March 2024
  */
-public class LocaleParser {
+public class LocaleNameParser {
 
     /**
      * Builds a mapping between all currently-supported languages, with the
@@ -101,7 +103,7 @@ public class LocaleParser {
 
     /**
      * Using regular expressions, eliminate those instances in locale filenames
-     * of the type: "-Latn", "-Cyrl"...
+     * of the type: "-Latn", "-Cyrl", "-Geor"...
      * 
      * @param filename to remove the possible substring from
      * @return filename without that alphabet indication

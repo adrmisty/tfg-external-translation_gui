@@ -2,8 +2,11 @@ package main.java.utils;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -30,6 +33,37 @@ public class ResourceLoader {
     private final static String FONT_FILE = "/main/resources/other/sf-pro.otf";
     private final static String API_PROPERTIES_FILE = "/main/resources/properties/api.properties";
     private final static String CONFIG_FILE = "/main/resources/properties/config.properties";
+
+    /**
+     * Parses a .properties file content onto a Properties object.
+     * 
+     * @param file path of the .properties file to load
+     * @return Properties object containing the contents of the file
+     * @throws Exception if there is an error while loading properties from a
+     *                   given file
+     */
+    public static Properties loadProperties(String filepath) throws Exception {
+
+	if (isFileI18N(filepath)) {
+	    Properties props = new Properties();
+	    File file = new File(filepath);
+
+	    try (FileInputStream fileStream = new FileInputStream(
+		    file.getAbsolutePath())) {
+		props.load(fileStream); // Ignores comments, etc
+	    } catch (FileNotFoundException fnfe) {
+		throw new Exception(fnfe.getMessage());
+	    } catch (IOException io) {
+		throw new Exception(io.getMessage());
+	    }
+
+	    return props;
+	} else {
+	    throw new Exception(
+		    "The provided file does not comply with i18n-localization format.");
+	}
+
+    }
 
     /**
      * @param path: absolute path to a file
@@ -107,6 +141,44 @@ public class ResourceLoader {
 		    null, io);
 	    return null;
 	}
+    }
+
+    /**
+     * @param file path of input file
+     * @return boolean true if input file is a .properties file with i18n
+     *         format, false otherwise
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    private static boolean isFileI18N(String filePath)
+	    throws FileNotFoundException, IOException {
+
+	try (BufferedReader reader = new BufferedReader(
+		new FileReader(filePath))) {
+	    String line;
+	    while ((line = reader.readLine()) != null) {
+
+		// Ignore comments and empty lines
+		if (line.trim().isEmpty() || line.trim().startsWith("#")) {
+		    continue;
+		}
+
+		// Check if the line is in key-value format
+		if (!line.contains("=")) {
+		    return false;
+		}
+
+		// Check if the key and value are separated by '='
+		String[] parts = line.split("=", 2);
+		if (parts.length != 2 || parts[0].trim().isEmpty()
+			|| parts[1].trim().isEmpty()) {
+		    return false;
+		}
+	    }
+	}
+
+	// All good, it's a fully-formed properties file!
+	return true;
     }
 
 }
