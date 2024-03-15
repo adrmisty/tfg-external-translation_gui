@@ -15,6 +15,7 @@ import main.java.gui.cards.CardEnd;
 import main.java.gui.cards.CardFile;
 import main.java.gui.cards.CardInfo;
 import main.java.gui.cards.CardMain;
+import main.java.gui.cards.CardManual;
 import main.java.gui.cards.CardMode;
 import main.java.gui.other.IDE;
 import main.java.utils.ResourceLoader;
@@ -40,8 +41,9 @@ public class MainWindow extends JFrame {
     private CardInfo cardInfo; // Information window
     private CardFile cardFile; // For uploading a file
     private CardMode cardMode; // For choosing a translation mode
+    private CardAuto cardAuto; // For OpenAI translation
+    private CardManual cardManual; // For manual translation
     private CardEnd cardEnd; // For ending the app
-    private CardAuto cardAuto;
 
     // Files & translation
     private String inputFilePath = "";
@@ -76,6 +78,7 @@ public class MainWindow extends JFrame {
 	contentPane.add(getCardFile());
 	contentPane.add(getCardMode());
 	contentPane.add(getCardAuto());
+	contentPane.add(getCardManual());
 	contentPane.add(getCardEnd());
 	currentCard = cardMain;
     }
@@ -101,6 +104,10 @@ public class MainWindow extends JFrame {
 	    break;
 	case "mode":
 	    currentCard = cardMode;
+	    break;
+	case "manual":
+	    currentCard = cardManual;
+	    cardManual.setLanguage(this.language);
 	    break;
 	case "automatic":
 	    currentCard = cardAuto;
@@ -145,6 +152,11 @@ public class MainWindow extends JFrame {
 
     public void autoTranslate() throws Exception {
 	translator.translateTo(this.language);
+    }
+
+    public void manualTranslate() throws Exception {
+	IDE.open(contentPane,
+		translator.manualTranslateTo(this.language, directoryPath));
     }
 
     public void review() throws IOException {
@@ -227,6 +239,14 @@ public class MainWindow extends JFrame {
 	    cardAuto.setVisible(false);
 	}
 	return cardAuto;
+    }
+
+    private JPanel getCardManual() {
+	if (cardManual == null) {
+	    cardManual = new CardManual(this);
+	    cardManual.setVisible(false);
+	}
+	return cardManual;
     }
 
     private JPanel getCardEnd() {

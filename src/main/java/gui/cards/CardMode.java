@@ -263,9 +263,11 @@ public class CardMode extends JPanel {
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    root.setLanguage((String) comboBox.getSelectedItem());
 		    if (btnAutomatic_Mode.isSelected()) {
-			root.setLanguage((String) comboBox.getSelectedItem());
 			root.show("automatic");
+		    } else {
+			root.show("manual");
 		    }
 		}
 	    });
@@ -297,7 +299,6 @@ public class CardMode extends JPanel {
 	comboBox.setSelectedIndex(0);
 	btnManual_Mode.setSelected(false);
 	btnAutomatic_Mode.setSelected(false);
-
     }
 
 }

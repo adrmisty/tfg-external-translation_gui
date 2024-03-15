@@ -175,8 +175,27 @@ public class LocaleFileWriter {
 	setSavedFilePath(path);
 	BufferedWriter writer = new BufferedWriter(
 		new FileWriter(savedFilePath));
-	writeProperties(writer, text);
+	writeResults(writer, text);
 	writer.close();
+    }
+
+    /**
+     * For manual translation: upon choosing the directory where to save the
+     * manual translation, they are prompted to write their translation onto the
+     * new .properties file.
+     * 
+     * @param path: path of the directory onto which to write their translation
+     * @return file path of the translation file in the specific directory
+     * @throws IOException
+     */
+    public String manualWrite(String path) throws IOException {
+	setSavedFileName();
+	setSavedFilePath(path);
+	BufferedWriter writer = new BufferedWriter(
+		new FileWriter(savedFilePath));
+	writeKeys(writer);
+	writer.close();
+	return this.savedFilePath;
     }
 
     /**
@@ -203,7 +222,7 @@ public class LocaleFileWriter {
      */
     public String tempWrite(String text) throws IOException {
 	setSavedFileName();
-	return writeTempProperties(text).toAbsolutePath().toString();
+	return writeTempResults(text).toAbsolutePath().toString();
     }
 
     /**
@@ -216,28 +235,42 @@ public class LocaleFileWriter {
      * 
      * @throws IOException in case of an issue with the bufferedWriter
      */
-    private void writeProperties(BufferedWriter writer, String text)
+    private void writeResults(BufferedWriter writer, String text)
 	    throws IOException {
 	String props = fileProcessor
-		.getWrittenResults(targetLanguage.getDisplayLanguage(), text,
-			properties)
+		.getWrittenResults(getTargetLanguage(), text, properties)
 		.toString();
 	writer.write(props);
 	writer.close();
     }
 
     /**
+     * Write a given set of keys onto a file.
      * 
-     * @param text
-     * @return
+     * @param writer (bufferedWriter with a reference to the file)
+     * 
+     * @throws IOException in case of an issue with the bufferedWriter
+     */
+    private void writeKeys(BufferedWriter writer) throws IOException {
+	String keys = fileProcessor.getKeysText(getTargetLanguage(), properties)
+		.toString();
+	writer.write(keys);
+	writer.close();
+    }
+
+    /**
+     * Writes results onto a temporary file, to be used for reviewing.
+     * 
+     * @param results of the translation
+     * @return Path object representing the temporary file
      * @throws IOException
      */
-    private Path writeTempProperties(String text) throws IOException {
+    private Path writeTempResults(String text) throws IOException {
 	String name = this.savedFileName.substring(0,
 		this.savedFileName.indexOf("."));
 	this.temporaryFile = Files.createTempFile(name, ".properties");
-	Files.writeString(temporaryFile, fileProcessor.getWrittenResults(
-		targetLanguage.getDisplayLanguage(), text, properties));
+	Files.writeString(temporaryFile, fileProcessor
+		.getWrittenResults(getTargetLanguage(), text, properties));
 	this.isFileTemporary = true;
 	return temporaryFile;
     }

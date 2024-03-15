@@ -77,6 +77,7 @@ public class LocaleFileProcessor {
      * @param targetLanguage: string specifying the target language of this
      *                        translation
      * @param text:           different translations returned by the translator
+     * @param properties:     properties object with key/vaue pairs
      * @return complete text in the specific format
      */
     public StringBuilder getWrittenResults(String targetLanguage, String text,
@@ -93,6 +94,27 @@ public class LocaleFileProcessor {
 	    p = ((String) keys.nextElement()) + "=" + sentences[i];
 	    sb.append(p + "\n");
 	    i++;
+	}
+	return sb;
+    }
+
+    /**
+     * From the texts given as results, build the .properties-like text to be
+     * written onto the file.
+     * 
+     * @param targetLanguage: string specifying the target language of this
+     *                        translation
+     * @param text:           different translations returned by the translator
+     * @return succession of keys in the file
+     */
+    public StringBuilder getKeysText(String targetLanguage, Properties props) {
+	StringBuilder sb = new StringBuilder("");
+	sb.append("# " + targetLanguage + "\n\n");
+
+	Enumeration<Object> keys = props.keys();
+
+	while (keys.hasMoreElements()) {
+	    sb.append((String) keys.nextElement() + "=\n");
 	}
 	return sb;
     }

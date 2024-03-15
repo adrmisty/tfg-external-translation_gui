@@ -70,6 +70,21 @@ public class Translator {
     }
 
     /**
+     * Writes property keys into a new file so that the user can execute the
+     * manual translation.
+     * 
+     * @param target: string representation of the language
+     * @param path:   path of the directory where to write the translation
+     * @return path: path of the file with the translation
+     * @throws Exception
+     */
+    public String manualTranslateTo(String target, String path)
+	    throws Exception {
+	file.setTargetLanguage(target);
+	return file.manualWrite(path);
+    }
+
+    /**
      * Writes the results into a temporary file to be used for reviewing and
      * editing the translation. Once the user chooses to, the file will be saved
      * to a specific path.
