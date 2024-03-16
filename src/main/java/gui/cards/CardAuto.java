@@ -18,9 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import main.java.file.ResourceLoader;
 import main.java.gui.MainWindow;
 import main.java.gui.other.BusyPanel;
-import main.java.utils.ResourceLoader;
 
 public class CardAuto extends JPanel {
 
@@ -147,7 +147,8 @@ public class CardAuto extends JPanel {
 
     private JButton getBtnSave_Auto() {
 	if (btnSave_Auto == null) {
-	    btnSave_Auto = new JButton("Save");
+	    btnSave_Auto = new JButton(
+		    root.getMessages().getString("button.save"));
 	    btnSave_Auto.setIcon(new ImageIcon(CardAuto.class
 		    .getResource("/main/resources/img/save-icon.png")));
 	    btnSave_Auto.setEnabled(false);
@@ -273,7 +274,8 @@ public class CardAuto extends JPanel {
 
     private JButton getBtnReview_Auto() {
 	if (btnReview_Auto == null) {
-	    btnReview_Auto = new JButton("Review");
+	    btnReview_Auto = new JButton(
+		    root.getMessages().getString("button.review"));
 	    btnReview_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {

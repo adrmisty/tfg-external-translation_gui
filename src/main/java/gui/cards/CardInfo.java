@@ -26,8 +26,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import main.java.file.ResourceLoader;
 import main.java.gui.MainWindow;
-import main.java.utils.ResourceLoader;
 
 public class CardInfo extends JPanel {
 

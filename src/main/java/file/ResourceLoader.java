@@ -1,4 +1,4 @@
-package main.java.utils;
+package main.java.file;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -30,6 +31,7 @@ public class ResourceLoader {
     /**
      * File paths to respective resources
      */
+    private final static String LANGUAGES_FILE = "/main/resources/other/languages_en_US.txt";
     private final static String FONT_FILE = "/main/resources/other/sf-pro.otf";
     private final static String API_PROPERTIES_FILE = "/main/resources/properties/api.properties";
     private final static String CONFIG_FILE = "/main/resources/properties/config.properties";
@@ -78,17 +80,9 @@ public class ResourceLoader {
      * @return list of all supported languages and localization of the program
      */
     public static List<String> getSupportedLanguages(ResourceBundle messages) {
-	try {
-	    URL res = ResourceLoader.class
-		    .getResource(messages.getString("file.languages"));
-	    File f = new File(res.toURI());
-	    List<String> list = Files.readAllLines(f.toPath());
-	    return list;
-	} catch (URISyntaxException | IOException ex) {
-	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE,
-		    null, ex);
-	    return null;
-	}
+	String languages = messages.getString("file.languages");
+	String[] supportedLanguages = languages.split("-");
+	return Arrays.asList(supportedLanguages);
     }
 
     /**
@@ -179,6 +173,22 @@ public class ResourceLoader {
 
 	// All good, it's a fully-formed properties file!
 	return true;
+    }
+
+    /**
+     * @return list of all supported languages and localization of the program
+     */
+    public static List<String> getSupportedLanguagesInEnglish() {
+	try {
+	    URL res = ResourceLoader.class.getResource(LANGUAGES_FILE);
+	    File f = new File(res.toURI());
+	    List<String> list = Files.readAllLines(f.toPath());
+	    return list;
+	} catch (URISyntaxException | IOException ex) {
+	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE,
+		    null, ex);
+	    return null;
+	}
     }
 
 }

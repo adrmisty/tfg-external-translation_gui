@@ -27,8 +27,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import main.java.file.ResourceLoader;
 import main.java.gui.MainWindow;
-import main.java.utils.ResourceLoader;
 
 public class CardFile extends JPanel {
 

@@ -1,4 +1,4 @@
-package main.java.utils;
+package main.java.file;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -179,18 +179,18 @@ public class LocaleFileWriter {
     private void setSavedFileName() {
 	String localName = bundleName + "_" + targetLanguage.toLanguageTag()
 		+ ".properties";
-	this.savedFileName = LocaleNameParser.removeAlphabetType(localName);
+	this.savedFileName = LocaleNameParser.formatName(localName);
     }
 
     /**
      * Saves the chosen target language (country-specific) as the display name
      * of the language.
      * 
-     * @param targetLanguage, format: "English, United States"
+     * @param index of the targetLanguage, format: "English, United States"
      * @throws Exception if specified Locale is not supported yet
      */
-    public void setTargetLanguage(String targetLanguage) throws Exception {
-	this.targetLanguage = fileProcessor.getTargetLanguage(targetLanguage);
+    public void setTargetLanguage(int index) throws Exception {
+	this.targetLanguage = fileProcessor.getTargetLanguage(index);
     }
 
     /**

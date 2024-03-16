@@ -1,4 +1,4 @@
-package main.java.utils;
+package main.java.file;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -59,15 +59,15 @@ public class LocaleFileProcessor {
     }
 
     /**
-     * From a given string specifying a target language, retrieve its assigned
-     * Locale object.
+     * From the index of a given string specifying a target language, retrieve
+     * its assigned Locale object.
      * 
-     * @param target language as a string
+     * @param index of target language as a string
      * @return locale object
      * @throws Exception in case of unavailable target locale
      */
-    public Locale getTargetLanguage(String target) throws Exception {
-	return LocaleNameParser.extract(map, target);
+    public Locale getTargetLanguage(int index) throws Exception {
+	return LocaleNameParser.extract(map, index);
     }
 
     /**
@@ -91,8 +91,12 @@ public class LocaleFileProcessor {
 	Enumeration<Object> keys = props.keys();
 
 	while (keys.hasMoreElements()) {
-	    p = ((String) keys.nextElement()) + "=" + sentences[i];
-	    sb.append(p + "\n");
+	    if (i < sentences.length) {
+		p = ((String) keys.nextElement()) + "=" + sentences[i];
+		sb.append(p + "\n");
+	    } else {
+		break;
+	    }
 	    i++;
 	}
 	return sb;

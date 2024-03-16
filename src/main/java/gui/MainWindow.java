@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import main.java.api.Translator;
+import main.java.file.ResourceLoader;
 import main.java.gui.cards.CardAuto;
 import main.java.gui.cards.CardEnd;
 import main.java.gui.cards.CardFile;
@@ -20,7 +21,6 @@ import main.java.gui.cards.CardMain;
 import main.java.gui.cards.CardManual;
 import main.java.gui.cards.CardMode;
 import main.java.gui.other.IDE;
-import main.java.utils.ResourceLoader;
 
 /**
  * Main Window of the application, which consists of several different views
@@ -54,6 +54,7 @@ public class MainWindow extends JFrame {
     private String inputFilePath = "";
     private String directoryPath = "";
     private String language = "";
+    private int languageIndex;
 
     /**
      * Create the frame.
@@ -158,20 +159,21 @@ public class MainWindow extends JFrame {
     }
 
     public void autoTranslate() throws Exception {
-	translator.translateTo(this.language);
+	translator.translateTo(this.languageIndex);
     }
 
     public void manualTranslate() throws Exception {
-	IDE.open(contentPane,
-		translator.manualTranslateTo(this.language, directoryPath));
+	IDE.open(contentPane, translator.manualTranslateTo(this.languageIndex,
+		directoryPath));
     }
 
     public void review() throws IOException {
 	IDE.open(contentPane, translator.review());
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage(String language, int index) {
 	this.language = language;
+	this.languageIndex = index;
     }
 
     public void chooseFile(String path) {

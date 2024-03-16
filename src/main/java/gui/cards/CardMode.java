@@ -17,8 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import main.java.file.ResourceLoader;
 import main.java.gui.MainWindow;
-import main.java.utils.ResourceLoader;
 
 public class CardMode extends JPanel {
 
@@ -269,7 +269,8 @@ public class CardMode extends JPanel {
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.setLanguage((String) comboBox.getSelectedItem());
+		    root.setLanguage((String) comboBox.getSelectedItem(),
+			    comboBox.getSelectedIndex());
 		    if (btnAutomatic_Mode.isSelected()) {
 			root.show("automatic");
 		    } else {

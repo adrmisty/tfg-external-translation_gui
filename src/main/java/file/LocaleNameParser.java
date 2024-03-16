@@ -1,6 +1,7 @@
-package main.java.utils;
+package main.java.file;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -27,33 +28,45 @@ public class LocaleNameParser {
 	String key;
 
 	for (Locale locale : Locale.getAvailableLocales()) {
-	    key = locale.getDisplayLanguage().toLowerCase() + "-"
+	    key = locale.getDisplayLanguage().toLowerCase() + "_"
 		    + locale.getDisplayCountry().toLowerCase();
 	    map.put(key, locale);
 	}
+
+	System.out.println(map);
 	return map;
     }
 
     /**
-     * From an input of the format "German, Germany", extract the locale codes,
-     * i.e. "de_DE".
+     * From the localized language index, return the specific locale.
      * 
-     * @param string containing "language, Country"
+     * @param map:  mapping of languages and locale objects
+     * @param index of the language in the program's locale at the moment
+     * @return name of that language+country in English
+     */
+    private static String getTranslatedLanguage(int index) {
+	List<String> langs = ResourceLoader.getSupportedLanguagesInEnglish();
+	String inEnglish = langs.get(index).toLowerCase();
+	return inEnglish;
+    }
+
+    /**
+     * From the index of an input of the format "German, Germany", extract the
+     * locale codes, i.e. "de_DE".
+     * 
+     * @param index of the chosen string representing language+country
      * @return locale object representing the input
      */
-    public static Locale extract(Map<String, Locale> map, String input)
+    public static Locale extract(Map<String, Locale> map, int index)
 	    throws Exception {
+
+	String input = getTranslatedLanguage(index);
 	String[] parts = input.split(", ");
+	String language = parts[0].trim().toLowerCase();
+	String country = parts[1].trim().toLowerCase();
 
-	if (parts.length == 2) {
-	    String language = parts[0].trim().toLowerCase();
-	    String country = parts[1].trim().toLowerCase();
-
-	    // Create a Locale object with language and country
-	    return map.get(language + "-" + country);
-	} else {
-	    throw new Exception("That locale choice is not supported yet!");
-	}
+	// Create a Locale object with language and country
+	return map.get(language + "_" + country);
     }
 
     /**
@@ -86,15 +99,16 @@ public class LocaleNameParser {
 	int name = filepath.lastIndexOf("\\");
 	String bundleName = filepath.substring(name + 1, extension);
 	String codes;
-	int last_ = filepath.lastIndexOf('_');
 
-	if (last_ > 0 && last_ < filepath.length() - 1) {
+	String[] divided = bundleName.split("_", 2);
+
+	if (divided.length == 2) {
 	    // Extract the base name and locale
-	    bundleName = filepath.substring(name + 1, last_);
-	    codes = filepath.substring(last_ + 1, extension);
+	    bundleName = divided[0];
+	    codes = divided[1];
 
 	    return new String[] { bundleName, codes };
-	} else if (last_ == -1) {
+	} else if (divided.length == 1) {
 	    return new String[] { bundleName, null };
 	}
 
@@ -103,19 +117,20 @@ public class LocaleNameParser {
 
     /**
      * Using regular expressions, eliminate those instances in locale filenames
-     * of the type: "-Latn", "-Cyrl", "-Geor"...
+     * of the type: "-Latn", "-Cyrl", "-Geor"... Also, replaces all hyphens with
+     * underscores.
      * 
      * @param filename to remove the possible substring from
      * @return filename without that alphabet indication
      */
-    public static String removeAlphabetType(String filename) {
+    public static String formatName(String filename) {
 	Pattern pattern = Pattern.compile("-[A-Za-z]+(?=-[A-Za-z]{2})");
 	Matcher matcher = pattern.matcher(filename);
 
 	// Replace matched instances with an empty string
 	String result = matcher.replaceAll("");
 
-	return result;
+	return result.replace("-", "_");
     }
 
 }

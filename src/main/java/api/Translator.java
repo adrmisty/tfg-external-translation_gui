@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import com.theokanning.openai.completion.chat.ChatMessage;
 
-import main.java.utils.LocaleFileWriter;
+import main.java.file.LocaleFileWriter;
 
 /**
  * Translates a given input .properties file into another one in the specified
@@ -32,12 +32,13 @@ public class Translator {
      * target language, accesses API to carry out translation and saves the
      * results as text.
      * 
-     * @param targetLang, target language (format: "English, United States")
+     * @param int index of the target language (format: "English, United
+     *            States")
      * @return translated texts as a string
      * @throws Exception if there is an error with the API
      */
-    public void translateTo(String target) throws Exception {
-	file.setTargetLanguage(target);
+    public void translateTo(int index) throws Exception {
+	file.setTargetLanguage(index);
 	this.results = apiTranslate(file.getProperties(),
 		file.getSourceLanguage(), file.getTargetLanguage());
     }
@@ -73,14 +74,13 @@ public class Translator {
      * Writes property keys into a new file so that the user can execute the
      * manual translation.
      * 
-     * @param target: string representation of the language
-     * @param path:   path of the directory where to write the translation
+     * @param index: integer index of the string representation of the language
+     * @param path:  path of the directory where to write the translation
      * @return path: path of the file with the translation
      * @throws Exception
      */
-    public String manualTranslateTo(String target, String path)
-	    throws Exception {
-	file.setTargetLanguage(target);
+    public String manualTranslateTo(int index, String path) throws Exception {
+	file.setTargetLanguage(index);
 	return file.manualWrite(path);
     }
 
