@@ -7,11 +7,9 @@ _externalized translation service for programs_, using the large language model 
 Developed by **Adriana Rodríguez Flórez**, undergraduate student at the BSc in Computer Science
 and Software Engineering at the University of Oviedo (Asturias, Spain).
 
-### To-Do's
-¡IMPORTANTE!
-* Añadir exception handling: no tirar las excepciones y capturarlas en el mismo sitio.
-* Refactorizar el código, ordenarlo...
-* Analizar cómo responde a distintos inputs.
+### Correcciones to-do
+* Tokenizar las requests y realizar distintas requests para tamaños distintos de input (ej. intentar con ruso, armenio y griego) para asegurar respuestas completas
+* Investigar lo de la API rest
 
 
 ## 🏛️ Architecture

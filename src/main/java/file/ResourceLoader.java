@@ -9,11 +9,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -31,10 +32,10 @@ public class ResourceLoader {
     /**
      * File paths to respective resources
      */
-    private final static String LANGUAGES_FILE = "/main/resources/other/languages_en_US.txt";
-    private final static String FONT_FILE = "/main/resources/other/sf-pro.otf";
-    private final static String API_PROPERTIES_FILE = "/main/resources/properties/api.properties";
-    private final static String CONFIG_FILE = "/main/resources/properties/config.properties";
+    private final static String LANGUAGES_FILE = "/other/languages_en_US.txt";
+    private final static String FONT_FILE = "/other/sf-pro.otf";
+    private final static String API_PROPERTIES_FILE = "/properties/api.properties";
+    private final static String CONFIG_FILE = "/properties/config.properties";
 
     /**
      * Parses a .properties file content onto a Properties object.
@@ -176,19 +177,38 @@ public class ResourceLoader {
     }
 
     /**
-     * @return list of all supported languages and localization of the program
+     * @param resource bundle with localized messages
+     * @return map of all supported languages of the program in its locale, with
+     *         their index in the real English list as value
      */
-    public static List<String> getSupportedLanguagesInEnglish() {
-	try {
-	    URL res = ResourceLoader.class.getResource(LANGUAGES_FILE);
-	    File f = new File(res.toURI());
-	    List<String> list = Files.readAllLines(f.toPath());
-	    return list;
-	} catch (URISyntaxException | IOException ex) {
-	    Logger.getLogger(ResourceLoader.class.getName()).log(Level.SEVERE,
-		    null, ex);
-	    return null;
+    public static Map<String, Integer> getMapSupportedLanguages(
+	    ResourceBundle messages) {
+	List<String> list = getSupportedLanguages(messages);
+	Map<String, Integer> mapLanguages = new HashMap<String, Integer>();
+
+	for (int i = 0; i < list.size(); i++) {
+	    mapLanguages.put(list.get(i), i);
 	}
+
+	return mapLanguages;
+    }
+
+    /**
+     * @return map of all supported languages of the program in English, with
+     *         their index as key
+     * @throws Exception
+     */
+    public static Map<Integer, String> getMapSupportedLanguages_English()
+	    throws Exception {
+	URL res = ResourceLoader.class.getResource(LANGUAGES_FILE);
+	File f = new File(res.toURI());
+	List<String> list = Files.readAllLines(f.toPath());
+	Map<Integer, String> mapLanguages = new HashMap<Integer, String>();
+
+	for (int i = 0; i < list.size(); i++) {
+	    mapLanguages.put(i, list.get(i));
+	}
+	return mapLanguages;
     }
 
 }

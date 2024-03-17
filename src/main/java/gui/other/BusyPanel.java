@@ -107,8 +107,8 @@ public class BusyPanel extends JPanel {
     private JLabel getLblImage() {
 	if (lblImage == null) {
 	    lblImage = new JLabel("");
-	    lblImage.setIcon(new ImageIcon(BusyPanel.class
-		    .getResource("/main/resources/img/done-icon.png")));
+	    lblImage.setIcon(new ImageIcon(
+		    BusyPanel.class.getResource("/img/done-icon.png")));
 	    lblImage.setVisible(false);
 	}
 	return lblImage;

@@ -8,8 +8,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collections;
+import java.util.List;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -160,13 +161,36 @@ public class CardMode extends JPanel {
 		    }
 		}
 	    });
-	    comboBox.setBounds(197, 185, 201, 32);
-	    comboBox.setModel(new DefaultComboBoxModel<String>(
-		    ResourceLoader.getSupportedLanguages(root.getMessages())
-			    .toArray(new String[0])));
+	    comboBox.setBounds(158, 185, 280, 32);
 	    comboBox.setFont(ResourceLoader.getFont().deriveFont(15f));
+	    sortComboBox();
 	}
 	return comboBox;
+    }
+
+    /**
+     * Sorts all the language in the combo box alphabetically, while having the
+     * first element always being the same.
+     */
+    private void sortComboBox() {
+	// Add all elements to combo box
+	List<String> languages = ResourceLoader
+		.getSupportedLanguages(root.getMessages());
+	String first = languages.get(0);
+
+	for (int i = 1; i < comboBox.getItemCount(); i++) {
+	    comboBox.addItem(comboBox.getItemAt(i));
+	}
+
+	Collections.sort(languages);
+	comboBox.removeAllItems();
+	comboBox.addItem(first);
+
+	for (String s : languages) {
+	    if (!s.equals(first)) {
+		comboBox.addItem(s);
+	    }
+	}
     }
 
     private JLabel getLblChoose() {
@@ -175,7 +199,7 @@ public class CardMode extends JPanel {
 		    root.getMessages().getString("label.mode.type"));
 	    lblChoose.setForeground(SystemColor.textHighlight);
 	    lblChoose.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblChoose.setBounds(131, 44, 327, 22);
+	    lblChoose.setBounds(67, 44, 448, 22);
 	    lblChoose.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return lblChoose;
@@ -189,7 +213,7 @@ public class CardMode extends JPanel {
 	    lblLanguage.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblLanguage.setForeground(SystemColor.textHighlight);
 	    lblLanguage.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblLanguage.setBounds(131, 155, 327, 19);
+	    lblLanguage.setBounds(67, 155, 448, 19);
 	}
 	return lblLanguage;
     }
@@ -198,7 +222,7 @@ public class CardMode extends JPanel {
 	if (lblChooseTranslation == null) {
 	    lblChooseTranslation = new JLabel(
 		    root.getMessages().getString("label.mode.title"));
-	    lblChooseTranslation.setBounds(0, 5, 586, 76);
+	    lblChooseTranslation.setBounds(0, 0, 586, 81);
 	    lblChooseTranslation.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblChooseTranslation
 		    .setFont(ResourceLoader.getFont().deriveFont(40f));
@@ -252,8 +276,8 @@ public class CardMode extends JPanel {
 		    root.show("file");
 		}
 	    });
-	    btnBack_Mode.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/home-icon.png")));
+	    btnBack_Mode.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/home-icon.png")));
 	    btnBack_Mode.setBounds(20, 11, 31, 37);
 	    btnBack_Mode.setMnemonic('b');
 	    btnBack_Mode.setBorder(null);
@@ -269,8 +293,7 @@ public class CardMode extends JPanel {
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.setLanguage((String) comboBox.getSelectedItem(),
-			    comboBox.getSelectedIndex());
+		    root.setLanguage((String) comboBox.getSelectedItem());
 		    if (btnAutomatic_Mode.isSelected()) {
 			root.show("automatic");
 		    } else {
@@ -278,7 +301,7 @@ public class CardMode extends JPanel {
 		    }
 		}
 	    });
-	    btnNext_Mode.setBounds(448, 13, 86, 33);
+	    btnNext_Mode.setBounds(421, 11, 115, 35);
 	    btnNext_Mode.setMnemonic('n');
 	    btnNext_Mode.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_Mode.setEnabled(false);
@@ -289,8 +312,8 @@ public class CardMode extends JPanel {
     private JButton getBtnHelp_Mode() {
 	if (btnHelp_Mode == null) {
 	    btnHelp_Mode = new JButton("");
-	    btnHelp_Mode.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/help.png")));
+	    btnHelp_Mode.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/help.png")));
 	    btnHelp_Mode.setBounds(537, 7, 49, 41);
 	    btnHelp_Mode.setToolTipText(
 		    root.getMessages().getString("tooltip.mode"));

@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  * Manager for the processing and writing of a file's translation.
@@ -41,8 +42,8 @@ public class LocaleFileWriter {
     private Path temporaryFile;
     private boolean isFileTemporary = false;
 
-    public LocaleFileWriter() {
-	fileProcessor = new LocaleFileProcessor();
+    public LocaleFileWriter(ResourceBundle messages) throws Exception {
+	fileProcessor = new LocaleFileProcessor(messages);
     }
 
     /*
@@ -189,8 +190,8 @@ public class LocaleFileWriter {
      * @param index of the targetLanguage, format: "English, United States"
      * @throws Exception if specified Locale is not supported yet
      */
-    public void setTargetLanguage(int index) throws Exception {
-	this.targetLanguage = fileProcessor.getTargetLanguage(index);
+    public void setTargetLanguage(String language) throws Exception {
+	this.targetLanguage = fileProcessor.getTargetLanguage(language);
     }
 
     /**

@@ -100,7 +100,7 @@ public class CardFile extends JPanel {
 	if (lblDragText == null) {
 	    lblDragText = new JLabel(
 		    root.getMessages().getString("label.file.dnd"));
-	    lblDragText.setBounds(156, 84, 282, 19);
+	    lblDragText.setBounds(156, 84, 299, 19);
 	    lblDragText.setLabelFor(getLblDrag());
 	    lblDragText.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblDragText.setFont(ResourceLoader.getFont().deriveFont(15f));
@@ -126,9 +126,9 @@ public class CardFile extends JPanel {
     private JLabel getLblDrag() {
 	if (lblDrag == null) {
 	    lblDrag = new JLabel("");
-	    lblDrag.setBounds(145, 11, 311, 141);
-	    lblDrag.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/dnd.png")));
+	    lblDrag.setBounds(156, 11, 299, 141);
+	    lblDrag.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/dnd.png")));
 	    lblDrag.setToolTipText(
 		    root.getMessages().getString("tooltip.file"));
 
@@ -201,8 +201,8 @@ public class CardFile extends JPanel {
 		    }
 		}
 	    });
-	    btnBack_File.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/home-icon.png")));
+	    btnBack_File.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/home-icon.png")));
 	    btnBack_File.setMnemonic('h');
 	    btnBack_File.setBorder(null);
 	    btnBack_File.setBackground(SystemColor.window);
@@ -231,7 +231,7 @@ public class CardFile extends JPanel {
 	    btnNext_File.setMnemonic('b');
 	    btnNext_File.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_File.setEnabled(false);
-	    btnNext_File.setBounds(448, 13, 86, 33);
+	    btnNext_File.setBounds(421, 11, 115, 35);
 	}
 	return btnNext_File;
     }
@@ -239,8 +239,8 @@ public class CardFile extends JPanel {
     private JButton getBtnHelp_File() {
 	if (btnHelp_File == null) {
 	    btnHelp_File = new JButton("");
-	    btnHelp_File.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/help.png")));
+	    btnHelp_File.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/help.png")));
 	    btnHelp_File.setToolTipText(
 		    root.getMessages().getString("tooltip.file"));
 	    btnHelp_File.setMnemonic('b');
@@ -355,7 +355,7 @@ public class CardFile extends JPanel {
 	if (btnBrowse == null) {
 	    btnBrowse = new JButton(
 		    root.getMessages().getString("button.browse"));
-	    btnBrowse.setBounds(349, 166, 89, 23);
+	    btnBrowse.setBounds(349, 166, 107, 23);
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {

@@ -149,8 +149,8 @@ public class CardAuto extends JPanel {
 	if (btnSave_Auto == null) {
 	    btnSave_Auto = new JButton(
 		    root.getMessages().getString("button.save"));
-	    btnSave_Auto.setIcon(new ImageIcon(CardAuto.class
-		    .getResource("/main/resources/img/save-icon.png")));
+	    btnSave_Auto.setIcon(new ImageIcon(
+		    CardAuto.class.getResource("/img/save-icon.png")));
 	    btnSave_Auto.setEnabled(false);
 	    btnSave_Auto.addActionListener(new ActionListener() {
 		@Override
@@ -168,7 +168,7 @@ public class CardAuto extends JPanel {
 	    });
 	    btnSave_Auto.setFont(btnSave_Auto.getFont().deriveFont(20f));
 	    btnSave_Auto.setFocusable(false);
-	    btnSave_Auto.setBounds(308, 163, 153, 42);
+	    btnSave_Auto.setBounds(306, 186, 187, 42);
 	}
 	return btnSave_Auto;
     }
@@ -187,7 +187,7 @@ public class CardAuto extends JPanel {
 	if (lblTitle_Auto == null) {
 	    lblTitle_Auto = new JLabel(
 		    root.getMessages().getString("label.auto.title.loading"));
-	    lblTitle_Auto.setBounds(10, 0, 586, 52);
+	    lblTitle_Auto.setBounds(0, 0, 586, 52);
 	    lblTitle_Auto.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblTitle_Auto.setForeground(Color.BLACK);
 	    lblTitle_Auto.setFont(ResourceLoader.getFont().deriveFont(30f));
@@ -250,8 +250,8 @@ public class CardAuto extends JPanel {
 		    root.show("mode");
 		}
 	    });
-	    btnBack_Auto.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/home-icon.png")));
+	    btnBack_Auto.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/home-icon.png")));
 	    btnBack_Auto.setMnemonic('b');
 	    btnBack_Auto.setBorder(null);
 	    btnBack_Auto.setBackground(SystemColor.window);
@@ -266,8 +266,8 @@ public class CardAuto extends JPanel {
 		    .getString("label.auto.subtitle.loading"));
 	    lblTime.setForeground(SystemColor.textHighlight);
 	    lblTime.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblTime.setBounds(173, 120, 256, 32);
-	    lblTime.setFont(ResourceLoader.getFont().deriveFont(15f));
+	    lblTime.setBounds(97, 143, 398, 32);
+	    lblTime.setFont(ResourceLoader.getFont().deriveFont(18f));
 	}
 	return lblTime;
     }
@@ -288,12 +288,12 @@ public class CardAuto extends JPanel {
 		    }
 		}
 	    });
-	    btnReview_Auto.setIcon(new ImageIcon(CardAuto.class
-		    .getResource("/main/resources/img/review-icon.png")));
+	    btnReview_Auto.setIcon(new ImageIcon(
+		    CardAuto.class.getResource("/img/review-icon.png")));
 	    btnReview_Auto.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    btnReview_Auto.setFocusable(false);
 	    btnReview_Auto.setEnabled(false);
-	    btnReview_Auto.setBounds(131, 163, 153, 42);
+	    btnReview_Auto.setBounds(97, 187, 187, 42);
 	}
 	return btnReview_Auto;
     }

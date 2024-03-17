@@ -101,8 +101,8 @@ public class CardEnd extends JPanel {
 		    root.show("file");
 		}
 	    });
-	    leftButton_End.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/translate.png")));
+	    leftButton_End.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/translate.png")));
 	    leftButton_End.setMnemonic('s');
 	    leftButton_End.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
@@ -119,8 +119,8 @@ public class CardEnd extends JPanel {
 		    System.exit(0);
 		}
 	    });
-	    rightButton_End.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/exit.png")));
+	    rightButton_End.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/exit.png")));
 	    rightButton_End.setMnemonic('l');
 	    rightButton_End.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
@@ -183,8 +183,8 @@ public class CardEnd extends JPanel {
     private JLabel getLblLogo_End() {
 	if (lblLogo_End == null) {
 	    lblLogo_End = new JLabel("");
-	    lblLogo_End.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/openai-logo.png")));
+	    lblLogo_End.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/openai-logo.png")));
 	    lblLogo_End.setHorizontalAlignment(SwingConstants.CENTER);
 	}
 	return lblLogo_End;

@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.SystemColor;
@@ -20,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.text.SimpleAttributeSet;
@@ -41,7 +41,6 @@ public class CardInfo extends JPanel {
     private JPanel downPanel_Info;
     private JPanel centerPanel_Info;
     private JPanel titlePanel_Info;
-    private JPanel unioviPanel;
     private JPanel authorPanel;
     private JPanel backEmptyPanel_Info;
     private JPanel backPanel_Info;
@@ -49,11 +48,8 @@ public class CardInfo extends JPanel {
     /*
      * Labels & text
      */
-    private JLabel lblProject;
-    private JLabel lblEmpty_Info;
+    private JTextArea lblProject;
     private JLabel lblUnioviLogo;
-    private JLabel lblEmpty_1;
-    private JLabel lblEmpty_1_1;
     private JLabel lblEmpty_2;
     private JLabel lblEmpty_2_1;
     private JLabel lblEmpty_2_1_1;
@@ -65,6 +61,7 @@ public class CardInfo extends JPanel {
     private JTextPane textDescription;
     private JLabel lblBack;
     private JButton btnBack_Info;
+    private JTextArea textArea;
 
     public CardInfo(MainWindow root) {
 	this.root = root;
@@ -103,30 +100,11 @@ public class CardInfo extends JPanel {
 	    titlePanel_Info = new JPanel();
 	    titlePanel_Info.setBounds(0, 0, 586, 142);
 	    titlePanel_Info.setBackground(SystemColor.window);
-	    titlePanel_Info.setLayout(new BorderLayout(0, 0));
-	    titlePanel_Info.add(getLblEmpty_Info(), BorderLayout.NORTH);
+	    titlePanel_Info.setLayout(null);
 	    titlePanel_Info.add(getLblProject());
-	    titlePanel_Info.add(getUnioviPanel(), BorderLayout.WEST);
+	    titlePanel_Info.add(getLblUnioviLogo());
 	}
 	return titlePanel_Info;
-    }
-
-    private JLabel getLblProject() {
-	if (lblProject == null) {
-	    lblProject = new JLabel(root.getMessages().getString("label.tfg"));
-	    lblProject.setLabelFor(getLblUnioviLogo());
-	    lblProject.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblProject.setFont(ResourceLoader.getFont().deriveFont(40f));
-	}
-	return lblProject;
-    }
-
-    private JLabel getLblEmpty_Info() {
-	if (lblEmpty_Info == null) {
-	    lblEmpty_Info = new JLabel(" ");
-	    lblEmpty_Info.setFont(new Font("Tahoma", Font.PLAIN, 40));
-	}
-	return lblEmpty_Info;
     }
 
     private JPanel getCenterPanel_Info() {
@@ -144,43 +122,16 @@ public class CardInfo extends JPanel {
 	return centerPanel_Info;
     }
 
-    private JPanel getUnioviPanel() {
-	if (unioviPanel == null) {
-	    unioviPanel = new JPanel();
-	    unioviPanel.setBackground(SystemColor.window);
-	    unioviPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-	    unioviPanel.add(getLblEmpty_1_1());
-	    unioviPanel.add(getLblUnioviLogo());
-	    unioviPanel.add(getLblEmpty_1());
-	}
-	return unioviPanel;
-    }
-
     private JLabel getLblUnioviLogo() {
 	if (lblUnioviLogo == null) {
 	    lblUnioviLogo = new JLabel("");
-	    lblUnioviLogo.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/uniovi-logo.png")));
+	    lblUnioviLogo.setBounds(38, 33, 113, 83);
+	    lblUnioviLogo.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/uniovi-logo.png")));
 	    lblUnioviLogo.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblUnioviLogo.setFont(ResourceLoader.getFont().deriveFont(30f));
 	}
 	return lblUnioviLogo;
-    }
-
-    private JLabel getLblEmpty_1() {
-	if (lblEmpty_1 == null) {
-	    lblEmpty_1 = new JLabel(" ");
-	    lblEmpty_1.setFont(new Font("Tahoma", Font.PLAIN, 40));
-	}
-	return lblEmpty_1;
-    }
-
-    private JLabel getLblEmpty_1_1() {
-	if (lblEmpty_1_1 == null) {
-	    lblEmpty_1_1 = new JLabel(" ");
-	    lblEmpty_1_1.setFont(new Font("Tahoma", Font.PLAIN, 40));
-	}
-	return lblEmpty_1_1;
     }
 
     private JLabel getLblEmpty_2() {
@@ -338,8 +289,8 @@ public class CardInfo extends JPanel {
 		    root.show("main");
 		}
 	    });
-	    btnBack_Info.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/home-icon.png")));
+	    btnBack_Info.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/home-icon.png")));
 	    btnBack_Info.setMnemonic('h');
 	    btnBack_Info.setBorder(null);
 	    btnBack_Info.setBackground(SystemColor.window);
@@ -348,4 +299,17 @@ public class CardInfo extends JPanel {
 	return btnBack_Info;
     }
 
+    private JTextArea getLblProject() {
+	if (lblProject == null) {
+	    lblProject = new JTextArea(
+		    root.getMessages().getString("label.tfg"));
+	    lblProject.setEditable(false);
+	    lblProject.setLineWrap(true);
+	    lblProject.setRows(2);
+	    lblProject.setWrapStyleWord(true);
+	    lblProject.setBounds(180, 48, 406, 94);
+	    lblProject.setFont(ResourceLoader.getFont().deriveFont(40f));
+	}
+	return lblProject;
+    }
 }

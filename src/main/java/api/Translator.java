@@ -3,6 +3,7 @@ package main.java.api;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import com.theokanning.openai.completion.chat.ChatMessage;
 
@@ -21,9 +22,9 @@ public class Translator {
     private static LocaleFileWriter file;
     private String results;
 
-    public Translator() {
+    public Translator(ResourceBundle messages) throws Exception {
 	api = new TranslationApi(); // API access
-	file = new LocaleFileWriter(); // Localization file manager
+	file = new LocaleFileWriter(messages); // Localization file manager
 	reset(); // File initialization
     }
 
@@ -32,13 +33,12 @@ public class Translator {
      * target language, accesses API to carry out translation and saves the
      * results as text.
      * 
-     * @param int index of the target language (format: "English, United
-     *            States")
+     * @param the target language (format: "English, United States")
      * @return translated texts as a string
      * @throws Exception if there is an error with the API
      */
-    public void translateTo(int index) throws Exception {
-	file.setTargetLanguage(index);
+    public void translateTo(String language) throws Exception {
+	file.setTargetLanguage(language);
 	this.results = apiTranslate(file.getProperties(),
 		file.getSourceLanguage(), file.getTargetLanguage());
     }
@@ -74,13 +74,15 @@ public class Translator {
      * Writes property keys into a new file so that the user can execute the
      * manual translation.
      * 
-     * @param index: integer index of the string representation of the language
-     * @param path:  path of the directory where to write the translation
+     * @param language: string representation of the language in the program's
+     *                  locale
+     * @param path:     path of the directory where to write the translation
      * @return path: path of the file with the translation
      * @throws Exception
      */
-    public String manualTranslateTo(int index, String path) throws Exception {
-	file.setTargetLanguage(index);
+    public String manualTranslateTo(String language, String path)
+	    throws Exception {
+	file.setTargetLanguage(language);
 	return file.manualWrite(path);
     }
 

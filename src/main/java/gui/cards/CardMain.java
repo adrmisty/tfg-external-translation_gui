@@ -149,7 +149,7 @@ public class CardMain extends JPanel {
 	    lblSlogan = new JLabel(
 		    root.getMessages().getString("label.slogan"));
 	    lblSlogan.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblSlogan.setFont(ResourceLoader.getFont().deriveFont(30f));
+	    lblSlogan.setFont(ResourceLoader.getFont().deriveFont(25f));
 	    lblSlogan.setBackground(SystemColor.window);
 	}
 	return lblSlogan;
@@ -178,8 +178,8 @@ public class CardMain extends JPanel {
     private JLabel getLblLogo() {
 	if (lblLogo == null) {
 	    lblLogo = new JLabel("");
-	    lblLogo.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/openai-logo.png")));
+	    lblLogo.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/openai-logo.png")));
 	    lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
 	}
 	return lblLogo;

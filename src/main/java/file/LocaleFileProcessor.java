@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  * Processes a localization file (its content, name and format) so that its
@@ -18,10 +19,14 @@ public class LocaleFileProcessor {
     // Locale
     private static final String _DEFAULT_CODE = Locale.getDefault()
 	    .toLanguageTag();
-    private static Map<String, Locale> map;
 
-    public LocaleFileProcessor() {
-	map = LocaleNameParser.getMap();
+    // Language-index-locale mappings
+    private static Map<String, Locale> map;
+    private static Map<String, Integer> localeLanguages = new HashMap<>();
+    private static Map<Integer, String> englishLanguages = new HashMap<>();
+
+    public LocaleFileProcessor(ResourceBundle messages) throws Exception {
+	setMappings(messages);
     }
 
     /**
@@ -59,15 +64,17 @@ public class LocaleFileProcessor {
     }
 
     /**
-     * From the index of a given string specifying a target language, retrieve
-     * its assigned Locale object.
+     * From a given localized string specifying a target language, retrieve its
+     * assigned Locale object.
      * 
-     * @param index of target language as a string
+     * @param bundle    of localized messages
+     * @param localized target language as a string
      * @return locale object
      * @throws Exception in case of unavailable target locale
      */
-    public Locale getTargetLanguage(int index) throws Exception {
-	return LocaleNameParser.extract(map, index);
+    public Locale getTargetLanguage(String language) throws Exception {
+	return LocaleNameParser.extract(map, localeLanguages, englishLanguages,
+		language);
     }
 
     /**
@@ -123,4 +130,16 @@ public class LocaleFileProcessor {
 	return sb;
     }
 
+    /**
+     * Establishes the mappings between index and meaning of the different
+     * languages.
+     * 
+     * @param messages: localized messages in the program's locale
+     * @throws Exception
+     */
+    private void setMappings(ResourceBundle messages) throws Exception {
+	map = LocaleNameParser.getMap();
+	localeLanguages = ResourceLoader.getMapSupportedLanguages(messages);
+	englishLanguages = ResourceLoader.getMapSupportedLanguages_English();
+    }
 }

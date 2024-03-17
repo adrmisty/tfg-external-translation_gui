@@ -1,7 +1,6 @@
 package main.java.file;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -33,21 +32,22 @@ public class LocaleNameParser {
 	    map.put(key, locale);
 	}
 
-	System.out.println(map);
 	return map;
     }
 
     /**
      * From the localized language index, return the specific locale.
      * 
-     * @param map:  mapping of languages and locale objects
-     * @param index of the language in the program's locale at the moment
+     * @param bundle   of localized messages
+     * @param language in the program's locale at the moment
      * @return name of that language+country in English
+     * @throws Exception
      */
-    private static String getTranslatedLanguage(int index) {
-	List<String> langs = ResourceLoader.getSupportedLanguagesInEnglish();
-	String inEnglish = langs.get(index).toLowerCase();
-	return inEnglish;
+    private static String getTranslatedLanguage(
+	    Map<String, Integer> localeLangs, Map<Integer, String> englishLangs,
+	    String language) throws Exception {
+	int index = localeLangs.get(language);
+	return englishLangs.get(index).toLowerCase();
     }
 
     /**
@@ -57,16 +57,18 @@ public class LocaleNameParser {
      * @param index of the chosen string representing language+country
      * @return locale object representing the input
      */
-    public static Locale extract(Map<String, Locale> map, int index)
-	    throws Exception {
+    public static Locale extract(Map<String, Locale> map,
+	    Map<String, Integer> localeLangs, Map<Integer, String> englishLangs,
+	    String language) throws Exception {
 
-	String input = getTranslatedLanguage(index);
+	String input = getTranslatedLanguage(localeLangs, englishLangs,
+		language);
 	String[] parts = input.split(", ");
-	String language = parts[0].trim().toLowerCase();
+	String lang = parts[0].trim().toLowerCase();
 	String country = parts[1].trim().toLowerCase();
 
 	// Create a Locale object with language and country
-	return map.get(language + "_" + country);
+	return map.get(lang + "_" + country);
     }
 
     /**

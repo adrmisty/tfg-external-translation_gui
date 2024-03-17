@@ -34,7 +34,7 @@ public class MainWindow extends JFrame {
     private static final long serialVersionUID = 1L;
 
     // API access for translation
-    private Translator translator = new Translator();
+    private Translator translator;
 
     // Locale
     private ResourceBundle messages;
@@ -54,19 +54,20 @@ public class MainWindow extends JFrame {
     private String inputFilePath = "";
     private String directoryPath = "";
     private String language = "";
-    private int languageIndex;
 
     /**
      * Create the frame.
+     * 
+     * @throws Exception
      */
-    public MainWindow() {
+    public MainWindow() throws Exception {
 	localize(Locale.getDefault());
 
 	setBackground(SystemColor.window);
 	setResizable(false);
 	setAutoRequestFocus(false);
-	setIconImage(Toolkit.getDefaultToolkit().getImage(
-		MainWindow.class.getResource("/main/resources/img/icon.png")));
+	setIconImage(Toolkit.getDefaultToolkit()
+		.getImage(MainWindow.class.getResource("/img/icon.png")));
 	setTitle("FileLingual");
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setFont(ResourceLoader.getFont());
@@ -159,21 +160,20 @@ public class MainWindow extends JFrame {
     }
 
     public void autoTranslate() throws Exception {
-	translator.translateTo(this.languageIndex);
+	translator.translateTo(language);
     }
 
     public void manualTranslate() throws Exception {
-	IDE.open(contentPane, translator.manualTranslateTo(this.languageIndex,
-		directoryPath));
+	IDE.open(contentPane,
+		translator.manualTranslateTo(language, directoryPath));
     }
 
     public void review() throws IOException {
 	IDE.open(contentPane, translator.review());
     }
 
-    public void setLanguage(String language, int index) {
+    public void setLanguage(String language) {
 	this.language = language;
-	this.languageIndex = index;
     }
 
     public void chooseFile(String path) {
@@ -206,8 +206,9 @@ public class MainWindow extends JFrame {
 	cardMode.reset();
     }
 
-    public void localize(Locale locale) {
+    public void localize(Locale locale) throws Exception {
 	this.messages = ResourceBundle.getBundle("Messages", locale);
+	this.translator = new Translator(this.messages);
     }
 
     public ResourceBundle getMessages() {

@@ -20,7 +20,7 @@ public class Main {
 	    @Override
 	    public void run() {
 		try {
-		    Locale.setDefault(new Locale("ru_RU"));
+		    Locale.setDefault(new Locale("hy_AM"));
 		    UIManager.setLookAndFeel(
 			    "com.formdev.flatlaf.themes.FlatMacLightLaf");
 		    MainWindow frame = new MainWindow();

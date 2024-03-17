@@ -1,6 +1,5 @@
 package main.java.gui.cards;
 
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -36,7 +35,6 @@ public class CardManual extends JPanel {
      * Labels & text
      */
     private JButton btnTranslate_Manual;
-    private JLabel lblTitle_Manual;
     private JPanel backEmptyPanel_Manual;
     private JLabel lblBack_Manual;
     private JButton btnBack_Manual;
@@ -50,6 +48,7 @@ public class CardManual extends JPanel {
     private JTextField txtLanguage;
 
     private String language;
+    private JLabel lblManualTitle;
 
     public CardManual(MainWindow root) {
 	this.root = root;
@@ -92,11 +91,10 @@ public class CardManual extends JPanel {
     private JPanel getCenterPanel_Auto() {
 	if (centerPanel_Manual == null) {
 	    centerPanel_Manual = new JPanel();
-	    centerPanel_Manual.setBounds(0, 63, 586, 253);
+	    centerPanel_Manual.setBounds(0, 81, 586, 235);
 	    centerPanel_Manual.setLayout(null);
 	    centerPanel_Manual.setBackground(SystemColor.window);
 	    centerPanel_Manual.add(getBtnTranslate_Manual());
-	    centerPanel_Manual.add(getLvlProgress_Auto_1());
 	    centerPanel_Manual.add(getLblLanguage());
 	    centerPanel_Manual.add(getLblFileLocation());
 	    centerPanel_Manual.add(getTxtPath());
@@ -110,8 +108,8 @@ public class CardManual extends JPanel {
 	if (btnTranslate_Manual == null) {
 	    btnTranslate_Manual = new JButton(
 		    root.getMessages().getString("button.translate"));
-	    btnTranslate_Manual.setIcon(new ImageIcon(CardManual.class
-		    .getResource("/main/resources/img/save-icon.png")));
+	    btnTranslate_Manual.setIcon(new ImageIcon(
+		    CardManual.class.getResource("/img/save-icon.png")));
 	    btnTranslate_Manual.setEnabled(false);
 	    btnTranslate_Manual.addActionListener(new ActionListener() {
 		@Override
@@ -125,9 +123,9 @@ public class CardManual extends JPanel {
 		}
 	    });
 	    btnTranslate_Manual
-		    .setFont(btnTranslate_Manual.getFont().deriveFont(20f));
+		    .setFont(btnTranslate_Manual.getFont().deriveFont(15f));
 	    btnTranslate_Manual.setFocusable(false);
-	    btnTranslate_Manual.setBounds(232, 150, 153, 42);
+	    btnTranslate_Manual.setBounds(229, 165, 153, 42);
 	}
 	return btnTranslate_Manual;
     }
@@ -136,22 +134,11 @@ public class CardManual extends JPanel {
 	if (northPanel_Manual == null) {
 	    northPanel_Manual = new JPanel();
 	    northPanel_Manual.setBackground(SystemColor.window);
-	    northPanel_Manual.setBounds(0, 0, 586, 65);
+	    northPanel_Manual.setBounds(0, 0, 586, 83);
 	    northPanel_Manual.setLayout(null);
+	    northPanel_Manual.add(getLblManualTitle());
 	}
 	return northPanel_Manual;
-    }
-
-    private JLabel getLvlProgress_Auto_1() {
-	if (lblTitle_Manual == null) {
-	    lblTitle_Manual = new JLabel(
-		    root.getMessages().getString("label.manual.title"));
-	    lblTitle_Manual.setBounds(10, 0, 586, 52);
-	    lblTitle_Manual.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblTitle_Manual.setForeground(Color.BLACK);
-	    lblTitle_Manual.setFont(ResourceLoader.getFont().deriveFont(30f));
-	}
-	return lblTitle_Manual;
     }
 
     private JPanel getDownPanel_Manual() {
@@ -210,8 +197,8 @@ public class CardManual extends JPanel {
 		    root.show("mode");
 		}
 	    });
-	    btnBack_Manual.setIcon(new ImageIcon(MainWindow.class
-		    .getResource("/main/resources/img/home-icon.png")));
+	    btnBack_Manual.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/home-icon.png")));
 	    btnBack_Manual.setMnemonic('b');
 	    btnBack_Manual.setBorder(null);
 	    btnBack_Manual.setBackground(SystemColor.window);
@@ -226,7 +213,7 @@ public class CardManual extends JPanel {
 		    root.getMessages().getString("label.manual.language"));
 	    lblLanguage.setForeground(SystemColor.textHighlight);
 	    lblLanguage.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblLanguage.setBounds(46, 63, 199, 32);
+	    lblLanguage.setBounds(10, 63, 214, 32);
 	    lblLanguage.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return lblLanguage;
@@ -239,7 +226,7 @@ public class CardManual extends JPanel {
 	    lblFileLocation.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblFileLocation.setForeground(SystemColor.textHighlight);
 	    lblFileLocation.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblFileLocation.setBounds(46, 98, 199, 32);
+	    lblFileLocation.setBounds(10, 98, 214, 32);
 	}
 	return lblFileLocation;
     }
@@ -257,7 +244,7 @@ public class CardManual extends JPanel {
 	    btnNext_Manual.setMnemonic('b');
 	    btnNext_Manual.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_Manual.setEnabled(false);
-	    btnNext_Manual.setBounds(448, 13, 86, 33);
+	    btnNext_Manual.setBounds(461, 11, 115, 35);
 	}
 	return btnNext_Manual;
     }
@@ -266,7 +253,7 @@ public class CardManual extends JPanel {
 	if (txtPath == null) {
 	    txtPath = new JTextField();
 	    txtPath.setHorizontalAlignment(SwingConstants.CENTER);
-	    txtPath.setFont(ResourceLoader.getFont().deriveFont(14f));
+	    txtPath.setFont(ResourceLoader.getFont().deriveFont(12f));
 	    txtPath.setEditable(false);
 	    txtPath.setColumns(10);
 	    txtPath.setBounds(222, 100, 178, 30);
@@ -289,7 +276,7 @@ public class CardManual extends JPanel {
 	    });
 	    btnBrowse.setMnemonic('b');
 	    btnBrowse.setFont(btnBrowse.getFont().deriveFont(14f));
-	    btnBrowse.setBounds(410, 103, 89, 23);
+	    btnBrowse.setBounds(410, 103, 115, 23);
 	}
 	return btnBrowse;
     }
@@ -306,4 +293,15 @@ public class CardManual extends JPanel {
 	return txtLanguage;
     }
 
+    private JLabel getLblManualTitle() {
+	if (lblManualTitle == null) {
+	    lblManualTitle = new JLabel(
+		    root.getMessages().getString("label.manual.title"));
+	    lblManualTitle.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblManualTitle.setFont(ResourceLoader.getFont().deriveFont(40f));
+	    lblManualTitle.setBounds(0, 0, 586, 76);
+
+	}
+	return lblManualTitle;
+    }
 }
