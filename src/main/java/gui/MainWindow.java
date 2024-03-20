@@ -4,15 +4,19 @@ import java.awt.CardLayout;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import main.java.api.Translator;
-import main.java.file.ResourceLoader;
 import main.java.gui.cards.CardAuto;
 import main.java.gui.cards.CardEnd;
 import main.java.gui.cards.CardFile;
@@ -21,6 +25,9 @@ import main.java.gui.cards.CardMain;
 import main.java.gui.cards.CardManual;
 import main.java.gui.cards.CardMode;
 import main.java.gui.other.IDE;
+import main.java.gui.other.NumberedJMenuItem;
+import main.java.translate.Translator;
+import main.java.util.ResourceLoader;
 
 /**
  * Main Window of the application, which consists of several different views
@@ -54,6 +61,12 @@ public class MainWindow extends JFrame {
     private String inputFilePath = "";
     private String directoryPath = "";
     private String language = "";
+
+    /*
+     * Language setting
+     */
+    private JMenuBar menuBar;
+    private JMenu mnLanguage;
 
     /**
      * Create the frame.
@@ -90,6 +103,10 @@ public class MainWindow extends JFrame {
 	contentPane.add(getCardManual());
 	contentPane.add(getCardEnd());
 	currentCard = cardMain;
+
+	menuBar = new JMenuBar();
+	menuBar.add(getMnLanguage());
+	setJMenuBar(menuBar);
     }
 
     /**
@@ -209,6 +226,7 @@ public class MainWindow extends JFrame {
     public void localize(Locale locale) throws Exception {
 	this.messages = ResourceBundle.getBundle("Messages", locale);
 	this.translator = new Translator(this.messages);
+	repaint();
     }
 
     public ResourceBundle getMessages() {
@@ -273,6 +291,28 @@ public class MainWindow extends JFrame {
 	    cardEnd.setVisible(false);
 	}
 	return cardEnd;
+    }
+
+    // Localization
+
+    private JMenu getMnLanguage() {
+	if (mnLanguage == null) {
+	    mnLanguage = new JMenu("Language");
+	    addMenuItems();
+	}
+	return mnLanguage;
+    }
+
+    private void addMenuItems() {
+	String[] items = ResourceLoader.getLanguageNames(messages);
+	List<JMenuItem> menuItems = new ArrayList<>();
+	Map<Integer, String> map = ResourceLoader.getLanguageCode();
+
+	for (int i = 0; i < items.length; i++) {
+	    menuItems.add(new NumberedJMenuItem(this, map, items[i], i));
+	    mnLanguage.add(menuItems.get(i));
+	}
+
     }
 
 }

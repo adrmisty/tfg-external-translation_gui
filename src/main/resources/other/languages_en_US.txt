@@ -26,6 +26,7 @@ Finnish, Finland
 French, France
 Galician, Spain
 Georgian, Georgia
+German, Germany
 Greek, Greece
 Greek, Cyprus
 Gujarati, India

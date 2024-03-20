@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
-import main.java.file.ResourceLoader;
 import main.java.gui.MainWindow;
+import main.java.util.ResourceLoader;
 
 public class CardMain extends JPanel {
 
@@ -115,8 +115,8 @@ public class CardMain extends JPanel {
 	    rightButton
 		    .setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	    Font font = rightButton.getFont();
-	    @SuppressWarnings("rawtypes")
-	    Map attributes = font.getAttributes();
+	    Map<TextAttribute, Integer> attributes = (Map<TextAttribute, Integer>) font
+		    .getAttributes();
 	    attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
 	    rightButton.setFont(font.deriveFont(attributes));
 	}

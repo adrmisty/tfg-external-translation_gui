@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 
 import javax.swing.UIManager;
 
-import main.java.file.ResourceLoader;
 import main.java.gui.MainWindow;
+import main.java.util.ResourceLoader;
 
 public class Main {
 
@@ -20,7 +20,7 @@ public class Main {
 	    @Override
 	    public void run() {
 		try {
-		    Locale.setDefault(new Locale("hy_AM"));
+		    Locale.setDefault(new Locale("en_US"));
 		    UIManager.setLookAndFeel(
 			    "com.formdev.flatlaf.themes.FlatMacLightLaf");
 		    MainWindow frame = new MainWindow();

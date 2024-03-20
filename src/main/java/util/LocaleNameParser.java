@@ -1,4 +1,4 @@
-package main.java.file;
+package main.java.util;
 
 import java.util.HashMap;
 import java.util.Locale;

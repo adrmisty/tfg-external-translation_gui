@@ -1,4 +1,4 @@
-package main.java.file;
+package main.java.util.file;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -10,6 +10,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
+import main.java.util.LocaleNameParser;
+import main.java.util.ResourceLoader;
 
 /**
  * Manager for the processing and writing of a file's translation.

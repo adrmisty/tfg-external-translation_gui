@@ -1,4 +1,4 @@
-package main.java.file;
+package main.java.util;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -36,6 +36,8 @@ public class ResourceLoader {
     private final static String FONT_FILE = "/other/sf-pro.otf";
     private final static String API_PROPERTIES_FILE = "/properties/api.properties";
     private final static String CONFIG_FILE = "/properties/config.properties";
+    private final static String[] LANGUAGE_NAMES = { "English", "Spanish",
+	    "German", "Arabic", "Russian" };
 
     /**
      * Parses a .properties file content onto a Properties object.
@@ -209,6 +211,21 @@ public class ResourceLoader {
 	    mapLanguages.put(i, list.get(i));
 	}
 	return mapLanguages;
+    }
+
+    public static String[] getLanguageNames(ResourceBundle messages) {
+	return messages.getString("languages").split("-");
+    }
+
+    public static Map<Integer, String> getLanguageCode() {
+	Map<Integer, String> map = new HashMap<Integer, String>();
+	map.put(0, "en_US");
+	map.put(1, "es_ES");
+	map.put(2, "de_DE");
+	map.put(3, "ar_EG");
+	map.put(4, "ru_RU");
+
+	return map;
     }
 
 }

@@ -1,29 +1,27 @@
-package main.java.api;
+package main.java.translate;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import com.theokanning.openai.completion.chat.ChatMessage;
-
-import main.java.file.LocaleFileWriter;
+import main.java.translate.api.ApiTranslation;
+import main.java.util.file.LocaleFileWriter;
 
 /**
  * Translates a given input .properties file into another one in the specified
  * target language, via OpenAI's ChatCompletions API.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version 2.0 (February 2024)
+ * @version March 2024
  */
 public class Translator {
 
-    private static TranslationApi api;
+    private static ApiTranslation api;
     private static LocaleFileWriter file;
     private String results;
 
     public Translator(ResourceBundle messages) throws Exception {
-	api = new TranslationApi(); // API access
+	api = new ApiTranslation(); // API access
 	file = new LocaleFileWriter(messages); // Localization file manager
 	reset(); // File initialization
     }
@@ -116,9 +114,7 @@ public class Translator {
      */
     private String apiTranslate(Properties properties, String sourceLang,
 	    String targetLang) throws Exception {
-	List<ChatMessage> messages = api.setPrompt(properties, sourceLang,
-		targetLang);
-	return api.translate(messages);
+	return api.translate(properties, sourceLang, targetLang);
     }
 
     /**

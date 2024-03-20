@@ -1,4 +1,4 @@
-package main.java.file;
+package main.java.util.file;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -6,6 +6,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
+import main.java.util.LocaleNameParser;
+import main.java.util.ResourceLoader;
 
 /**
  * Processes a localization file (its content, name and format) so that its
