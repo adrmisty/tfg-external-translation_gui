@@ -87,14 +87,31 @@ public class MainWindow extends JFrame {
 	setBounds(100, 100, 600, 450);
 	this.setLocationRelativeTo(null);
 
-	// Card container
+	// Card layout
 	contentPane = new JPanel();
 	contentPane.setBackground(SystemColor.window);
 	contentPane.setBorder(null);
 	setContentPane(contentPane);
-
-	// Card layout
 	contentPane.setLayout(new CardLayout());
+
+	initWindow(Locale.getDefault());
+    }
+
+    public void initWindow(Locale locale) throws Exception {
+	contentPane.removeAll();
+	cardMain = null;
+	cardInfo = null;
+	cardFile = null;
+	cardMode = null;
+	cardAuto = null;
+	cardManual = null;
+	cardEnd = null;
+	mnLanguage = null;
+	menuBar = null;
+
+	localize(locale);
+
+	// Card container
 	contentPane.add(getCardMain());
 	contentPane.add(getCardInfo());
 	contentPane.add(getCardFile());
@@ -102,11 +119,11 @@ public class MainWindow extends JFrame {
 	contentPane.add(getCardAuto());
 	contentPane.add(getCardManual());
 	contentPane.add(getCardEnd());
-	currentCard = cardMain;
+	getMnLanguage();
 
-	menuBar = new JMenuBar();
-	menuBar.add(getMnLanguage());
-	setJMenuBar(menuBar);
+	currentCard = cardMain;
+	validate();
+	repaint();
     }
 
     /**
@@ -137,10 +154,10 @@ public class MainWindow extends JFrame {
 	    break;
 	case "automatic":
 	    currentCard = cardAuto;
-	    cardAuto.executeAutomaticTranslation();
+	    cardAuto.executeAutomaticTranslation(); // start task
 	    break;
 	case "end":
-	    currentCard = cardEnd;
+	    currentCard = cardEnd; // set name to be shown on screen
 	    cardEnd.setSavedFileName(translator.getSavedFileName());
 	    break;
 	default:
@@ -157,7 +174,7 @@ public class MainWindow extends JFrame {
      * @param message: explanation of the error
      */
     public void showErrorMessage(String message) {
-	JOptionPane.showMessageDialog(this, message, "FileLingual: error",
+	JOptionPane.showMessageDialog(this, message, "FileLingual",
 		JOptionPane.ERROR_MESSAGE);
     }
 
@@ -169,7 +186,7 @@ public class MainWindow extends JFrame {
      */
     public void showErrorMessage(Exception e, String message) {
 	JOptionPane.showMessageDialog(this, message + " " + e.getMessage(),
-		"FileLingual: error", JOptionPane.ERROR_MESSAGE);
+		"FileLingual", JOptionPane.ERROR_MESSAGE);
     }
 
     public void save() throws IOException {
@@ -226,7 +243,6 @@ public class MainWindow extends JFrame {
     public void localize(Locale locale) throws Exception {
 	this.messages = ResourceBundle.getBundle("Messages", locale);
 	this.translator = new Translator(this.messages);
-	repaint();
     }
 
     public ResourceBundle getMessages() {
@@ -295,21 +311,25 @@ public class MainWindow extends JFrame {
 
     // Localization
 
-    private JMenu getMnLanguage() {
+    private JMenu getMnLanguage() throws Exception {
 	if (mnLanguage == null) {
-	    mnLanguage = new JMenu("Language");
+	    menuBar = new JMenuBar();
+	    mnLanguage = new JMenu(this.messages.getString("menu.language"));
+	    menuBar.add(mnLanguage);
+	    setJMenuBar(menuBar);
 	    addMenuItems();
 	}
 	return mnLanguage;
     }
 
-    private void addMenuItems() {
+    private void addMenuItems() throws Exception {
 	String[] items = ResourceLoader.getLanguageNames(messages);
 	List<JMenuItem> menuItems = new ArrayList<>();
 	Map<Integer, String> map = ResourceLoader.getLanguageCode();
 
 	for (int i = 0; i < items.length; i++) {
-	    menuItems.add(new NumberedJMenuItem(this, map, items[i], i));
+	    menuItems.add(new NumberedJMenuItem(this, messages, items[i],
+		    map.get(i)));
 	    mnLanguage.add(menuItems.get(i));
 	}
 
