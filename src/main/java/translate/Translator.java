@@ -5,11 +5,15 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import main.java.translate.api.ApiTranslation;
+import main.java.translate.database.TranslationCache;
 import main.java.util.file.LocaleFileWriter;
+import main.java.util.file.PropertiesUtil;
 
 /**
  * Translates a given input .properties file into another one in the specified
- * target language, via OpenAI's ChatCompletions API.
+ * target language, via OpenAI's ChatCompletions API. This translator manages a
+ * file writer and can manage and access a database which serves as a
+ * translation cache.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
  * @version March 2024
@@ -18,11 +22,18 @@ public class Translator {
 
     private static ApiTranslation api;
     private static LocaleFileWriter file;
-    private String results;
+    private TranslationCache cache;
+
+    // Translations
+    private Properties results; // Complete results
+    private Properties apiResults; // Retrieved by the API
+    private Properties notInCache; // To be submitted to the API
+    private Properties inCache; // Found in the cache
 
     public Translator(ResourceBundle messages) throws Exception {
 	api = new ApiTranslation(); // API access
 	file = new LocaleFileWriter(messages); // Localization file manager
+	cache = new TranslationCache(); // Translation database
 	reset(); // File initialization
     }
 
@@ -37,8 +48,8 @@ public class Translator {
      */
     public void translateTo(String language) throws Exception {
 	file.setTargetLanguage(language);
-	this.results = apiTranslate(file.getProperties(),
-		file.getSourceLanguage(), file.getTargetLanguage());
+	this.results = apiTranslate();
+	updateCache();
     }
 
     /**
@@ -105,16 +116,44 @@ public class Translator {
      * Accesses API to translate a set of properties from a source language to a
      * target language.
      * 
-     * @param properties:    Properties object containing i18n localization
-     *                       settings with texts in a given language
-     * @param sourceLanguage (i.e. "English")
-     * @param targetLanguage (i.e. "German")
-     * @return translated texts as a string
+     * @return translated properties
      * @throws Exception
      */
-    private String apiTranslate(Properties properties, String sourceLang,
-	    String targetLang) throws Exception {
-	return api.translate(properties, sourceLang, targetLang);
+    private Properties apiTranslate() throws Exception {
+
+	// Checks whether some translations have already been made
+	checkCache();
+
+	// Translate strictly those that have never been translated before
+	this.apiResults = api.translate(notInCache, file.getSourceLanguage(),
+		file.getTargetLanguage());
+
+	// Combine results
+	return PropertiesUtil.join(this.inCache, this.apiResults);
+    }
+
+    /**
+     * Saves API results onto translation cache (if not found in the database!).
+     * 
+     * @throws Exception
+     */
+    private void updateCache() throws Exception {
+	cache.storeAll(this.apiResults, file.getProperties(),
+		file.getTargetLanguageCode());
+    }
+
+    /**
+     * Retrieves those values already translated and present in the database,
+     * and sets the group of properties to be translated and sent to the API.
+     * 
+     * @throws Exception
+     */
+    private void checkCache() throws Exception {
+
+	Properties[] props = cache.getCachedTranslations(file.getProperties(),
+		file.getTargetLanguageCode());
+	this.notInCache = props[1];
+	this.inCache = props[0];
     }
 
     /**
@@ -122,7 +161,7 @@ public class Translator {
      * translation process.
      */
     public void reset() {
-	this.results = "";
+	this.results = new Properties();
 	file.reset();
     }
 
@@ -131,7 +170,7 @@ public class Translator {
      *         otherwise
      */
     public boolean isDone() {
-	return !results.isBlank();
+	return this.results.isEmpty();
     }
 
     /**

@@ -2,6 +2,7 @@ package main.java.translate.api;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
@@ -42,17 +43,18 @@ public class ApiTranslation {
      * @param targetLanguage (i.e. "German")
      * @return translated texts as a string
      * 
-     * @return localization texts in the target language, as a string
+     * @return properties object with their values translated onto the target
+     *         language
      * @throws Exception
      */
-    public String translate(Properties properties, String sourceLang,
+    public Properties translate(Properties properties, String sourceLang,
 	    String targetLang) throws Exception {
 
 	List<ChatMessage> messages = getRequests(properties, sourceLang,
 		targetLang);
 	String results = getResults(messages);
 
-	return results;
+	return parseResults(properties, results);
     }
 
     /**
@@ -115,7 +117,30 @@ public class ApiTranslation {
 
 	// Return translation
 	return results.toString();
-
     }
 
+    /**
+     * Parses the results given as a String from the API, as a Properties object
+     * according to the format of the object passed as a parameter in the
+     * starting query.
+     * 
+     * @param untranslated properties
+     * @param results,     as a complete string
+     * 
+     * @return replacement of property values for their translations
+     */
+    private Properties parseResults(Properties properties, String results) {
+	String[] res = results.split("\n");
+	Properties translations = new Properties();
+
+	Enumeration<Object> keys = properties.keys();
+	int i = 0;
+	while (keys.hasMoreElements()) {
+	    String key = (String) keys.nextElement();
+	    translations.put(key, res[i]);
+	    i++;
+	}
+
+	return translations;
+    }
 }

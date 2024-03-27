@@ -9,8 +9,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +34,12 @@ public class ResourceLoader {
     /**
      * File paths to respective resources
      */
-    private final static String LANGUAGES_FILE = "/other/languages_en_US.txt";
-    private final static String LANGUAGE_CODES_FILE = "/other/language_codes.txt";
-    private final static String FONT_FILE = "/other/sf-pro.otf";
+    private final static String LANGUAGES_FILE = "/locale/languages_en_US.txt";
+    private final static String LANGUAGE_CODES_FILE = "/locale/language_codes.txt";
+    private final static String FONT_FILE = "/img/sf-pro.otf";
     private final static String API_PROPERTIES_FILE = "/properties/api.properties";
     private final static String CONFIG_FILE = "/properties/config.properties";
+    private final static String DATABASE_NAME = "/database/translation_cache.db";
 
     /**
      * Parses a .properties file content onto a Properties object.
@@ -212,11 +215,21 @@ public class ResourceLoader {
 	return mapLanguages;
     }
 
+    /**
+     * @param messages: localization of the application
+     * @return array of language names to which the app can effectively be
+     *         localized to
+     */
     public static String[] getLanguageNames(ResourceBundle messages) {
 	return messages.getString("languages").split("-");
     }
 
-    public static Map<Integer, String> getLanguageCode() throws Exception {
+    /**
+     * @return language codes of the respective language names to which the app
+     *         can effectively be localized to
+     * @throws Exception if the resources file is not found
+     */
+    public static Map<Integer, String> getLanguageCodes() throws Exception {
 	Map<Integer, String> map = new HashMap<Integer, String>();
 	URL res = ResourceLoader.class.getResource(LANGUAGE_CODES_FILE);
 	File f = new File(res.toURI());
@@ -226,6 +239,21 @@ public class ResourceLoader {
 	    map.put(i, list.get(i));
 	}
 	return map;
+    }
+
+    /**
+     * @return JDBC url of the translation database for the application
+     * @throws Exception if database is not found in resource directory
+     */
+    public static String getJdbcUrl() throws Exception {
+	URI jdbc = ResourceLoader.class.getResource(DATABASE_NAME).toURI();
+
+	if (jdbc != null) {
+	    String dbUrl = Paths.get(jdbc).toString();
+	    return ("jdbc:sqlite:" + dbUrl);
+	} else {
+	    throw new Exception("ERROR: Database not found among resources.");
+	}
     }
 
 }

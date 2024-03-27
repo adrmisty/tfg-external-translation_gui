@@ -325,7 +325,7 @@ public class MainWindow extends JFrame {
     private void addMenuItems() throws Exception {
 	String[] items = ResourceLoader.getLanguageNames(messages);
 	List<JMenuItem> menuItems = new ArrayList<>();
-	Map<Integer, String> map = ResourceLoader.getLanguageCode();
+	Map<Integer, String> map = ResourceLoader.getLanguageCodes();
 
 	for (int i = 0; i < items.length; i++) {
 	    menuItems.add(new NumberedJMenuItem(this, messages, items[i],

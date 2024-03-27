@@ -1,13 +1,12 @@
 package main.java.util.file;
 
-import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.util.LocaleNameParser;
 import main.java.util.ResourceLoader;
 
 /**
@@ -90,24 +89,23 @@ public class LocaleFileProcessor {
      * @param properties:     properties object with key/vaue pairs
      * @return complete text in the specific format
      */
-    public StringBuilder getWrittenResults(String targetLanguage, String text,
-	    Properties props) {
-	String[] sentences = text.split("\n");
+    public StringBuilder getWrittenResults(String targetLanguage,
+	    Properties texts) {
 	StringBuilder sb = new StringBuilder("");
 	sb.append("# " + targetLanguage + "\n\n");
 
-	int i = 0;
 	String p;
-	Enumeration<Object> keys = props.keys();
+	List<String> keys = PropertiesUtil.getKeys(texts);
+	List<String> result = PropertiesUtil.getValues(texts);
 
-	while (keys.hasMoreElements()) {
-	    if (i < sentences.length) {
-		p = ((String) keys.nextElement()) + "=" + sentences[i];
+	for (int i = 0; i < keys.size(); i++) {
+	    if (i < texts.size() - 1) {
+		p = keys.get(i) + "=" + result.get(i);
 		sb.append(p + "\n");
 	    } else {
 		break;
 	    }
-	    i++;
+
 	}
 	return sb;
     }
@@ -125,10 +123,11 @@ public class LocaleFileProcessor {
 	StringBuilder sb = new StringBuilder("");
 	sb.append("# " + targetLanguage + "\n\n");
 
-	Enumeration<Object> keys = props.keys();
+	List<String> keys = PropertiesUtil.getKeys(props);
 
-	while (keys.hasMoreElements()) {
-	    sb.append((String) keys.nextElement() + "=\n");
+	for (String k : keys) {
+	    sb.append(k + "=\n");
+
 	}
 	return sb;
     }
