@@ -39,7 +39,7 @@ public class ResourceLoader {
     private final static String FONT_FILE = "/img/sf-pro.otf";
     private final static String API_PROPERTIES_FILE = "/properties/api.properties";
     private final static String CONFIG_FILE = "/properties/config.properties";
-    private final static String DATABASE_NAME = "/database/translation_cache.db";
+    private final static String DATABASE_NAME = "/database/cache.db";
 
     /**
      * Parses a .properties file content onto a Properties object.

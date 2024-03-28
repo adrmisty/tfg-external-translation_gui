@@ -6,8 +6,8 @@ import java.util.ResourceBundle;
 
 import main.java.translate.api.ApiTranslation;
 import main.java.translate.database.TranslationCache;
+import main.java.util.PropertiesUtil;
 import main.java.util.file.LocaleFileWriter;
-import main.java.util.file.PropertiesUtil;
 
 /**
  * Translates a given input .properties file into another one in the specified
@@ -34,7 +34,7 @@ public class Translator {
 	api = new ApiTranslation(); // API access
 	file = new LocaleFileWriter(messages); // Localization file manager
 	cache = new TranslationCache(); // Translation database
-	reset(); // File initialization
+	reset(); // Initialization
     }
 
     /**
@@ -124,22 +124,21 @@ public class Translator {
 	// Checks whether some translations have already been made
 	checkCache();
 
-	// Translate strictly those that have never been translated before
-	this.apiResults = api.translate(notInCache, file.getSourceLanguage(),
-		file.getTargetLanguage());
-
-	// Combine results
-	return PropertiesUtil.join(this.inCache, this.apiResults);
+	return getAutoResults(); // Translate strictly those that have never
+				 // been translated before
     }
 
     /**
-     * Saves API results onto translation cache (if not found in the database!).
+     * If any, saves API results onto translation cache (if not found in the
+     * database!).
      * 
      * @throws Exception
      */
     private void updateCache() throws Exception {
-	cache.storeAll(this.apiResults, file.getProperties(),
-		file.getTargetLanguageCode());
+	if (this.apiResults != null) {
+	    cache.storeAll(this.apiResults, file.getProperties(),
+		    file.getTargetLanguageCode());
+	}
     }
 
     /**
@@ -158,9 +157,12 @@ public class Translator {
 
     /**
      * Resets all remaining file-related information, to [re-]start the
-     * translation process.
+     * translation process. [Optionally: remove everything from the DB]
+     * 
+     * @throws Exception in ccase of SQL error
      */
-    public void reset() {
+    public void reset() throws Exception {
+	cache.reset();
 	this.results = new Properties();
 	file.reset();
     }
@@ -187,4 +189,27 @@ public class Translator {
 	return file.getSavedFileName();
     }
 
+    /**
+     * Considering the translations found in the cache and those yet to be done,
+     * it either does/doesn't request translations to the API, for optimization
+     * of performance.
+     * 
+     * @return combined results (caché, API...)
+     * @throws Exception in case of error with API translation
+     */
+    private Properties getAutoResults() throws Exception {
+	if (!notInCache.isEmpty()) {
+	    this.apiResults = api.translate(notInCache,
+		    file.getSourceLanguage(), file.getTargetLanguage());
+	} else {
+	    return this.inCache;
+	}
+
+	// Combine results
+	if (this.inCache.isEmpty()) {
+	    return this.apiResults; // All results from API
+	}
+	return PropertiesUtil.join(this.apiResults, this.inCache); // Combination
+								   // of both
+    }
 }

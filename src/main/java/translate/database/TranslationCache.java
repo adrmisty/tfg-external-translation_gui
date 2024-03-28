@@ -6,11 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Properties;
 
 import main.java.util.HashUtil;
+import main.java.util.PropertiesUtil;
 import main.java.util.ResourceLoader;
-import main.java.util.file.PropertiesUtil;
 
 /**
  * Builds and manages a database (SQLite) aimed at acting like a caché for
@@ -28,21 +29,6 @@ public class TranslationCache {
 
     private String JDBC_URL;
     private Connection connection;
-
-    /**
-     * @return established connection to the SQLite database
-     * @throws Exception in case of error with JDBC url or connection
-     *                   establishment
-     */
-    private Connection getConnection() throws Exception {
-	if (JDBC_URL == null) {
-	    JDBC_URL = ResourceLoader.getJdbcUrl();
-	}
-	if (connection == null || connection.isClosed()) {
-	    connection = DriverManager.getConnection(JDBC_URL);
-	}
-	return connection;
-    }
 
     /**
      * Closes the connection to the caché database.
@@ -73,36 +59,22 @@ public class TranslationCache {
 	    // Will only be stored if not already found in the DB
 	    store(text, translation, language);
 	}
+	closeConnection();
     }
 
     /**
-     * Stores the translation into a specific target language of a given text
-     * query in the database. To avoid excessive memory usage, hash of the text
-     * is stored instead of the text itself.
+     * Deletes all records from the database.
      * 
-     * @param text:           sentence to be translated to the target language
-     * @param translation:    translated text
-     * @param targetLanguage: alpha2 code of the target language (i.e. en_US)
-     * @throws SQLException in case of connection issue with DB
+     * @throws Exception in case of SQL exception
      */
-    private void store(String text, String translation, String targetLanguage)
-	    throws Exception {
-
+    public void reset() throws Exception {
 	getConnection();
-	String insert = "INSERT INTO translation_cache (text_hash, text_translation,"
-		+ " timestamp, language_code) VALUES (?, ?, ?, ?)";
-	try (PreparedStatement stmnt = connection.prepareStatement(insert)) {
+	String delete = "DELETE FROM translation_cache";
 
-	    // Save hash, translation, language code and timestamp
-	    stmnt.setString(1, hash(text)); // PK
-	    stmnt.setString(2, translation);
-	    stmnt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-	    stmnt.setString(4, targetLanguage.toLowerCase()); // PK
-	} catch (SQLException e) {
-	    // already saved!
-	} finally {
-	    closeConnection();
+	try (PreparedStatement stmnt = connection.prepareStatement(delete)) {
+	    stmnt.executeUpdate();
 	}
+	closeConnection();
     }
 
     /**
@@ -121,8 +93,9 @@ public class TranslationCache {
 
 	Properties translations = new Properties();
 	Properties untranslated = new Properties();
+	List<String> keys = PropertiesUtil.getKeys(properties);
 
-	for (String key : PropertiesUtil.getKeys(properties)) {
+	for (String key : keys) {
 	    String text = properties.getProperty(key);
 	    String translation = getTranslation(text, language);
 
@@ -131,9 +104,65 @@ public class TranslationCache {
 	    } else {
 		untranslated.put(key, text);
 	    }
-
 	}
+
+	closeConnection();
 	return new Properties[] { translations, untranslated };
+    }
+
+    /*
+     * ###################################################### AUX
+     */
+
+    /**
+     * @return established connection to the SQLite database
+     * @throws Exception in case of error with JDBC url or connection
+     *                   establishment
+     */
+    private Connection getConnection() throws Exception {
+	if (JDBC_URL == null) {
+	    JDBC_URL = ResourceLoader.getJdbcUrl();
+	}
+	if (connection == null || connection.isClosed()) {
+	    connection = DriverManager.getConnection(JDBC_URL);
+	}
+	return connection;
+    }
+
+    /**
+     * Stores the translation into a specific target language of a given text
+     * query in the database. To avoid excessive memory usage, hash of the text
+     * is stored instead of the text itself.
+     * 
+     * @param text:           sentence to be translated to the target language
+     * @param translation:    translated text
+     * @param targetLanguage: alpha2 code of the target language (i.e. en_US)
+     * @throws SQLException in case of connection issue with DB
+     */
+    private boolean store(String text, String translation,
+	    String targetLanguage) throws Exception {
+
+	getConnection();
+	boolean stored;
+
+	String insert = "INSERT INTO translation_cache (text_hash, text_translation,"
+		+ " created_at, language_code) VALUES (?, ?, ?, ?)";
+	try (PreparedStatement stmnt = connection.prepareStatement(insert)) {
+
+	    // Save hash, translation, language code and timestamp
+	    stmnt.setString(1, hash(text)); // PK
+	    stmnt.setString(2, translation);
+	    stmnt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+	    stmnt.setString(4, targetLanguage.toLowerCase()); // PK
+
+	    stmnt.executeUpdate();
+	    stored = true;
+	} catch (SQLException e) {
+	    // already saved!
+	    stored = false;
+	}
+
+	return stored;
     }
 
     /**
@@ -147,10 +176,10 @@ public class TranslationCache {
      *         text, null otherwise
      * @throws Exception in case of SQL error or hashing error
      */
-    public String getTranslation(String text, String language)
+    private String getTranslation(String text, String language)
 	    throws Exception {
 	getConnection();
-	String find = "SELECT translated_text FROM translation_cache WHERE text_hash=? and language_code=?";
+	String find = "SELECT text_translation as text FROM translation_cache WHERE text_hash=? and language_code=?";
 	String trans = null;
 
 	try (PreparedStatement stmnt = connection.prepareStatement(find)) {
@@ -160,18 +189,12 @@ public class TranslationCache {
 
 	    ResultSet rs = stmnt.executeQuery();
 	    if (rs.next()) {
-		trans = rs.getString("translated_text");
+		trans = rs.getString("text");
 	    }
-	} finally {
-	    closeConnection();
 	}
 
 	return trans;
     }
-
-    /*
-     * ###################################################### AUX
-     */
 
     private String hash(String text) throws Exception {
 	return HashUtil.getHash(text);

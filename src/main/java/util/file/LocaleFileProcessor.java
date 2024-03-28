@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import main.java.util.PropertiesUtil;
 import main.java.util.ResourceLoader;
 
 /**
@@ -99,13 +100,11 @@ public class LocaleFileProcessor {
 	List<String> result = PropertiesUtil.getValues(texts);
 
 	for (int i = 0; i < keys.size(); i++) {
+	    p = keys.get(i) + "=" + result.get(i);
+	    sb.append(p);
 	    if (i < texts.size() - 1) {
-		p = keys.get(i) + "=" + result.get(i);
-		sb.append(p + "\n");
-	    } else {
-		break;
+		sb.append("\n");
 	    }
-
 	}
 	return sb;
     }

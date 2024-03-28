@@ -1,8 +1,7 @@
-package main.java.util.file;
+package main.java.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -23,10 +22,19 @@ public class PropertiesUtil {
      * @return merged properties into one object
      */
     public static Properties join(Properties p1, Properties p2) {
-	Properties p = new Properties(p2);
-	p.forEach((key, value) -> p1.setProperty(key.toString(),
-		value.toString()));
-	return p;
+	Properties mergedProperties = new Properties();
+
+	// Copy properties from prop1 to mergedProperties
+	for (String key : p1.stringPropertyNames()) {
+	    mergedProperties.setProperty(key, p1.getProperty(key));
+	}
+
+	// Copy properties from prop2 to mergedProperties
+	for (String key : p2.stringPropertyNames()) {
+	    mergedProperties.setProperty(key, p2.getProperty(key));
+	}
+
+	return mergedProperties;
     }
 
     /**
@@ -34,14 +42,7 @@ public class PropertiesUtil {
      * @return list of the keys of the object
      */
     public static List<String> getKeys(Properties pr) {
-	Enumeration<Object> keys = pr.keys();
-	List<String> k = new ArrayList<String>();
-
-	while (keys.hasMoreElements()) {
-	    k.add((String) keys.nextElement());
-	}
-
-	return k;
+	return new ArrayList<String>(pr.stringPropertyNames());
     }
 
     /**

@@ -89,7 +89,7 @@ public class LocaleFileWriter {
 	setSavedFilePath(path);
 	BufferedWriter writer = new BufferedWriter(
 		new FileWriter(savedFilePath));
-	writeResults(writer, properties);
+	writeResults(writer, results);
 	writer.close();
     }
 
@@ -206,7 +206,7 @@ public class LocaleFileWriter {
      * @return alpha2 code of the target language
      */
     public String getTargetLanguageCode() {
-	return targetLanguage.toLanguageTag();
+	return targetLanguage.getLanguage() + "_" + targetLanguage.getCountry();
     }
 
     /**
