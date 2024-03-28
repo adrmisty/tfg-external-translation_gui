@@ -194,7 +194,7 @@ public class MainWindow extends JFrame {
     }
 
     public void autoTranslate() throws Exception {
-	translator.translateTo(language);
+	translator.autoTranslateTo(language);
     }
 
     public void manualTranslate() throws Exception {

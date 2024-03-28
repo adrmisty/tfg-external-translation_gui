@@ -27,11 +27,32 @@ import main.java.util.ResourceLoader;
  */
 public class TranslationCache {
 
+    // Connection to database
     private String JDBC_URL;
     private Connection connection;
 
+    // Translations in cache
+    private Properties notInCache; // Not found in cache
+    private Properties inCache; // Translations found in the cache
+
     /**
-     * Closes the connection to the caché database.
+     * @return set of properties that are not translated and thus, not found in
+     *         the database
+     */
+    public Properties getUntranslated() {
+	return notInCache;
+    }
+
+    /**
+     * @return set of properties (in a given language) that match those given as
+     *         input and are found in the database
+     */
+    public Properties getTranslated() {
+	return inCache;
+    }
+
+    /**
+     * Closes the connection to the cache database.
      * 
      * @throws SQLException in case of error with closing the connection
      */
@@ -79,20 +100,21 @@ public class TranslationCache {
 
     /**
      * Retrieves all present translations of a given set of properties into a
-     * language, that are in the database. This set of properties can be empty.
+     * language, that are in the database; and also those that are not cached.
      * 
-     * @param properties: properties NOT translated in the database
-     * @param language:   alpha2 code of the language
-     * @return a list of Properties objects: the first is the set of
-     *         translations already found in the cache, the second is those
-     *         untranslated objects
-     * @throws Exception
+     * @param properties object containing set of translations to be fully
+     *                   computed or not
+     * @param language   alpha2 code of the language
+     * @throws Exception in case of error with database access, writing
+     *                   to/from...
      */
-    public Properties[] getCachedTranslations(Properties properties,
-	    String language) throws Exception {
+    public void match(Properties properties, String language) throws Exception {
 
-	Properties translations = new Properties();
-	Properties untranslated = new Properties();
+	// Initialize
+	this.inCache = new Properties();
+	this.notInCache = new Properties();
+
+	// Retrieve translations
 	List<String> keys = PropertiesUtil.getKeys(properties);
 
 	for (String key : keys) {
@@ -100,18 +122,16 @@ public class TranslationCache {
 	    String translation = getTranslation(text, language);
 
 	    if (translation != null) {
-		translations.put(key, translation);
+		this.inCache.put(key, translation);
 	    } else {
-		untranslated.put(key, text);
+		this.notInCache.put(key, text);
 	    }
 	}
-
 	closeConnection();
-	return new Properties[] { translations, untranslated };
     }
 
     /*
-     * ###################################################### AUX
+     * ######################## AUXILIARY METHODS ##############################
      */
 
     /**
@@ -149,7 +169,7 @@ public class TranslationCache {
 		+ " created_at, language_code) VALUES (?, ?, ?, ?)";
 	try (PreparedStatement stmnt = connection.prepareStatement(insert)) {
 
-	    // Save hash, translation, language code and timestamp
+	    // Save hash, translation, language code and time stamp
 	    stmnt.setString(1, hash(text)); // PK
 	    stmnt.setString(2, translation);
 	    stmnt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
@@ -196,6 +216,13 @@ public class TranslationCache {
 	return trans;
     }
 
+    /**
+     * Converts a given text to their hash representation.
+     * 
+     * @param text to compute the hash of
+     * @return hexadecimal hash representation
+     * @throws Exception with issues computing hash
+     */
     private String hash(String text) throws Exception {
 	return HashUtil.getHash(text);
     }

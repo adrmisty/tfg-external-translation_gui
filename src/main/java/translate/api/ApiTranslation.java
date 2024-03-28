@@ -2,7 +2,6 @@ package main.java.translate.api;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
@@ -11,6 +10,7 @@ import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 
+import main.java.util.PropertiesUtil;
 import main.java.util.ResourceLoader;
 
 /**
@@ -22,10 +22,17 @@ import main.java.util.ResourceLoader;
  */
 public class ApiTranslation {
 
+    // Translation results
+    private Properties results;
+
     private static ApiRequestBuilder apiReq;
     private static OpenAiService service;
     private final static int TIMEOUT = 90;
 
+    /**
+     * Creates an ApiTranslation object aimed to manage requests to the
+     * ChatCompletionsAPI.
+     */
     public ApiTranslation() {
 	service = new OpenAiService(ResourceLoader.getApiKey(),
 		Duration.ofSeconds(TIMEOUT));
@@ -37,25 +44,38 @@ public class ApiTranslation {
      * has given as input) into a specific language also specified in the prompt
      * via a set of requests to the API.
      * 
-     * @param properties:    Properties object containing i18n localization
-     *                       settings with texts in a given language
-     * @param sourceLanguage (i.e. "English")
-     * @param targetLanguage (i.e. "German")
+     * @param properties:     Properties object containing i18n localization
+     *                        settings with texts in a given language
+     * @param sourceLanguage: i.e. "English"
+     * @param targetLanguage: i.e. "German"
      * @return translated texts as a string
      * 
-     * @return properties object with their values translated onto the target
-     *         language
-     * @throws Exception
+     * @return properties object with the parameter properties translated onto
+     *         the target language
+     * @throws Exception in case of issue with API access and request
      */
     public Properties translate(Properties properties, String sourceLang,
 	    String targetLang) throws Exception {
-
 	List<ChatMessage> messages = getRequests(properties, sourceLang,
 		targetLang);
-	String results = getResults(messages);
-
-	return parseResults(properties, results);
+	this.results = PropertiesUtil.replaceValues(properties,
+		getResults(messages));
+	return this.results;
     }
+
+    /**
+     * Retrieves the translation results returned by the API.
+     * 
+     * @return properties object containing translations computed and retrieved
+     *         from the API
+     */
+    public Properties getResults() {
+	return this.results;
+    }
+
+    /*
+     * ######################## AUXILIARY METHODS ##############################
+     */
 
     /**
      * Builds a set of requests to input in the ChatCompletions API.
@@ -119,28 +139,4 @@ public class ApiTranslation {
 	return results.toString();
     }
 
-    /**
-     * Parses the results given as a String from the API, as a Properties object
-     * according to the format of the object passed as a parameter in the
-     * starting query.
-     * 
-     * @param untranslated properties
-     * @param results,     as a complete string
-     * 
-     * @return replacement of property values for their translations
-     */
-    private Properties parseResults(Properties properties, String results) {
-	String[] res = results.split("\n");
-	Properties translations = new Properties();
-
-	Enumeration<Object> keys = properties.keys();
-	int i = 0;
-	while (keys.hasMoreElements()) {
-	    String key = (String) keys.nextElement();
-	    translations.put(key, res[i]);
-	    i++;
-	}
-
-	return translations;
-    }
 }

@@ -11,9 +11,10 @@ import main.java.util.file.LocaleFileWriter;
 
 /**
  * Translates a given input .properties file into another one in the specified
- * target language, via OpenAI's ChatCompletions API. This translator manages a
- * file writer and can manage and access a database which serves as a
- * translation cache.
+ * target language, via OpenAI's ChatCompletions API.
+ * 
+ * This translator manages a file writer and can access a database which serves
+ * as a translation cache.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
  * @version March 2024
@@ -25,11 +26,18 @@ public class Translator {
     private TranslationCache cache;
 
     // Translations
-    private Properties results; // Complete results
-    private Properties apiResults; // Retrieved by the API
-    private Properties notInCache; // To be submitted to the API
-    private Properties inCache; // Found in the cache
+    private Properties results; // Translation results
 
+    /*
+     * ######################## PUBLIC METHODS #################################
+     */
+
+    /**
+     * Creates a translator with a given localization for the application.
+     * 
+     * @param messages: localization settings chosen by the user
+     * @throws Exception in case of I/O issues with writing to file
+     */
     public Translator(ResourceBundle messages) throws Exception {
 	api = new ApiTranslation(); // API access
 	file = new LocaleFileWriter(messages); // Localization file manager
@@ -38,27 +46,53 @@ public class Translator {
     }
 
     /**
-     * Executes the translation process, from a given input file: establishes
-     * target language, accesses API to carry out translation and saves the
-     * results as text.
+     * Executes the automatic API translation process, from a given input file:
      * 
-     * @param the target language (format: "English, United States")
-     * @return translated texts as a string
-     * @throws Exception if there is an error with the API
+     * - 1. Establishes the target language.
+     * 
+     * - 2. Accesses LL to carry out automatic translation. (In case of
+     * translations having already been carried out in the past, result is
+     * retrieved directly from the caché).
+     * 
+     * - 3. Retrieves results.
+     * 
+     * - 4. Updates caché with new translations.
+     * 
+     * @param target language: with format "English, United States"
+     * 
+     * @throws Exception if there is an error with API access
      */
-    public void translateTo(String language) throws Exception {
+    public void autoTranslateTo(String language) throws Exception {
 	file.setTargetLanguage(language);
 	this.results = apiTranslate();
-	updateCache();
+    }
+
+    /**
+     * Writes property keys into a new file so that the user can execute the
+     * manual translation themselves.
+     * 
+     * @param language: string representation of the language in the program's
+     *                  locale (i.e. if program is being executed in French and
+     *                  results shall be translated to "German", this string
+     *                  would be "Allemand")
+     * @param path:     path of the directory where to create and write the
+     *                  translated file
+     * @throws Exception in case of issue with I/O writing to file
+     */
+    public String manualTranslateTo(String language, String path)
+	    throws Exception {
+	file.setTargetLanguage(language);
+	return file.manualWrite(path);
     }
 
     /**
      * Inputs the file that the user wishes to translate, which must be
-     * compliant with i18n format. If not, an exception is thrown. Otherwise,
-     * the file is parsed and its relevant information saved for further
-     * processing.
+     * compliant with i18n format.
      * 
-     * @param (absolute path to the file)
+     * If not, an exception is thrown. Otherwise, the file is parsed and its
+     * relevant information saved for further processing.
+     * 
+     * @param path: absolute path to the file to be translated
      * @throws Exception if file is not format-compliant
      */
     public void input(String path) throws Exception {
@@ -66,10 +100,15 @@ public class Translator {
     }
 
     /**
-     * Saves results into chosen file path.
+     * Saves results onto chosen file path.
      * 
-     * @param file path (absolute directory path where file should be saved)
-     * @throws IOException
+     * If said results have already been written to a temporary review file,
+     * they are copied onto the new path. Otherwise, results are written for the
+     * first time in the specified file path.
+     * 
+     * @param file path: absolute directory path where file should be saved
+     * @throws IOException in case of I/O issue when writing to/from file, or
+     *                     copying contents of temporary file
      */
     public void save(String path) throws IOException {
 	if (!file.isFileTemporary()) {
@@ -80,36 +119,17 @@ public class Translator {
     }
 
     /**
-     * Writes property keys into a new file so that the user can execute the
-     * manual translation.
-     * 
-     * @param language: string representation of the language in the program's
-     *                  locale
-     * @param path:     path of the directory where to write the translation
-     * @return path: path of the file with the translation
-     * @throws Exception
-     */
-    public String manualTranslateTo(String language, String path)
-	    throws Exception {
-	file.setTargetLanguage(language);
-	return file.manualWrite(path);
-    }
-
-    /**
      * Writes the results into a temporary file to be used for reviewing and
-     * editing the translation. Once the user chooses to, the file will be saved
-     * to a specific path.
+     * editing the translation.
      * 
-     * @param file path (absolute directory path where file should be saved)
-     * @return path to temporary file as a string
-     * @throws IOException
+     * @throws IOException in case of issues with I/O writing to temporary file
      */
     public String review() throws IOException {
 	return file.tempWrite(this.results);
     }
 
     /*
-     * ######################## AUXILIARY METHODS #############################
+     * ######################## AUXILIARY METHODS ##############################
      */
 
     /**
@@ -117,26 +137,28 @@ public class Translator {
      * target language.
      * 
      * @return translated properties
-     * @throws Exception
+     * @throws Exception in case of issue with API
      */
     private Properties apiTranslate() throws Exception {
-
 	// Checks whether some translations have already been made
-	checkCache();
-
-	return getAutoResults(); // Translate strictly those that have never
-				 // been translated before
+	fromCache();
+	// Translate strictly those that have never been translated before
+	Properties results = getAutoResults();
+	// Update cache
+	toCache();
+	// Retrieve results
+	return results;
     }
 
     /**
      * If any, saves API results onto translation cache (if not found in the
      * database!).
      * 
-     * @throws Exception
+     * @throws Exception in case of issue with DB
      */
-    private void updateCache() throws Exception {
-	if (this.apiResults != null) {
-	    cache.storeAll(this.apiResults, file.getProperties(),
+    private void toCache() throws Exception {
+	if (api.getResults() != null) {
+	    cache.storeAll(api.getResults(), file.getProperties(),
 		    file.getTargetLanguageCode());
 	}
     }
@@ -145,21 +167,17 @@ public class Translator {
      * Retrieves those values already translated and present in the database,
      * and sets the group of properties to be translated and sent to the API.
      * 
-     * @throws Exception
+     * @throws Exception in case of issue with DB
      */
-    private void checkCache() throws Exception {
-
-	Properties[] props = cache.getCachedTranslations(file.getProperties(),
-		file.getTargetLanguageCode());
-	this.notInCache = props[1];
-	this.inCache = props[0];
+    private void fromCache() throws Exception {
+	cache.match(file.getProperties(), file.getTargetLanguageCode());
     }
 
     /**
      * Resets all remaining file-related information, to [re-]start the
      * translation process. [Optionally: remove everything from the DB]
      * 
-     * @throws Exception in ccase of SQL error
+     * @throws Exception in case of issue with DB
      */
     public void reset() throws Exception {
 	cache.reset();
@@ -172,7 +190,7 @@ public class Translator {
      *         otherwise
      */
     public boolean isDone() {
-	return this.results.isEmpty();
+	return !this.results.isEmpty();
     }
 
     /**
@@ -198,18 +216,26 @@ public class Translator {
      * @throws Exception in case of error with API translation
      */
     private Properties getAutoResults() throws Exception {
-	if (!notInCache.isEmpty()) {
-	    this.apiResults = api.translate(notInCache,
-		    file.getSourceLanguage(), file.getTargetLanguage());
+
+	// No need to access the API
+	if (cache.getUntranslated().isEmpty()) {
+	    return cache.getTranslated();
+
 	} else {
-	    return this.inCache;
+	    // Needs to access the API
+	    api.translate(cache.getUntranslated(), file.getSourceLanguage(),
+		    file.getTargetLanguage());
+
+	    // Everything has been translated from API
+	    if (cache.getTranslated().isEmpty()) {
+		return api.getResults();
+
+		// Both API and cache translations
+	    } else {
+		return PropertiesUtil.join(api.getResults(),
+			cache.getTranslated());
+	    }
 	}
 
-	// Combine results
-	if (this.inCache.isEmpty()) {
-	    return this.apiResults; // All results from API
-	}
-	return PropertiesUtil.join(this.apiResults, this.inCache); // Combination
-								   // of both
     }
 }

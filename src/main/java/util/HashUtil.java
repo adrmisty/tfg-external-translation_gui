@@ -11,15 +11,18 @@ import java.security.NoSuchAlgorithmException;
  */
 public class HashUtil {
 
+    private final static String ALGORITHM = "SHA-512"; // others, like "SHA-256"
+
     /**
      * @param text to convert into its hash representation
-     * @return hexadecimal representation of their 512-bit hash code
-     * @throws Exception in case of issues with SHA-512 computation
+     * @return hexadecimal representation of their hash code
+     * @throws Exception in case of issues with computation [i.e. algorithm not
+     *                   found]
      */
     public static String getHash(String text) throws Exception {
 	MessageDigest digest;
 	try {
-	    digest = MessageDigest.getInstance("SHA-512");
+	    digest = MessageDigest.getInstance(ALGORITHM);
 	    byte[] hashBytes = digest.digest(text.getBytes());
 	    StringBuilder hexadecimal = new StringBuilder();
 
