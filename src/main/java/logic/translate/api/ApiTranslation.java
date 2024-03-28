@@ -1,4 +1,4 @@
-package main.java.translate.api;
+package main.java.logic.translate.api;
 
 import java.time.Duration;
 import java.util.ArrayList;

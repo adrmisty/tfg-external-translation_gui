@@ -1,11 +1,11 @@
-package main.java.translate;
+package main.java.logic;
 
 import java.io.IOException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.translate.api.ApiTranslation;
-import main.java.translate.database.TranslationCache;
+import main.java.logic.translate.api.ApiTranslation;
+import main.java.logic.translate.cache.TranslationCache;
 import main.java.util.PropertiesUtil;
 import main.java.util.file.LocaleFileWriter;
 
@@ -174,6 +174,42 @@ public class Translator {
     }
 
     /**
+     * Considering the translations found in the cache and those yet to be done,
+     * it either does/doesn't request translations to the API, for optimization
+     * of performance.
+     * 
+     * @return combined results (caché, API...)
+     * @throws Exception in case of error with API translation
+     */
+    private Properties getAutoResults() throws Exception {
+
+	// No need to access the API
+	if (cache.getUntranslated().isEmpty()) {
+	    return cache.getTranslated();
+
+	} else {
+	    // Needs to access the API
+	    api.translate(cache.getUntranslated(), file.getSourceLanguage(),
+		    file.getTargetLanguage());
+
+	    // Everything has been translated from API
+	    if (cache.getTranslated().isEmpty()) {
+		return api.getResults();
+
+		// Both API and cache translations
+	    } else {
+		return PropertiesUtil.join(api.getResults(),
+			cache.getTranslated());
+	    }
+	}
+
+    }
+
+    /*
+     * ######################## GET/SET ########################################
+     */
+
+    /**
      * Resets all remaining file-related information, to [re-]start the
      * translation process. [Optionally: remove everything from the DB]
      * 
@@ -205,37 +241,5 @@ public class Translator {
      */
     public String getSavedFileName() {
 	return file.getSavedFileName();
-    }
-
-    /**
-     * Considering the translations found in the cache and those yet to be done,
-     * it either does/doesn't request translations to the API, for optimization
-     * of performance.
-     * 
-     * @return combined results (caché, API...)
-     * @throws Exception in case of error with API translation
-     */
-    private Properties getAutoResults() throws Exception {
-
-	// No need to access the API
-	if (cache.getUntranslated().isEmpty()) {
-	    return cache.getTranslated();
-
-	} else {
-	    // Needs to access the API
-	    api.translate(cache.getUntranslated(), file.getSourceLanguage(),
-		    file.getTargetLanguage());
-
-	    // Everything has been translated from API
-	    if (cache.getTranslated().isEmpty()) {
-		return api.getResults();
-
-		// Both API and cache translations
-	    } else {
-		return PropertiesUtil.join(api.getResults(),
-			cache.getTranslated());
-	    }
-	}
-
     }
 }

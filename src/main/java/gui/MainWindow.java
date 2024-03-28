@@ -26,7 +26,7 @@ import main.java.gui.cards.CardManual;
 import main.java.gui.cards.CardMode;
 import main.java.gui.other.IDE;
 import main.java.gui.other.NumberedJMenuItem;
-import main.java.translate.Translator;
+import main.java.logic.Translator;
 import main.java.util.ResourceLoader;
 
 /**
