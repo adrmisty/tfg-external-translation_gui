@@ -7,20 +7,29 @@ _externalized translation service for programs_, using the large language model 
 Developed by **Adriana Rodríguez Flórez**, undergraduate student at the BSc in Computer Science
 and Software Engineering at the University of Oviedo (Asturias, Spain).
 
-### Correcciones to-do
-* Tokenizar las requests y realizar distintas requests para tamaños distintos de input (ej. intentar con ruso, armenio y griego) para asegurar respuestas completas
-* Investigar lo de la API rest
-
 
 ## 🏛️ Architecture
 
-### Frameworks
-* Swing
+### Database
+* SQLite.
+
+### Model
+The LLM used by the service corresponds with the ChatGPT-3.5 series. 
 
 ### APIs
-* OpenAI ChatCompletionsAPI (via the OpenAI service provided by https://github.com/TheoKanning/openai-java)
+* GUI: Swing
+* Model access: OpenAI ChatCompletionsAPI (service implemented for Java, provided by https://github.com/TheoKanning/openai-java).
+* Database management: JDBC (Java Database Connectivity).
 
-## 📅 Designs & wireframes
+
+
+## 📅 Design
+
+### Database E-R
+<img width="374" alt="image" src="https://github.com/adrmisty/tfg-external-translation_gui/assets/98897794/6db90df1-4b32-4833-bc93-978e70d1aaa3">
+
+
+### Wireframes
 <img width="374" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/1e6e9412-1052-4e8b-9f26-6095a291be97">
 <img width="304" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/e0ed2138-674e-4068-af20-d09b85968719">
 <img width="334" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/e8adafc2-eaf3-43bc-b66f-8ad02119927d">
