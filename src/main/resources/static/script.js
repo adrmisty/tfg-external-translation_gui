@@ -130,12 +130,5 @@ class TranslationWeb {
 
 var text = new TextUtil();
 var translator = new TranslationWeb(text);
-
-// Set supported languages
+// Set supported languages to select
 translator.languages();
-
-// Event listener
-document.getElementById('form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    translator.translate();
-})
