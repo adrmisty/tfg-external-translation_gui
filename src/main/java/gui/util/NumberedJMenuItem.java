@@ -1,4 +1,4 @@
-package main.java.gui.other;
+package main.java.gui.util;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.JMenuItem;
 
-import main.java.gui.MainWindow;
+import main.java.gui.cards.MainWindow;
 
 public class NumberedJMenuItem extends JMenuItem {
     private static final long serialVersionUID = 1L;

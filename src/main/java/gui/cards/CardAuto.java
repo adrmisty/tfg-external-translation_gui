@@ -18,8 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import main.java.gui.MainWindow;
-import main.java.gui.other.BusyPanel;
+import main.java.gui.util.BusyPanel;
 import main.java.util.ResourceLoader;
 
 public class CardAuto extends JPanel {

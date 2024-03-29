@@ -1,4 +1,4 @@
-package main.java.logic.translate.api;
+package main.java.translation.api;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +32,14 @@ public class ApiRequestBuilder {
      * respect the batch size - that is limited by the max. number of tokens per
      * request.
      * 
-     * @param properties: file containing localization properties for a program
-     * @param sourceLang: language from which user is translating
-     * @param targetLang: language to which user is translating
+     * @param properties file containing localization properties for a program
+     * @param targetLang language to which user is translating
      * @return list of chat messages (role: user -> content: prompt of the
      *         translation command)
      * @throws Exception
      */
     public List<ChatMessage> buildRequests(Properties properties,
-	    String sourceLang, String targetLang) throws Exception {
+	    String targetLang) throws Exception {
 
 	String command = String.format("Translate into %s:\n", targetLang);
 

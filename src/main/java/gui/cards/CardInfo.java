@@ -26,7 +26,6 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import main.java.gui.MainWindow;
 import main.java.util.ResourceLoader;
 
 public class CardInfo extends JPanel {
@@ -61,7 +60,6 @@ public class CardInfo extends JPanel {
     private JTextPane textDescription;
     private JLabel lblBack;
     private JButton btnBack_Info;
-    private JTextArea textArea;
 
     public CardInfo(MainWindow root) {
 	this.root = root;

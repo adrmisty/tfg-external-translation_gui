@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
-import main.java.gui.MainWindow;
 import main.java.util.ResourceLoader;
 
 public class CardMain extends JPanel {

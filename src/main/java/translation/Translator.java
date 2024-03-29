@@ -1,11 +1,11 @@
-package main.java.logic;
+package main.java.translation;
 
 import java.io.IOException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.logic.translate.api.ApiTranslation;
-import main.java.logic.translate.cache.TranslationCache;
+import main.java.translation.api.ApiTranslation;
+import main.java.translation.cache.TranslationCache;
 import main.java.util.PropertiesUtil;
 import main.java.util.file.LocaleFileWriter;
 
@@ -189,8 +189,7 @@ public class Translator {
 
 	} else {
 	    // Needs to access the API
-	    api.translate(cache.getUntranslated(), file.getSourceLanguage(),
-		    file.getTargetLanguage());
+	    api.translate(cache.getUntranslated(), file.getTargetLanguage());
 
 	    // Everything has been translated from API
 	    if (cache.getTranslated().isEmpty()) {

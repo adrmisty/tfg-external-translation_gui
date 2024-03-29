@@ -1,4 +1,4 @@
-package main.java.gui;
+package main.java.gui.cards;
 
 import java.awt.CardLayout;
 import java.awt.SystemColor;
@@ -17,16 +17,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import main.java.gui.cards.CardAuto;
-import main.java.gui.cards.CardEnd;
-import main.java.gui.cards.CardFile;
-import main.java.gui.cards.CardInfo;
-import main.java.gui.cards.CardMain;
-import main.java.gui.cards.CardManual;
-import main.java.gui.cards.CardMode;
-import main.java.gui.other.IDE;
-import main.java.gui.other.NumberedJMenuItem;
-import main.java.logic.Translator;
+import main.java.gui.util.IDE;
+import main.java.gui.util.NumberedJMenuItem;
+import main.java.translation.Translator;
 import main.java.util.ResourceLoader;
 
 /**

@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<!-- Datos que describen el documento -->
+<head>
+    <meta charset="UTF-8" />
+    <title>FileLingual</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="script.js"></script>
+    <meta name="author" content="Adriana Rodríguez Flórez, UO282798" />
+    <meta name="description" content="Outsourced/Externalized service for translation via the OpenAI ChatCompletions API" />
+    <meta name="keywords" content="translation,openai,tfg,rest,springboot,file,properties" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+
+    <header>
+        <h1>Start translating now!</h1>
+        <h2>Translate automatically using OpenAI</h2>   
+    </header>
+
+    <main>
+        <form id="form" enctype="multipart/form-data">
+            <!-- Allow user to upload a .properties file -->
+            <label for="file">Upload a localization properties file: </label>
+            <p><input id="file" type="file" onchange="translator.enable()"></p>   
+
+            <!-- Target language selector-->
+            <label for="language">Choose the target language: </label>
+            <select id="language" onchange="translator.enable()"></select><br></br>
+
+            <!-- Submit file to SpringBoot app -->
+            <button id="submit" type="submit" disabled="true">Translate file</button>
+        </form>
+
+        <article id="uploadedFile"><h5>No file has been uploaded yet.</h5></article>
+
+        <!-- Once results are loaded -->
+        <section id="results">
+        </section>
+
+    </main>
+
+
+
+    <footer>
+        <p>Final Degree Project</p>
+        <p>BSc in Computer Science and Software Engineering (University of Oviedo)</p>
+        <address>
+            <p>Contact: 
+            <a href="mailto:UO282798@uniovi.es">Adriana Rodríguez Flórez (UO282798@uniovi.es)</a></p>
+        </address>
+    </footer>
+
+</body>
+
+</html>

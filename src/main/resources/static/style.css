@@ -1,0 +1,83 @@
+/****************************************
+    Adriana Rodríguez Flórez - UO282798 
+    Stylesheet
+*****************************************/
+  
+/* ---------------- HEADER ---------------- */
+/* Especificidad: 001 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  display:flex;
+  flex-direction: column;
+}
+  /* ---------------- BUTTONS ---------------- */
+input {
+  background-color: #c2d8ee;
+  color:#000000;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+  /* ---------------- HEADER ---------------- */
+  /* Specificity: 001 */
+  header {
+    border:double;
+    border-width: 1em;
+    border-color: #ffffff;
+    font-weight: bold;
+    color: #000000;
+    background-color: #c2d8ee;
+  }
+  /* Specificity: 001 */
+  h1 {
+    font-size: 3em;
+    text-align: center;
+  }
+  /* Specificity: 001 */
+  h2 {
+    font-size: 1.5em;
+    text-align: center;
+  }
+  
+  
+  /* ---------------- TEXT ---------------- */
+  /* Specificity: 001 */
+  main {
+    background-color: #ffffff;
+    color: #000000;
+    font-size: 1em;
+    padding: 1.2em;
+  }
+  /* Specificity: 002 */
+  h3,h4 {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  
+  /* ---------------- FOOTER ---------------- */
+  /* Specificity: 001 */
+  footer {
+    border-color: #ffffff;
+    border-style: solid;
+    border-width: 0.5em;
+    font-size: 0.75em;
+    font-weight: bold;
+    color: #000000;
+    background-color: #c2d8ee;
+    text-align: center;
+  }
+  
+  /* ---------------- LINKS ---------------- */
+  /* Specificity: 002 */
+  a:link,
+  a:visited {
+    color: #000000; 
+    font-weight: bold;
+  }
+  /* Especificidad: 001 */
+  a:hover {
+    color: #2d1c8c;
+    font-weight: bold;
+  }
+ 

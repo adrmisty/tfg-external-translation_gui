@@ -1,4 +1,4 @@
-package main.java.gui.other;
+package main.java.gui.util;
 
 import java.awt.Desktop;
 import java.io.File;

@@ -1,4 +1,4 @@
-package main.java.logic.translate.api;
+package main.java.translation.api;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -44,20 +44,18 @@ public class ApiTranslation {
      * has given as input) into a specific language also specified in the prompt
      * via a set of requests to the API.
      * 
-     * @param properties:     Properties object containing i18n localization
-     *                        settings with texts in a given language
-     * @param sourceLanguage: i.e. "English"
-     * @param targetLanguage: i.e. "German"
+     * @param properties Properties object containing i18n localization settings
+     *                   with texts in a given language
+     * @param targetLang i.e. "German"
      * @return translated texts as a string
      * 
      * @return properties object with the parameter properties translated onto
      *         the target language
      * @throws Exception in case of issue with API access and request
      */
-    public Properties translate(Properties properties, String sourceLang,
-	    String targetLang) throws Exception {
-	List<ChatMessage> messages = getRequests(properties, sourceLang,
-		targetLang);
+    public Properties translate(Properties properties, String targetLang)
+	    throws Exception {
+	List<ChatMessage> messages = getRequests(properties, targetLang);
 	this.results = PropertiesUtil.replaceValues(properties,
 		getResults(messages));
 	return this.results;
@@ -80,21 +78,20 @@ public class ApiTranslation {
     /**
      * Builds a set of requests to input in the ChatCompletions API.
      * 
-     * @param properties: Properties object containing localization texts
-     * @param sourceLang: source language that these properties are written in
-     * @param targetLang: target language that the user wishes to translate to
+     * @param properties Properties object containing localization texts
+     * @param targetLang target language that the user wishes to translate to
      * 
      * @return prompt: string containing all texts to translate
      * @throws Exception in case of empty properties or API error
      */
     private List<ChatMessage> getRequests(Properties properties,
-	    String sourceLang, String targetLang) throws Exception {
+	    String targetLang) throws Exception {
 
 	List<ChatMessage> messages = new ArrayList<>();
 
 	// Build the respective messages
 	if (!properties.isEmpty()) {
-	    messages = apiReq.buildRequests(properties, sourceLang, targetLang);
+	    messages = apiReq.buildRequests(properties, targetLang);
 	} else {
 	    throw new Exception(
 		    "No properties content has been indicated in the specified file.");

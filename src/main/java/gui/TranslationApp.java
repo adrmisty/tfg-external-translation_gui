@@ -1,4 +1,4 @@
-package main.java;
+package main.java.gui;
 
 import java.awt.EventQueue;
 import java.util.Locale;
@@ -7,10 +7,10 @@ import java.util.logging.Logger;
 
 import javax.swing.UIManager;
 
-import main.java.gui.MainWindow;
+import main.java.gui.cards.MainWindow;
 import main.java.util.ResourceLoader;
 
-public class Main {
+public class TranslationApp {
 
     /**
      * Launch the application.

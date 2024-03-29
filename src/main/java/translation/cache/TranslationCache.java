@@ -1,4 +1,4 @@
-package main.java.logic.translate.cache;
+package main.java.translation.cache;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
