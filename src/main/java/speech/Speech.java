@@ -2,12 +2,14 @@ package main.java.speech;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import com.microsoft.cognitiveservices.speech.SpeechConfig;
 import com.microsoft.cognitiveservices.speech.SpeechSynthesizer;
 
 import main.java.util.exception.LanguageException;
 import main.java.util.file.LanguageParser;
+import main.java.util.properties.PropertiesUtil;
 import main.java.util.properties.ResourceLoader;
 
 /*
@@ -27,11 +29,12 @@ public class Speech {
 
     // Localize
     public Speech() throws Exception {
-    }
-
-    public void config() throws Exception {
 	this.speech = SpeechConfig.fromSubscription(
 		ResourceLoader.getSpeechApiKey(), "westeurope");
+    }
+
+    public void config(String language) throws Exception {
+	this.speech.setSpeechSynthesisLanguage(language);
 	this.synth = new SpeechSynthesizer(speech);
     }
 
@@ -40,11 +43,24 @@ public class Speech {
      * 
      * @param values list of sentences and texts to read out loud in a given
      *               language
+     * @throws InterruptedException
      */
-    public void speak(List<String> values) {
-	for (String s : values) {
-	    synth.SpeakText(s);
+    public void speak(Properties properties) throws InterruptedException {
+
+	List<String> values = PropertiesUtil.getValues(properties);
+	for (String v : values) {
+	    synth.SpeakText(v);
+	    Thread.sleep(1000);
 	}
+	stop();
+    }
+
+    /**
+     * Stops the execution of TTS.
+     */
+    public void stop() {
+	synth.StopSpeakingAsync();
+	synth.close();
     }
 
     /**

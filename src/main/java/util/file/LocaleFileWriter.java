@@ -189,7 +189,8 @@ public class LocaleFileWriter {
     /**
      * Saves the chosen target language (country-specific) as its Locale Object.
      * 
-     * @param targetLanguage: format "English, United States"
+     * @param targetLanguage format "English, United States"
+     * @return resulting locale object
      * @throws Exception if specified Locale is not supported yet
      */
     public void setTargetLanguage(String language) throws Exception {

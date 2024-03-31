@@ -138,29 +138,36 @@ public class MainWindow extends JFrame {
 	switch (newCard) {
 	case "main":
 	    currentCard = cardMain;
+	    mnLanguage.setEnabled(true);
 	    break;
 	case "file":
 	    currentCard = cardFile;
+	    mnLanguage.setEnabled(false);
 	    break;
 	case "info":
 	    currentCard = cardInfo;
+	    mnLanguage.setEnabled(false);
 	    break;
 	case "mode":
 	    currentCard = cardMode;
+	    mnLanguage.setEnabled(false);
 	    break;
 	case "manual":
 	    currentCard = cardManual;
 	    cardManual.setLanguage(this.language);
+	    mnLanguage.setEnabled(false);
 	    break;
 	case "automatic":
 	    currentCard = cardAuto;
 	    // Start running automatic translation task
 	    cardAuto.run();
+	    mnLanguage.setEnabled(false);
 	    break;
 	case "end":
 	    currentCard = cardEnd;
 	    // Set name to be shown on screen
 	    cardEnd.setSavedFileName(translator.getSavedFileName());
+	    mnLanguage.setEnabled(false);
 	    break;
 	default:
 	    showErrorMessage("Card not available.");
@@ -199,6 +206,10 @@ public class MainWindow extends JFrame {
 	if (results == null) { // Manual translation
 	    IDE.open(contentPane, translator.getSavedFilePath());
 	}
+    }
+
+    public void textToSpeech(boolean start) throws Exception {
+	translator.toSpeech(start);
     }
 
     public void review() throws Exception {

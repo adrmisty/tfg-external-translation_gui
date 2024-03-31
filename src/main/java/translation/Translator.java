@@ -8,6 +8,7 @@ import main.java.translation.mode.AutoTranslation;
 import main.java.translation.mode.ManualTranslation;
 import main.java.translation.mode.TranslationMode;
 import main.java.util.file.LocaleFileWriter;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * Translates a given input .properties file into another one in the specified
@@ -91,6 +92,24 @@ public class Translator {
     }
 
     /**
+     * Configures to the target language, and has the Text-to-Speech
+     * functionality execute reading over the results. [i.e. if translated texts
+     * are in Bulgarian, voice type will be localized to Bulgarian so its accent
+     * is correctly captured]
+     * 
+     * @param boolean true if start playing, false if stop playing
+     * @throws Exception in case of issue with TTS configuration/run
+     */
+    public void toSpeech(boolean start) throws Exception {
+	if (start) {
+	    speech.config(file.getTargetCode());
+	    speech.speak(this.results);
+	} else {
+	    speech.stop();
+	}
+    }
+
+    /**
      * Inputs the file that the user wishes to translate, which must be
      * compliant with i18n format.
      * 
@@ -119,6 +138,8 @@ public class Translator {
 	    file.write(path, this.results);
 	} else {
 	    file.saveReview(path);
+	    // Save review updates in results
+	    update();
 	}
     }
 
@@ -130,6 +151,10 @@ public class Translator {
      */
     public String review() throws Exception {
 	return file.tempWrite(this.results);
+    }
+
+    public void update() throws Exception {
+	this.results = ResourceLoader.loadProperties(getSavedFilePath());
     }
 
     /*

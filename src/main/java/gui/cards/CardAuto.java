@@ -47,6 +47,12 @@ public class CardAuto extends JPanel {
     private JFileChooser fileChooser;
     private JLabel lblTime;
     private JButton btnReview_Auto;
+    private JButton btnSpeech;
+    private JButton btnStop;
+
+    // Threads
+    private Thread speechTask;
+    private Thread translationTask;
 
     public CardAuto(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -55,12 +61,24 @@ public class CardAuto extends JPanel {
 	this.add(getNorthPanel_Auto());
 	this.add(getCenterPanel_Auto());
 	this.add(getDownPanel_Auto());
-    }
 
-    public void run() {
-	busyPanel.start();
+	// Text to speech thread
+	this.speechTask = new Thread(new Runnable() {
+	    @Override
+	    public void run() {
+		try {
+		    // Task execution
+		    btnStop.setEnabled(true);
+		    root.textToSpeech(true);
+		    root.textToSpeech(false);
+		} catch (Exception ex) {
+		    root.showErrorMessage(ex.getMessage());
+		}
+	    }
+	});
 
-	new Thread(new Runnable() {
+	// Translation task
+	this.translationTask = new Thread(new Runnable() {
 	    @Override
 	    public void run() {
 		try {
@@ -79,8 +97,12 @@ public class CardAuto extends JPanel {
 		    root.showErrorMessage(ex.getMessage());
 		}
 	    }
-	}).start();
+	});
+    }
 
+    public void run() {
+	busyPanel.start();
+	translationTask.start();
     }
 
     public void stopLoading() {
@@ -88,6 +110,7 @@ public class CardAuto extends JPanel {
 	setCursor(Cursor.getDefaultCursor());
 	btnSave_Auto.setEnabled(true);
 	btnReview_Auto.setEnabled(true);
+	btnSpeech.setEnabled(true);
 	lblTitle_Auto.setText(
 		root.getMessages().getString("label.auto.title.success"));
 	lblTime.setText(
@@ -208,6 +231,9 @@ public class CardAuto extends JPanel {
 	if (backEmptyPanel_Auto == null) {
 	    backEmptyPanel_Auto = new JPanel();
 	    backEmptyPanel_Auto.setBackground(SystemColor.window);
+	    backEmptyPanel_Auto.setLayout(null);
+	    backEmptyPanel_Auto.add(getBtnSpeech());
+	    backEmptyPanel_Auto.add(getBtnStop());
 	}
 	return backEmptyPanel_Auto;
     }
@@ -297,5 +323,54 @@ public class CardAuto extends JPanel {
 	    btnReview_Auto.setBounds(97, 187, 187, 42);
 	}
 	return btnReview_Auto;
+    }
+
+    private JButton getBtnSpeech() {
+	if (btnSpeech == null) {
+	    btnSpeech = new JButton(root.getMessages().getString("button.tts"));
+	    btnSpeech.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    try {
+			speechTask.start();
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
+		}
+	    });
+	    btnSpeech.setIcon(
+		    new ImageIcon(CardAuto.class.getResource("/img/tts.png")));
+	    btnSpeech.setFont(btnSpeech.getFont().deriveFont(15f));
+	    btnSpeech.setFocusable(false);
+	    btnSpeech.setEnabled(false);
+	    btnSpeech.setBounds(174, 0, 236, 42);
+	}
+	return btnSpeech;
+    }
+
+    private JButton getBtnStop() {
+	if (btnStop == null) {
+	    btnStop = new JButton((String) null);
+	    btnStop.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    try {
+			speechTask.interrupt();
+			btnSpeech.setEnabled(true);
+			btnStop.setEnabled(false);
+			root.textToSpeech(false);
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
+		}
+	    });
+	    btnStop.setEnabled(false);
+	    btnStop.setIcon(
+		    new ImageIcon(CardAuto.class.getResource("/img/stop.png")));
+	    btnStop.setFont(btnStop.getFont().deriveFont(15f));
+	    btnStop.setFocusable(false);
+	    btnStop.setBounds(420, 0, 49, 42);
+	}
+	return btnStop;
     }
 }

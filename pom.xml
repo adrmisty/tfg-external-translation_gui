@@ -93,7 +93,7 @@
 	    <version>2.0.9</version>
 	</dependency>
 	
-	<!-- https://mvnrepository.com/artifact/com.microsoft.cognitiveservices.speech/client-sdk -->
+	<!-- Microsoft Cognitive Services SDK -->
 	<dependency>
 	    <groupId>com.microsoft.cognitiveservices.speech</groupId>
 	    <artifactId>client-sdk</artifactId>
