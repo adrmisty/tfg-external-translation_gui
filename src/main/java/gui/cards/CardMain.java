@@ -17,7 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
-import main.java.util.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardMain extends JPanel {
 
@@ -47,7 +48,7 @@ public class CardMain extends JPanel {
     private JLabel lblLogo;
     private JLabel lblFileLingual;
 
-    public CardMain(MainWindow root) {
+    public CardMain(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setLayout(null);
@@ -56,7 +57,7 @@ public class CardMain extends JPanel {
 	this.add(getCenterPanel());
     }
 
-    private JPanel getNorthPanel() {
+    private JPanel getNorthPanel() throws ResourceException {
 	if (northPanel == null) {
 	    northPanel = new JPanel();
 	    northPanel.setBounds(0, 0, 586, 110);
@@ -67,7 +68,7 @@ public class CardMain extends JPanel {
 	return northPanel;
     }
 
-    private JPanel getDownPanel() {
+    private JPanel getDownPanel() throws ResourceException {
 	if (downPanel == null) {
 	    downPanel = new JPanel();
 	    downPanel.setBounds(0, 246, 586, 167);
@@ -78,7 +79,7 @@ public class CardMain extends JPanel {
 	return downPanel;
     }
 
-    private JButton getLeftButton() {
+    private JButton getLeftButton() throws ResourceException {
 	if (leftButton == null) {
 	    leftButton = new JButton(
 		    root.getMessages().getString("button.start"));
@@ -87,7 +88,11 @@ public class CardMain extends JPanel {
 	    leftButton.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.show("file");
+		    try {
+			root.show("file");
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
 		}
 	    });
 	    leftButton.setMnemonic('s');
@@ -97,7 +102,7 @@ public class CardMain extends JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    private JButton getRightButton() {
+    private JButton getRightButton() throws ResourceException {
 	if (rightButton == null) {
 	    // Underlined text
 	    rightButton = new JButton(
@@ -106,7 +111,11 @@ public class CardMain extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    // Open information window
-		    root.show("info");
+		    try {
+			root.show("info");
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
 		}
 	    });
 	    rightButton.setFont(ResourceLoader.getFont().deriveFont(20f));
@@ -122,7 +131,7 @@ public class CardMain extends JPanel {
 	return rightButton;
     }
 
-    private JSplitPane getSplitPane() {
+    private JSplitPane getSplitPane() throws ResourceException {
 	if (splitPane == null) {
 	    splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 		    getLeftButton(), getRightButton());
@@ -131,7 +140,7 @@ public class CardMain extends JPanel {
 	return splitPane;
     }
 
-    private JPanel getCenterPanel() {
+    private JPanel getCenterPanel() throws ResourceException {
 	if (centerPanel == null) {
 	    centerPanel = new JPanel();
 	    centerPanel.setBackground(SystemColor.window);
@@ -143,7 +152,7 @@ public class CardMain extends JPanel {
 	return centerPanel;
     }
 
-    private JLabel getLblSlogan() {
+    private JLabel getLblSlogan() throws ResourceException {
 	if (lblSlogan == null) {
 	    lblSlogan = new JLabel(
 		    root.getMessages().getString("label.slogan"));
@@ -154,7 +163,7 @@ public class CardMain extends JPanel {
 	return lblSlogan;
     }
 
-    private JPanel getLogoPanel() {
+    private JPanel getLogoPanel() throws ResourceException {
 	if (logoPanel == null) {
 	    logoPanel = new JPanel();
 	    logoPanel.setBackground(SystemColor.window);
@@ -165,7 +174,7 @@ public class CardMain extends JPanel {
 	return logoPanel;
     }
 
-    private JLabel getLblForLogo() {
+    private JLabel getLblForLogo() throws ResourceException {
 	if (lblForLogo == null) {
 	    lblForLogo = new JLabel(
 		    root.getMessages().getString("label.poweredby"));
@@ -184,7 +193,7 @@ public class CardMain extends JPanel {
 	return lblLogo;
     }
 
-    private JLabel getLblFileLingual() {
+    private JLabel getLblFileLingual() throws ResourceException {
 	if (lblFileLingual == null) {
 	    lblFileLingual = new JLabel("FileLingual");
 	    lblFileLingual.setHorizontalAlignment(SwingConstants.CENTER);

@@ -18,7 +18,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import main.java.util.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardMode extends JPanel {
 
@@ -48,7 +49,7 @@ public class CardMode extends JPanel {
     private JButton btnNext_Mode;
     private JButton btnHelp_Mode;
 
-    public CardMode(MainWindow root) {
+    public CardMode(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setBackground(SystemColor.window);
@@ -58,7 +59,7 @@ public class CardMode extends JPanel {
 	this.add(getDownPanel_Mode());
     }
 
-    private JPanel getNorthPanel_Mode() {
+    private JPanel getNorthPanel_Mode() throws ResourceException {
 	if (northPanel_Mode == null) {
 	    northPanel_Mode = new JPanel();
 	    northPanel_Mode.setBounds(0, 0, 586, 81);
@@ -69,7 +70,7 @@ public class CardMode extends JPanel {
 	return northPanel_Mode;
     }
 
-    private JPanel getDownPanel_Mode() {
+    private JPanel getDownPanel_Mode() throws ResourceException {
 	if (downPanel_Mode == null) {
 	    downPanel_Mode = new JPanel();
 	    downPanel_Mode.setBounds(0, 315, 586, 98);
@@ -80,7 +81,7 @@ public class CardMode extends JPanel {
 	return downPanel_Mode;
     }
 
-    private JPanel getCenterPanel_Mode() {
+    private JPanel getCenterPanel_Mode() throws ResourceException {
 	if (centerPanel_Mode == null) {
 	    centerPanel_Mode = new JPanel();
 	    centerPanel_Mode.setBounds(0, 80, 586, 236);
@@ -114,7 +115,7 @@ public class CardMode extends JPanel {
 	}
     }
 
-    private JButton getBtnManual_Mode() {
+    private JButton getBtnManual_Mode() throws ResourceException {
 	if (btnManual_Mode == null) {
 	    btnManual_Mode = new JButton(
 		    root.getMessages().getString("button.mode.manual"));
@@ -132,7 +133,7 @@ public class CardMode extends JPanel {
 	return btnManual_Mode;
     }
 
-    private JButton getBtnAutomatic_Mode() {
+    private JButton getBtnAutomatic_Mode() throws ResourceException {
 	if (btnAutomatic_Mode == null) {
 	    btnAutomatic_Mode = new JButton(
 		    root.getMessages().getString("button.mode.auto"));
@@ -140,6 +141,11 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    setSelectedButton(btnAutomatic_Mode, btnManual_Mode);
+		    try {
+			root.setMode(null);
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
 		    unlockNext();
 		}
 	    });
@@ -149,7 +155,7 @@ public class CardMode extends JPanel {
 	return btnAutomatic_Mode;
     }
 
-    private JComboBox<String> getComboBox() {
+    private JComboBox<String> getComboBox() throws ResourceException {
 	if (comboBox == null) {
 	    comboBox = new JComboBox<String>();
 	    comboBox.addItemListener(new ItemListener() {
@@ -192,7 +198,7 @@ public class CardMode extends JPanel {
 	}
     }
 
-    private JLabel getLblChoose() {
+    private JLabel getLblChoose() throws ResourceException {
 	if (lblChoose == null) {
 	    lblChoose = new JLabel(
 		    root.getMessages().getString("label.mode.type"));
@@ -204,7 +210,7 @@ public class CardMode extends JPanel {
 	return lblChoose;
     }
 
-    private JLabel getLblLanguage() {
+    private JLabel getLblLanguage() throws ResourceException {
 	if (lblLanguage == null) {
 	    lblLanguage = new JLabel(
 		    root.getMessages().getString("label.mode.language"));
@@ -217,7 +223,7 @@ public class CardMode extends JPanel {
 	return lblLanguage;
     }
 
-    private JLabel getLblChooseTranslation() {
+    private JLabel getLblChooseTranslation() throws ResourceException {
 	if (lblChooseTranslation == null) {
 	    lblChooseTranslation = new JLabel(
 		    root.getMessages().getString("label.mode.title"));
@@ -237,7 +243,7 @@ public class CardMode extends JPanel {
 	return backEmptyPanel_Mode;
     }
 
-    private JPanel getBackPanel_Mode() {
+    private JPanel getBackPanel_Mode() throws ResourceException {
 	if (backPanel_Mode == null) {
 	    backPanel_Mode = new JPanel();
 	    backPanel_Mode.setBackground(SystemColor.window);
@@ -250,7 +256,7 @@ public class CardMode extends JPanel {
 	return backPanel_Mode;
     }
 
-    private JLabel getLblBack_Mode() {
+    private JLabel getLblBack_Mode() throws ResourceException {
 	if (lblBack_Mode == null) {
 	    lblBack_Mode = new JLabel("<");
 	    lblBack_Mode.setLabelFor(getBtnBack_Mode());
@@ -272,7 +278,11 @@ public class CardMode extends JPanel {
 	    btnBack_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.show("file");
+		    try {
+			root.show("file");
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
 		}
 	    });
 	    btnBack_Mode.setIcon(new ImageIcon(
@@ -285,7 +295,7 @@ public class CardMode extends JPanel {
 	return btnBack_Mode;
     }
 
-    private JButton getBtnNext_Mode() {
+    private JButton getBtnNext_Mode() throws ResourceException {
 	if (btnNext_Mode == null) {
 	    btnNext_Mode = new JButton(
 		    root.getMessages().getString("button.next"));
@@ -294,9 +304,17 @@ public class CardMode extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 		    root.setLanguage((String) comboBox.getSelectedItem());
 		    if (btnAutomatic_Mode.isSelected()) {
-			root.show("automatic");
+			try {
+			    root.show("automatic");
+			} catch (Exception e1) {
+			    root.showErrorMessage(e1.getMessage());
+			}
 		    } else {
-			root.show("manual");
+			try {
+			    root.show("manual");
+			} catch (Exception e1) {
+			    root.showErrorMessage(e1.getMessage());
+			}
 		    }
 		}
 	    });
@@ -308,7 +326,7 @@ public class CardMode extends JPanel {
 	return btnNext_Mode;
     }
 
-    private JButton getBtnHelp_Mode() {
+    private JButton getBtnHelp_Mode() throws ResourceException {
 	if (btnHelp_Mode == null) {
 	    btnHelp_Mode = new JButton("");
 	    btnHelp_Mode.setIcon(new ImageIcon(

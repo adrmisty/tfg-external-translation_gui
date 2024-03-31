@@ -26,7 +26,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import main.java.util.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardInfo extends JPanel {
 
@@ -61,7 +62,7 @@ public class CardInfo extends JPanel {
     private JLabel lblBack;
     private JButton btnBack_Info;
 
-    public CardInfo(MainWindow root) {
+    public CardInfo(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setLayout(null);
@@ -70,7 +71,7 @@ public class CardInfo extends JPanel {
 	this.add(getDownPanel_Info());
     }
 
-    private JPanel getNorthPanel_Info() {
+    private JPanel getNorthPanel_Info() throws ResourceException {
 	if (northPanel_Info == null) {
 	    northPanel_Info = new JPanel();
 	    northPanel_Info.setBounds(0, 0, 586, 142);
@@ -81,7 +82,7 @@ public class CardInfo extends JPanel {
 	return northPanel_Info;
     }
 
-    private JPanel getDownPanel_Info() {
+    private JPanel getDownPanel_Info() throws ResourceException {
 	if (downPanel_Info == null) {
 	    downPanel_Info = new JPanel();
 	    downPanel_Info.setBounds(0, 310, 586, 103);
@@ -93,7 +94,7 @@ public class CardInfo extends JPanel {
 	return downPanel_Info;
     }
 
-    private JPanel getTitlePanel_Info() {
+    private JPanel getTitlePanel_Info() throws ResourceException {
 	if (titlePanel_Info == null) {
 	    titlePanel_Info = new JPanel();
 	    titlePanel_Info.setBounds(0, 0, 586, 142);
@@ -105,7 +106,7 @@ public class CardInfo extends JPanel {
 	return titlePanel_Info;
     }
 
-    private JPanel getCenterPanel_Info() {
+    private JPanel getCenterPanel_Info() throws ResourceException {
 	if (centerPanel_Info == null) {
 	    centerPanel_Info = new JPanel();
 	    centerPanel_Info.setBounds(0, 142, 586, 168);
@@ -120,7 +121,7 @@ public class CardInfo extends JPanel {
 	return centerPanel_Info;
     }
 
-    private JLabel getLblUnioviLogo() {
+    private JLabel getLblUnioviLogo() throws ResourceException {
 	if (lblUnioviLogo == null) {
 	    lblUnioviLogo = new JLabel("");
 	    lblUnioviLogo.setBounds(38, 33, 113, 83);
@@ -157,7 +158,7 @@ public class CardInfo extends JPanel {
 	return lblEmpty_2_1_1;
     }
 
-    private JPanel getAuthorPanel() {
+    private JPanel getAuthorPanel() throws ResourceException {
 	if (authorPanel == null) {
 	    authorPanel = new JPanel();
 	    authorPanel.setBackground(SystemColor.window);
@@ -170,7 +171,7 @@ public class CardInfo extends JPanel {
 	return authorPanel;
     }
 
-    private JLabel getLblAuthor() {
+    private JLabel getLblAuthor() throws ResourceException {
 	if (lblAuthor == null) {
 	    lblAuthor = new JLabel(
 		    root.getMessages().getString("label.tfg.author"));
@@ -182,7 +183,7 @@ public class CardInfo extends JPanel {
 	return lblAuthor;
     }
 
-    private JLabel getLblEmail() {
+    private JLabel getLblEmail() throws ResourceException {
 	if (lblEmail == null) {
 	    lblEmail = new JLabel("uo282798@uniovi.es");
 	    lblEmail.setBackground(SystemColor.window);
@@ -225,7 +226,7 @@ public class CardInfo extends JPanel {
 	return lblEmpty_3_1;
     }
 
-    private JTextPane getTextDescription() {
+    private JTextPane getTextDescription() throws ResourceException {
 	if (textDescription == null) {
 	    textDescription = new JTextPane();
 	    textDescription.setBackground(SystemColor.window);
@@ -252,7 +253,7 @@ public class CardInfo extends JPanel {
 	return backEmptyPanel_Info;
     }
 
-    private JPanel getBackPanel_Info() {
+    private JPanel getBackPanel_Info() throws ResourceException {
 	if (backPanel_Info == null) {
 	    backPanel_Info = new JPanel();
 	    backPanel_Info.setLayout(null);
@@ -263,7 +264,7 @@ public class CardInfo extends JPanel {
 	return backPanel_Info;
     }
 
-    private JLabel getLblBack_Info() {
+    private JLabel getLblBack_Info() throws ResourceException {
 	if (lblBack == null) {
 	    lblBack = new JLabel("<");
 	    lblBack.addMouseListener(new MouseAdapter() {
@@ -284,7 +285,11 @@ public class CardInfo extends JPanel {
 	    btnBack_Info.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.show("main");
+		    try {
+			root.show("main");
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
 		}
 	    });
 	    btnBack_Info.setIcon(new ImageIcon(
@@ -297,7 +302,7 @@ public class CardInfo extends JPanel {
 	return btnBack_Info;
     }
 
-    private JTextArea getLblProject() {
+    private JTextArea getLblProject() throws ResourceException {
 	if (lblProject == null) {
 	    lblProject = new JTextArea(
 		    root.getMessages().getString("label.tfg"));

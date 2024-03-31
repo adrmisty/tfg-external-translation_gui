@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -19,7 +18,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import main.java.gui.util.BusyPanel;
-import main.java.util.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardAuto extends JPanel {
 
@@ -48,7 +48,7 @@ public class CardAuto extends JPanel {
     private JLabel lblTime;
     private JButton btnReview_Auto;
 
-    public CardAuto(MainWindow root) {
+    public CardAuto(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setLayout(null);
@@ -57,7 +57,7 @@ public class CardAuto extends JPanel {
 	this.add(getDownPanel_Auto());
     }
 
-    public void executeAutomaticTranslation() {
+    public void run() {
 	busyPanel.start();
 
 	new Thread(new Runnable() {
@@ -65,7 +65,7 @@ public class CardAuto extends JPanel {
 	    public void run() {
 		try {
 		    // Task execution
-		    root.autoTranslate();
+		    root.translate();
 		    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
 		    // Task finished, stop the busy panel
@@ -105,7 +105,7 @@ public class CardAuto extends JPanel {
     }
 
     private boolean getSaveFileChooser() {
-	if (root.choseDirectory()) {
+	if (root.isDirPath()) {
 	    return true;
 	}
 
@@ -114,14 +114,13 @@ public class CardAuto extends JPanel {
 	int returnVal = fileChooser.showSaveDialog(this);
 
 	if (returnVal == JFileChooser.APPROVE_OPTION) {
-	    root.chooseDirectory(
-		    fileChooser.getSelectedFile().getAbsolutePath());
+	    root.setDirPath(fileChooser.getSelectedFile().getAbsolutePath());
 	    return true;
 	}
 	return false;
     }
 
-    private JPanel getCenterPanel_Auto() {
+    private JPanel getCenterPanel_Auto() throws ResourceException {
 	if (centerPanel_Automatic == null) {
 	    centerPanel_Automatic = new JPanel();
 	    centerPanel_Automatic.setBounds(0, 63, 586, 253);
@@ -182,7 +181,7 @@ public class CardAuto extends JPanel {
 	return northPanel_Auto;
     }
 
-    private JLabel getLvlProgress_Auto_1() {
+    private JLabel getLvlProgress_Auto_1() throws ResourceException {
 	if (lblTitle_Auto == null) {
 	    lblTitle_Auto = new JLabel(
 		    root.getMessages().getString("label.auto.title.loading"));
@@ -246,7 +245,11 @@ public class CardAuto extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    reset();
-		    root.show("mode");
+		    try {
+			root.show("mode");
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
 		}
 	    });
 	    btnBack_Auto.setIcon(new ImageIcon(
@@ -259,7 +262,7 @@ public class CardAuto extends JPanel {
 	return btnBack_Auto;
     }
 
-    private JLabel getLblTime() {
+    private JLabel getLblTime() throws ResourceException {
 	if (lblTime == null) {
 	    lblTime = new JLabel(root.getMessages()
 		    .getString("label.auto.subtitle.loading"));
@@ -271,7 +274,7 @@ public class CardAuto extends JPanel {
 	return lblTime;
     }
 
-    private JButton getBtnReview_Auto() {
+    private JButton getBtnReview_Auto() throws ResourceException {
 	if (btnReview_Auto == null) {
 	    btnReview_Auto = new JButton(
 		    root.getMessages().getString("button.review"));
@@ -280,8 +283,7 @@ public class CardAuto extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 		    try {
 			root.review();
-		    } catch (IOException e1) {
-			// TODO Auto-generated catch block
+		    } catch (Exception e1) {
 			root.showErrorMessage(
 				root.getMessages().getString("error.review"));
 		    }

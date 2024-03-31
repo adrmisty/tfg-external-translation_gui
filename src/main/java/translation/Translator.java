@@ -1,12 +1,12 @@
 package main.java.translation;
 
-import java.io.IOException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.translation.api.ApiTranslation;
-import main.java.translation.cache.TranslationCache;
-import main.java.util.PropertiesUtil;
+import main.java.speech.Speech;
+import main.java.translation.mode.AutoTranslation;
+import main.java.translation.mode.ManualTranslation;
+import main.java.translation.mode.TranslationMode;
 import main.java.util.file.LocaleFileWriter;
 
 /**
@@ -21,9 +21,15 @@ import main.java.util.file.LocaleFileWriter;
  */
 public class Translator {
 
-    private static ApiTranslation api;
     private static LocaleFileWriter file;
-    private TranslationCache cache;
+
+    // Text to speech
+    private Speech speech;
+
+    // Translation mode
+    private TranslationMode auto;
+    private TranslationMode manual;
+    private TranslationMode mode;
 
     // Translations
     private Properties results; // Translation results
@@ -33,56 +39,55 @@ public class Translator {
      */
 
     /**
-     * Creates a translator with a given localization for the application.
+     * Creates a generic translator.
      * 
-     * @param messages: localization settings chosen by the user
+     * @param messages localization settings chosen by the user
      * @throws Exception in case of I/O issues with writing to file
      */
     public Translator(ResourceBundle messages) throws Exception {
-	api = new ApiTranslation(); // API access
-	file = new LocaleFileWriter(messages); // Localization file manager
-	cache = new TranslationCache(); // Translation database
+	file = new LocaleFileWriter(messages); // Results file
+	speech = new Speech(); // TTS
 	reset(); // Initialization
     }
 
     /**
-     * Executes the automatic API translation process, from a given input file:
+     * Sets automatic translation mode.
      * 
-     * - 1. Establishes the target language.
-     * 
-     * - 2. Accesses LL to carry out automatic translation. (In case of
-     * translations having already been carried out in the past, result is
-     * retrieved directly from the caché).
-     * 
-     * - 3. Retrieves results.
-     * 
-     * - 4. Updates caché with new translations.
-     * 
-     * @param target language: with format "English, United States"
-     * 
-     * @throws Exception if there is an error with API access
+     * @throws Exception with problems creating the API access service
      */
-    public void autoTranslateTo(String language) throws Exception {
-	file.setTargetLanguage(language);
-	this.results = apiTranslate();
+    public void setAutoMode() throws Exception {
+	if (auto == null) {
+	    auto = new AutoTranslation(file);
+	}
+	this.mode = auto;
     }
 
     /**
-     * Writes property keys into a new file so that the user can execute the
-     * manual translation themselves.
+     * Sets manual translation mode.
      * 
-     * @param language: string representation of the language in the program's
-     *                  locale (i.e. if program is being executed in French and
-     *                  results shall be translated to "German", this string
-     *                  would be "Allemand")
-     * @param path:     path of the directory where to create and write the
-     *                  translated file
-     * @throws Exception in case of issue with I/O writing to file
+     * @param path to which manual writing will be done
      */
-    public String manualTranslateTo(String language, String path)
-	    throws Exception {
+    public void setManualMode(String path) {
+	if (manual == null) {
+	    manual = new ManualTranslation(file, path);
+	}
+	this.mode = manual;
+    }
+
+    /**
+     * Translates according to the specified translation mode, into a given
+     * target language.
+     * 
+     * @param language format "Bulgarian, Bulgaria"
+     * @return results in the form of a Properties object
+     * @throws Exception in case of translation problems
+     */
+    public Properties translateTo(String language) throws Exception {
+	// For file creation & processing
 	file.setTargetLanguage(language);
-	return file.manualWrite(path);
+	// Translation mode
+	this.results = mode.translate(language);
+	return this.results;
     }
 
     /**
@@ -107,10 +112,9 @@ public class Translator {
      * first time in the specified file path.
      * 
      * @param file path: absolute directory path where file should be saved
-     * @throws IOException in case of I/O issue when writing to/from file, or
-     *                     copying contents of temporary file
+     * @throws Exception
      */
-    public void save(String path) throws IOException {
+    public void save(String path) throws Exception {
 	if (!file.isFileTemporary()) {
 	    file.write(path, this.results);
 	} else {
@@ -122,86 +126,10 @@ public class Translator {
      * Writes the results into a temporary file to be used for reviewing and
      * editing the translation.
      * 
-     * @throws IOException in case of issues with I/O writing to temporary file
+     * @throws Exception
      */
-    public String review() throws IOException {
+    public String review() throws Exception {
 	return file.tempWrite(this.results);
-    }
-
-    /*
-     * ######################## AUXILIARY METHODS ##############################
-     */
-
-    /**
-     * Accesses API to translate a set of properties from a source language to a
-     * target language.
-     * 
-     * @return translated properties
-     * @throws Exception in case of issue with API
-     */
-    private Properties apiTranslate() throws Exception {
-	// Checks whether some translations have already been made
-	fromCache();
-	// Translate strictly those that have never been translated before
-	Properties results = getAutoResults();
-	// Update cache
-	toCache();
-	// Retrieve results
-	return results;
-    }
-
-    /**
-     * If any, saves API results onto translation cache (if not found in the
-     * database!).
-     * 
-     * @throws Exception in case of issue with DB
-     */
-    private void toCache() throws Exception {
-	if (api.getResults() != null) {
-	    cache.storeAll(api.getResults(), file.getProperties(),
-		    file.getTargetLanguageCode());
-	}
-    }
-
-    /**
-     * Retrieves those values already translated and present in the database,
-     * and sets the group of properties to be translated and sent to the API.
-     * 
-     * @throws Exception in case of issue with DB
-     */
-    private void fromCache() throws Exception {
-	cache.match(file.getProperties(), file.getTargetLanguageCode());
-    }
-
-    /**
-     * Considering the translations found in the cache and those yet to be done,
-     * it either does/doesn't request translations to the API, for optimization
-     * of performance.
-     * 
-     * @return combined results (caché, API...)
-     * @throws Exception in case of error with API translation
-     */
-    private Properties getAutoResults() throws Exception {
-
-	// No need to access the API
-	if (cache.getUntranslated().isEmpty()) {
-	    return cache.getTranslated();
-
-	} else {
-	    // Needs to access the API
-	    api.translate(cache.getUntranslated(), file.getTargetLanguage());
-
-	    // Everything has been translated from API
-	    if (cache.getTranslated().isEmpty()) {
-		return api.getResults();
-
-		// Both API and cache translations
-	    } else {
-		return PropertiesUtil.join(api.getResults(),
-			cache.getTranslated());
-	    }
-	}
-
     }
 
     /*
@@ -215,8 +143,10 @@ public class Translator {
      * @throws Exception in case of issue with DB
      */
     public void reset() throws Exception {
-	cache.reset();
 	this.results = new Properties();
+	if (mode != null) {
+	    mode.reset();
+	}
 	file.reset();
     }
 
@@ -225,7 +155,7 @@ public class Translator {
      *         otherwise
      */
     public boolean isDone() {
-	return !this.results.isEmpty();
+	return !results.isEmpty();
     }
 
     /**

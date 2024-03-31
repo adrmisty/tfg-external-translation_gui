@@ -3,11 +3,11 @@ package main.java.gui.cards;
 import java.awt.CardLayout;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
@@ -20,7 +20,8 @@ import javax.swing.JPanel;
 import main.java.gui.util.IDE;
 import main.java.gui.util.NumberedJMenuItem;
 import main.java.translation.Translator;
-import main.java.util.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * Main Window of the application, which consists of several different views
@@ -51,8 +52,8 @@ public class MainWindow extends JFrame {
     private CardEnd cardEnd; // For ending the app
 
     // Files & translation
-    private String inputFilePath = "";
-    private String directoryPath = "";
+    private String filePath = "";
+    private String dirPath = "";
     private String language = "";
 
     /*
@@ -67,7 +68,6 @@ public class MainWindow extends JFrame {
      * @throws Exception
      */
     public MainWindow() throws Exception {
-	localize(Locale.getDefault());
 
 	setBackground(SystemColor.window);
 	setResizable(false);
@@ -90,6 +90,13 @@ public class MainWindow extends JFrame {
 	initWindow(Locale.getDefault());
     }
 
+    /**
+     * Initializes the window's components to a specific Locale.
+     * 
+     * @param locale specified by user or, in case of first launch, system's
+     *               default
+     * @throws Exception in case of localization error
+     */
     public void initWindow(Locale locale) throws Exception {
 	contentPane.removeAll();
 	cardMain = null;
@@ -125,7 +132,7 @@ public class MainWindow extends JFrame {
      * @param String identificating the new card to show
      * @throws Exception if the card to show is not recognised
      */
-    public void show(String newCard) {
+    public void show(String newCard) throws Exception {
 	currentCard.setVisible(false);
 
 	switch (newCard) {
@@ -147,15 +154,16 @@ public class MainWindow extends JFrame {
 	    break;
 	case "automatic":
 	    currentCard = cardAuto;
-	    cardAuto.executeAutomaticTranslation(); // start task
+	    // Start running automatic translation task
+	    cardAuto.run();
 	    break;
 	case "end":
-	    currentCard = cardEnd; // set name to be shown on screen
+	    currentCard = cardEnd;
+	    // Set name to be shown on screen
 	    cardEnd.setSavedFileName(translator.getSavedFileName());
 	    break;
 	default:
-	    showErrorMessage(
-		    "The selected screen to be shown is not supported.");
+	    showErrorMessage("Card not available.");
 	}
 
 	currentCard.setVisible(true);
@@ -182,20 +190,18 @@ public class MainWindow extends JFrame {
 		"FileLingual", JOptionPane.ERROR_MESSAGE);
     }
 
-    public void save() throws IOException {
-	translator.save(directoryPath);
+    public void save() throws Exception {
+	translator.save(dirPath);
     }
 
-    public void autoTranslate() throws Exception {
-	translator.autoTranslateTo(language);
+    public void translate() throws Exception {
+	Properties results = translator.translateTo(language);
+	if (results == null) { // Manual translation
+	    IDE.open(contentPane, translator.getSavedFilePath());
+	}
     }
 
-    public void manualTranslate() throws Exception {
-	IDE.open(contentPane,
-		translator.manualTranslateTo(language, directoryPath));
-    }
-
-    public void review() throws IOException {
+    public void review() throws Exception {
 	IDE.open(contentPane, translator.review());
     }
 
@@ -203,50 +209,48 @@ public class MainWindow extends JFrame {
 	this.language = language;
     }
 
-    public void chooseFile(String path) {
-	this.inputFilePath = path;
+    public void setFilePath(String path) {
+	this.filePath = path;
     }
 
-    public void chooseDirectory(String path) {
-	this.directoryPath = path;
+    public void setDirPath(String path) {
+	this.dirPath = path;
     }
 
-    public boolean choseDirectory() {
-	return !directoryPath.isBlank();
+    public boolean isDirPath() {
+	return !dirPath.isBlank();
     }
 
-    public void editFile() {
-	IDE.open(contentPane,
-		this.directoryPath + translator.getSavedFileName());
+    public void input() {
+	IDE.open(contentPane, translator.getSavedFilePath());
     }
 
     public void inputFile() throws Exception {
-	translator.input(inputFilePath);
+	translator.input(filePath);
     }
 
     public void resetFileValues() {
-	this.inputFilePath = "";
-	this.directoryPath = "";
+	this.filePath = "";
+	this.dirPath = "";
     }
 
     public void resetModeValues() {
 	cardMode.reset();
     }
 
-    public void localize(Locale locale) throws Exception {
-	this.messages = ResourceBundle.getBundle("Messages", locale);
-	this.translator = new Translator(this.messages);
-    }
-
-    public ResourceBundle getMessages() {
-	return this.messages;
+    public void setMode(String path) throws Exception {
+	if (path == null) {
+	    translator.setAutoMode();
+	} else {
+	    translator.setManualMode(path);
+	}
     }
 
     /*
-     * ##### CARDS
+     * ######################## CARDS #################################
      */
 
-    private JPanel getCardMain() {
+    private JPanel getCardMain() throws ResourceException {
 	if (cardMain == null) {
 	    cardMain = new CardMain(this);
 	    cardMain.setVisible(true);
@@ -254,7 +258,7 @@ public class MainWindow extends JFrame {
 	return cardMain;
     }
 
-    private JPanel getCardInfo() {
+    private JPanel getCardInfo() throws ResourceException {
 	if (cardInfo == null) {
 	    cardInfo = new CardInfo(this);
 	    cardInfo.setVisible(false);
@@ -262,7 +266,7 @@ public class MainWindow extends JFrame {
 	return cardInfo;
     }
 
-    private JPanel getCardFile() {
+    private JPanel getCardFile() throws ResourceException {
 	if (cardFile == null) {
 	    cardFile = new CardFile(this);
 	    cardFile.setVisible(false);
@@ -270,7 +274,7 @@ public class MainWindow extends JFrame {
 	return cardFile;
     }
 
-    private JPanel getCardMode() {
+    private JPanel getCardMode() throws ResourceException {
 	if (cardMode == null) {
 	    cardMode = new CardMode(this);
 	    cardMode.setVisible(false);
@@ -278,7 +282,7 @@ public class MainWindow extends JFrame {
 	return cardMode;
     }
 
-    private JPanel getCardAuto() {
+    private JPanel getCardAuto() throws ResourceException {
 	if (cardAuto == null) {
 	    cardAuto = new CardAuto(this);
 	    cardAuto.setVisible(false);
@@ -286,7 +290,7 @@ public class MainWindow extends JFrame {
 	return cardAuto;
     }
 
-    private JPanel getCardManual() {
+    private JPanel getCardManual() throws ResourceException {
 	if (cardManual == null) {
 	    cardManual = new CardManual(this);
 	    cardManual.setVisible(false);
@@ -294,7 +298,7 @@ public class MainWindow extends JFrame {
 	return cardManual;
     }
 
-    private JPanel getCardEnd() {
+    private JPanel getCardEnd() throws ResourceException {
 	if (cardEnd == null) {
 	    cardEnd = new CardEnd(this);
 	    cardEnd.setVisible(false);
@@ -302,7 +306,9 @@ public class MainWindow extends JFrame {
 	return cardEnd;
     }
 
-    // Localization
+    /*
+     * ######################## LOCALIZATION #################################
+     */
 
     private JMenu getMnLanguage() throws Exception {
 	if (mnLanguage == null) {
@@ -325,7 +331,15 @@ public class MainWindow extends JFrame {
 		    map.get(i)));
 	    mnLanguage.add(menuItems.get(i));
 	}
+    }
 
+    public void localize(Locale locale) throws Exception {
+	this.messages = ResourceBundle.getBundle("Messages", locale);
+	this.translator = new Translator(this.messages);
+    }
+
+    public ResourceBundle getMessages() {
+	return this.messages;
     }
 
 }

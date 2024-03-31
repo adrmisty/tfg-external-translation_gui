@@ -24,7 +24,7 @@ public class TranslationController {
     // OpenAI API access (will execute all translations)
     public static ApiTranslation api_rest;
 
-    public TranslationController() {
+    public TranslationController() throws Exception {
 	api_rest = new ApiTranslation();
     }
 
@@ -41,9 +41,8 @@ public class TranslationController {
      * @throws Exception
      * @throws IOException
      */
-    @PostMapping("/translateFile")
+    @PostMapping("/translate")
     public Properties translate(@RequestParam("file") MultipartFile file,
-	    String sourceLanguage,
 	    @RequestParam("targetLanguage") String targetLanguage)
 	    throws Exception {
 

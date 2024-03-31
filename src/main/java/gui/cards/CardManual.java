@@ -15,7 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import main.java.util.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardManual extends JPanel {
 
@@ -49,7 +50,7 @@ public class CardManual extends JPanel {
     private String language;
     private JLabel lblManualTitle;
 
-    public CardManual(MainWindow root) {
+    public CardManual(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setLayout(null);
@@ -70,7 +71,7 @@ public class CardManual extends JPanel {
     }
 
     private boolean getSaveFileChooser() {
-	if (root.choseDirectory()) {
+	if (root.isDirPath()) {
 	    return true;
 	}
 
@@ -80,14 +81,13 @@ public class CardManual extends JPanel {
 
 	if (returnVal == JFileChooser.APPROVE_OPTION) {
 	    txtPath.setText(fileChooser.getSelectedFile().getPath());
-	    root.chooseDirectory(
-		    fileChooser.getSelectedFile().getAbsolutePath());
+	    root.setDirPath(fileChooser.getSelectedFile().getAbsolutePath());
 	    return true;
 	}
 	return false;
     }
 
-    private JPanel getCenterPanel_Auto() {
+    private JPanel getCenterPanel_Auto() throws ResourceException {
 	if (centerPanel_Manual == null) {
 	    centerPanel_Manual = new JPanel();
 	    centerPanel_Manual.setBounds(0, 81, 586, 235);
@@ -114,7 +114,9 @@ public class CardManual extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
-			root.manualTranslate();
+			root.setMode(fileChooser.getSelectedFile()
+				.getAbsolutePath());
+			root.translate();
 		    } catch (Exception e1) {
 			root.showErrorMessage(
 				root.getMessages().getString("error.manual"));
@@ -129,7 +131,7 @@ public class CardManual extends JPanel {
 	return btnTranslate_Manual;
     }
 
-    private JPanel getNorthPanel_Manual() {
+    private JPanel getNorthPanel_Manual() throws ResourceException {
 	if (northPanel_Manual == null) {
 	    northPanel_Manual = new JPanel();
 	    northPanel_Manual.setBackground(SystemColor.window);
@@ -140,7 +142,7 @@ public class CardManual extends JPanel {
 	return northPanel_Manual;
     }
 
-    private JPanel getDownPanel_Manual() {
+    private JPanel getDownPanel_Manual() throws ResourceException {
 	if (downPanel_Manual == null) {
 	    downPanel_Manual = new JPanel();
 	    downPanel_Manual.setBounds(0, 315, 586, 98);
@@ -159,7 +161,7 @@ public class CardManual extends JPanel {
 	return backEmptyPanel_Manual;
     }
 
-    private JPanel getBackPanel_Manual() {
+    private JPanel getBackPanel_Manual() throws ResourceException {
 	if (backPanel_Manual == null) {
 	    backPanel_Manual = new JPanel();
 	    backPanel_Manual.setLayout(null);
@@ -193,7 +195,11 @@ public class CardManual extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    reset();
-		    root.show("mode");
+		    try {
+			root.show("mode");
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
 		}
 	    });
 	    btnBack_Manual.setIcon(new ImageIcon(
@@ -206,7 +212,7 @@ public class CardManual extends JPanel {
 	return btnBack_Manual;
     }
 
-    private JLabel getLblLanguage() {
+    private JLabel getLblLanguage() throws ResourceException {
 	if (lblLanguage == null) {
 	    lblLanguage = new JLabel(
 		    root.getMessages().getString("label.manual.language"));
@@ -218,7 +224,7 @@ public class CardManual extends JPanel {
 	return lblLanguage;
     }
 
-    private JLabel getLblFileLocation() {
+    private JLabel getLblFileLocation() throws ResourceException {
 	if (lblFileLocation == null) {
 	    lblFileLocation = new JLabel(
 		    root.getMessages().getString("label.manual.file"));
@@ -230,14 +236,18 @@ public class CardManual extends JPanel {
 	return lblFileLocation;
     }
 
-    private JButton getBtnNext_Manual() {
+    private JButton getBtnNext_Manual() throws ResourceException {
 	if (btnNext_Manual == null) {
 	    btnNext_Manual = new JButton(
 		    root.getMessages().getString("button.next"));
 	    btnNext_Manual.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.show("end");
+		    try {
+			root.show("end");
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
 		}
 	    });
 	    btnNext_Manual.setMnemonic('b');
@@ -248,7 +258,7 @@ public class CardManual extends JPanel {
 	return btnNext_Manual;
     }
 
-    private JTextField getTxtPath() {
+    private JTextField getTxtPath() throws ResourceException {
 	if (txtPath == null) {
 	    txtPath = new JTextField();
 	    txtPath.setHorizontalAlignment(SwingConstants.CENTER);
@@ -280,7 +290,7 @@ public class CardManual extends JPanel {
 	return btnBrowse;
     }
 
-    private JTextField getTxtLanguage() {
+    private JTextField getTxtLanguage() throws ResourceException {
 	if (txtLanguage == null) {
 	    txtLanguage = new JTextField(this.language);
 	    txtLanguage.setHorizontalAlignment(SwingConstants.CENTER);
@@ -292,7 +302,7 @@ public class CardManual extends JPanel {
 	return txtLanguage;
     }
 
-    private JLabel getLblManualTitle() {
+    private JLabel getLblManualTitle() throws ResourceException {
 	if (lblManualTitle == null) {
 	    lblManualTitle = new JLabel(
 		    root.getMessages().getString("label.manual.title"));

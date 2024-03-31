@@ -15,7 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
-import main.java.util.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardEnd extends JPanel {
 
@@ -42,7 +43,7 @@ public class CardEnd extends JPanel {
     private JLabel lblLogo_End;
     private JLabel lblFileSave;
 
-    public CardEnd(MainWindow root) {
+    public CardEnd(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setBackground(SystemColor.window);
@@ -65,7 +66,7 @@ public class CardEnd extends JPanel {
 	return northPanel_End;
     }
 
-    private JPanel getDownPanel_End() {
+    private JPanel getDownPanel_End() throws ResourceException {
 	if (downPanel_End == null) {
 	    downPanel_End = new JPanel();
 	    downPanel_End.setLayout(null);
@@ -77,7 +78,7 @@ public class CardEnd extends JPanel {
 	return downPanel_End;
     }
 
-    private JSplitPane getSplitPane_End() {
+    private JSplitPane getSplitPane_End() throws ResourceException {
 	if (splitPane_End == null) {
 	    splitPane_End = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 		    (Component) null, (Component) null);
@@ -88,7 +89,7 @@ public class CardEnd extends JPanel {
 	return splitPane_End;
     }
 
-    private JButton getLeftButton_End() {
+    private JButton getLeftButton_End() throws ResourceException {
 	if (leftButton_End == null) {
 	    leftButton_End = new JButton(
 		    root.getMessages().getString("label.more"));
@@ -97,7 +98,11 @@ public class CardEnd extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 		    root.resetFileValues();
 		    root.resetModeValues();
-		    root.show("file");
+		    try {
+			root.show("file");
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
 		}
 	    });
 	    leftButton_End.setIcon(new ImageIcon(
@@ -108,7 +113,7 @@ public class CardEnd extends JPanel {
 	return leftButton_End;
     }
 
-    private JButton getRightButton_End() {
+    private JButton getRightButton_End() throws ResourceException {
 	if (rightButton_End == null) {
 	    rightButton_End = new JButton(
 		    root.getMessages().getString("label.exit"));
@@ -189,7 +194,7 @@ public class CardEnd extends JPanel {
 	return lblLogo_End;
     }
 
-    private JLabel getLblFileSave() {
+    private JLabel getLblFileSave() throws ResourceException {
 	if (lblFileSave == null) {
 	    lblFileSave = new JLabel();
 	    lblFileSave.setHorizontalAlignment(SwingConstants.CENTER);

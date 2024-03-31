@@ -10,8 +10,10 @@ import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 
-import main.java.util.PropertiesUtil;
-import main.java.util.ResourceLoader;
+import main.java.util.exception.PropertiesException;
+import main.java.util.exception.TranslationException;
+import main.java.util.properties.PropertiesUtil;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * Provides access to OpenAI'S ChatCompletions API in order to request the
@@ -32,8 +34,10 @@ public class ApiTranslation {
     /**
      * Creates an ApiTranslation object aimed to manage requests to the
      * ChatCompletionsAPI.
+     * 
+     * @throws PropertiesException
      */
-    public ApiTranslation() {
+    public ApiTranslation() throws Exception {
 	service = new OpenAiService(ResourceLoader.getApiKey(),
 		Duration.ofSeconds(TIMEOUT));
 	apiReq = new ApiRequestBuilder();
@@ -54,7 +58,7 @@ public class ApiTranslation {
      * @throws Exception in case of issue with API access and request
      */
     public Properties translate(Properties properties, String targetLang)
-	    throws Exception {
+	    throws TranslationException {
 	List<ChatMessage> messages = getRequests(properties, targetLang);
 	this.results = PropertiesUtil.replaceValues(properties,
 		getResults(messages));
@@ -85,7 +89,7 @@ public class ApiTranslation {
      * @throws Exception in case of empty properties or API error
      */
     private List<ChatMessage> getRequests(Properties properties,
-	    String targetLang) throws Exception {
+	    String targetLang) throws TranslationException {
 
 	List<ChatMessage> messages = new ArrayList<>();
 
@@ -93,7 +97,7 @@ public class ApiTranslation {
 	if (!properties.isEmpty()) {
 	    messages = apiReq.buildRequests(properties, targetLang);
 	} else {
-	    throw new Exception(
+	    throw new TranslationException(
 		    "No properties content has been indicated in the specified file.");
 	}
 
@@ -101,10 +105,10 @@ public class ApiTranslation {
     }
 
     /**
-     * Makes a set of requests to the ChatCompletions API.
+     * Parses results from a set of messages to request to the API.
      * 
-     * @param messages: list of chat messages (requests) to input to the API
-     * @return results: unified results, as a string, of all these requests
+     * @param messages list of chat messages (requests) to input to the API
+     * @return results unified results, as a string, of all these requests
      * 
      */
     private String getResults(List<ChatMessage> messages) {
@@ -127,7 +131,6 @@ public class ApiTranslation {
 	    if (i < messages.size()) {
 		results.append("\n");
 	    }
-
 	    i++;
 
 	}

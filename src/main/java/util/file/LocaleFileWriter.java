@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.util.ResourceLoader;
+import main.java.util.properties.ResourceLoader;
 
 /**
- * Manager for the processing and writing of a file's translation.
+ * Manager for the processing and writing to file.
  * 
  * Contains relevant information to a file that is currently being processed by
  * the application (properties contents, original bundle, and source/target
@@ -32,11 +32,13 @@ public class LocaleFileWriter {
 
     // Languages
     private String sourceLanguage; // "English, United States"
-    private Locale targetLanguage; // "Azerbaijani, Azerbaijan" or "az-AZ"
+    private Locale targetLanguage; // "az-AZ"
 
-    // Current file information
+    // Input file information
     private Properties properties; // Complete information in file
     private String bundleName; // Bundle name for the app's .properties files
+
+    // Target file information
     private String savedFilePath; // Absolute file path to translated file
     private String savedFileName; // Bundle name + new locale code for file
 
@@ -66,8 +68,7 @@ public class LocaleFileWriter {
 	// Parse and save info
 	this.properties = ResourceLoader.loadProperties(filepath);
 	Map<String, String> fileInfo = fileProcessor.getFileInfo(filepath);
-	this.sourceLanguage = LocaleNameParser
-		.getLanguage(fileInfo.get("locales"));
+	this.sourceLanguage = fileInfo.get("locales");
 	this.bundleName = fileInfo.get("bundleName");
     }
 
@@ -82,9 +83,9 @@ public class LocaleFileWriter {
      * @param results    (translated textual properties)
      * 
      * @return true if writing process has been executed correctly
-     * @throws IOException
+     * @throws Exception
      */
-    public void write(String path, Properties results) throws IOException {
+    public void write(String path, Properties results) throws Exception {
 	setSavedFileName();
 	setSavedFilePath(path);
 	BufferedWriter writer = new BufferedWriter(
@@ -100,9 +101,9 @@ public class LocaleFileWriter {
      * 
      * @param path: path of the directory onto which to write their translation
      * @return file path of the translation file in the specific directory
-     * @throws IOException
+     * @throws Exception
      */
-    public String manualWrite(String path) throws IOException {
+    public String manualWrite(String path) throws Exception {
 	setSavedFileName();
 	setSavedFilePath(path);
 	BufferedWriter writer = new BufferedWriter(
@@ -132,9 +133,9 @@ public class LocaleFileWriter {
      * 
      * @param text: results of the translation to be written onto the file
      * @return path to temporary file
-     * @throws IOException
+     * @throws Exception
      */
-    public String tempWrite(Properties texts) throws IOException {
+    public String tempWrite(Properties texts) throws Exception {
 	setSavedFileName();
 	return writeTempResults(texts).toAbsolutePath().toString();
     }
@@ -182,7 +183,7 @@ public class LocaleFileWriter {
     private void setSavedFileName() {
 	String localName = bundleName + "_" + targetLanguage.toLanguageTag()
 		+ ".properties";
-	this.savedFileName = LocaleNameParser.formatName(localName);
+	this.savedFileName = fileProcessor.format(localName);
     }
 
     /**
@@ -192,21 +193,25 @@ public class LocaleFileWriter {
      * @throws Exception if specified Locale is not supported yet
      */
     public void setTargetLanguage(String language) throws Exception {
-	this.targetLanguage = fileProcessor.getTargetLanguage(language);
+	this.targetLanguage = fileProcessor.getLanguage(language);
     }
 
     /**
      * @return display language of the target language's locale
+     * @throws Exception in case of an error with application's supported
+     *                   locales
      */
-    public String getTargetLanguage() {
-	return targetLanguage.getDisplayLanguage();
+    public String getTargetLanguage() throws Exception {
+	return fileProcessor.getLanguage(targetLanguage);
     }
 
     /**
      * @return alpha2 code of the target language
+     * @throws Exception in case of an error with application's supported
+     *                   locales
      */
-    public String getTargetLanguageCode() {
-	return targetLanguage.getLanguage() + "_" + targetLanguage.getCountry();
+    public String getTargetCode() throws Exception {
+	return fileProcessor.getCode(targetLanguage);
     }
 
     /**
@@ -232,7 +237,7 @@ public class LocaleFileWriter {
     }
 
     /*
-     * ######################## AUXILIARY METHODS #############################
+     * ######################## WRITING METHODS #############################
      */
 
     /**
@@ -242,13 +247,12 @@ public class LocaleFileWriter {
      * 
      * @param writer     (bufferedWriter with a reference to the file)
      * @param properties (textual properties to parse)
-     * 
-     * @throws IOException in case of an issue with the bufferedWriter
+     * @throws Exception
      */
     private void writeResults(BufferedWriter writer, Properties properties)
-	    throws IOException {
+	    throws Exception {
 	String props = fileProcessor
-		.getWrittenResults(getTargetLanguage(), properties).toString();
+		.getValuesText(getTargetLanguage(), properties).toString();
 	writer.write(props);
 	writer.close();
     }
@@ -257,10 +261,9 @@ public class LocaleFileWriter {
      * Write a given set of keys onto a file.
      * 
      * @param writer (bufferedWriter with a reference to the file)
-     * 
-     * @throws IOException in case of an issue with the bufferedWriter
+     * @throws Exception
      */
-    private void writeKeys(BufferedWriter writer) throws IOException {
+    private void writeKeys(BufferedWriter writer) throws Exception {
 	String keys = fileProcessor.getKeysText(getTargetLanguage(), properties)
 		.toString();
 	writer.write(keys);
@@ -272,14 +275,14 @@ public class LocaleFileWriter {
      * 
      * @param results of the translation as a list of strings
      * @return Path object representing the temporary file
-     * @throws IOException
+     * @throws Exception
      */
-    private Path writeTempResults(Properties texts) throws IOException {
+    private Path writeTempResults(Properties texts) throws Exception {
 	String name = this.savedFileName.substring(0,
 		this.savedFileName.indexOf("."));
 	this.temporaryFile = Files.createTempFile(name, ".properties");
 	Files.writeString(temporaryFile,
-		fileProcessor.getWrittenResults(getTargetLanguage(), texts));
+		fileProcessor.getValuesText(getTargetLanguage(), texts));
 	this.isFileTemporary = true;
 	return temporaryFile;
     }

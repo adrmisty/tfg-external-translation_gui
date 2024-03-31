@@ -4,32 +4,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.util.PropertiesUtil;
-import main.java.util.ResourceLoader;
+import main.java.util.exception.PropertiesException;
+import main.java.util.properties.PropertiesUtil;
 
 /**
  * Processes a localization file (its content, name and format) so that its
- * information is readily available for translation.
+ * information is readily available and saved for translation. It also deals
+ * with the format a .properties file should have when it comes to writing to
+ * file,
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
  * @version March 2024
  */
 public class LocaleFileProcessor {
 
-    // Locale
-    private static final String _DEFAULT_CODE = Locale.getDefault()
-	    .toLanguageTag();
-
-    // Language-index-locale mappings
-    private static Map<String, Locale> map;
-    private static Map<String, Integer> localeLanguages = new HashMap<>();
-    private static Map<Integer, String> englishLanguages = new HashMap<>();
+    // Language parser (codes + names functions)
+    private static LanguageParser parser;
 
     public LocaleFileProcessor(ResourceBundle messages) throws Exception {
-	setMappings(messages);
+	parser = new LanguageParser(messages);
     }
 
     /**
@@ -44,24 +41,24 @@ public class LocaleFileProcessor {
      */
     public Map<String, String> getFileInfo(String filepath) throws Exception {
 
-	if (!ResourceLoader.getFileExtension(filepath).get()
-		.equals("properties")) {
-	    throw new Exception(
-		    "The indicated localization file is not i18n-compliant!");
+	if (!getFileExtension(filepath).get().equals("properties")) {
+	    throw new PropertiesException(
+		    "The indicated localization file is not i18n-compliant!",
+		    filepath);
 	}
 
-	String[] fileName = LocaleNameParser.extractLocaleFromFile(filepath);
+	String[] fileName = parser.unformat(filepath);
 	String bundleName = fileName[0];
 	String codes = fileName[1];
 
 	if (codes == null) {
-	    codes = _DEFAULT_CODE;
+	    codes = parser.getCode(Locale.getDefault());
 	}
 
 	// Save bundle name and its locale
 	Map<String, String> fileInfo = new HashMap<String, String>();
 	fileInfo.put("bundleName", bundleName);
-	fileInfo.put("locales", codes);
+	fileInfo.put("locale", parser.getLanguage(codes));
 
 	return fileInfo;
     }
@@ -70,14 +67,42 @@ public class LocaleFileProcessor {
      * From a given localized string specifying a target language, retrieve its
      * assigned Locale object.
      * 
-     * @param bundle    of localized messages
-     * @param localized target language as a string
-     * @return locale object
+     * @param language string representing language, format "English, United
+     *                 States"
+     * @return locale object representing that language, with format code
+     *         "en_US"
      * @throws Exception in case of unavailable target locale
      */
-    public Locale getTargetLanguage(String language) throws Exception {
-	return LocaleNameParser.extract(map, localeLanguages, englishLanguages,
-		language);
+    public Locale getLanguage(String language) throws Exception {
+	return parser.getLocale(language);
+    }
+
+    /**
+     * @param target locale object representing language
+     * @return display name of the language in the app's locale
+     * @throws Exception in case of unavailable language
+     */
+    public String getLanguage(Locale locale) throws Exception {
+	return parser.getLanguage(locale);
+    }
+
+    /**
+     * @param target locale object representing language
+     * @return locale alpha2 string code representing that language
+     * @throws Exception in case of unavailable language
+     */
+    public String getCode(Locale locale) throws Exception {
+	return parser.getCode(locale);
+    }
+
+    /**
+     * Establishes the format for a localization file name.
+     * 
+     * @param filename of the new locale file
+     * @return formatted filename
+     */
+    public String format(String filename) {
+	return parser.format(filename);
     }
 
     /**
@@ -90,7 +115,7 @@ public class LocaleFileProcessor {
      * @param properties:     properties object with key/vaue pairs
      * @return complete text in the specific format
      */
-    public StringBuilder getWrittenResults(String targetLanguage,
+    public StringBuilder getValuesText(String targetLanguage,
 	    Properties texts) {
 	StringBuilder sb = new StringBuilder("");
 	sb.append("# " + targetLanguage + "\n\n");
@@ -132,15 +157,12 @@ public class LocaleFileProcessor {
     }
 
     /**
-     * Establishes the mappings between index and meaning of the different
-     * languages.
-     * 
-     * @param messages: localized messages in the program's locale
-     * @throws Exception
+     * @param path absolute path to a file
+     * @return file extension of the file, if it exists
      */
-    private void setMappings(ResourceBundle messages) throws Exception {
-	map = LocaleNameParser.getMap();
-	localeLanguages = ResourceLoader.getMapSupportedLanguages(messages);
-	englishLanguages = ResourceLoader.getMapSupportedLanguages_English();
+    public static Optional<String> getFileExtension(String path) {
+	return Optional.ofNullable(path).filter(f -> f.contains("."))
+		.map(f -> f.substring(path.lastIndexOf(".") + 1));
     }
+
 }

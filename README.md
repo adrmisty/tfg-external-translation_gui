@@ -7,6 +7,12 @@ _externalized translation service for programs_, using the large language model 
 Developed by **Adriana Rodríguez Flórez**, undergraduate student at the BSc in Computer Science
 and Software Engineering at the University of Oviedo (Asturias, Spain).
 
+## 💡 To Do
+* Deploy application in a Docker container.
+* Windows Speech API to read translations.
+* Abstract app from AI model.
+* Secure the OS.
+* Maybe use the AI to describe images (?).
 
 ## 🏛️ Architecture
 

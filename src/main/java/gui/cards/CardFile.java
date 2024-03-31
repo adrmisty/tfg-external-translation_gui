@@ -27,7 +27,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import main.java.util.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.file.LocaleFileProcessor;
+import main.java.util.properties.ResourceLoader;
 
 public class CardFile extends JPanel {
 
@@ -63,7 +65,7 @@ public class CardFile extends JPanel {
     private JButton btnHelp_File;
     private JLabel lblDndWarning;
 
-    public CardFile(MainWindow root) {
+    public CardFile(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setLayout(null);
@@ -72,7 +74,7 @@ public class CardFile extends JPanel {
 	this.add(getDownPanel_File());
     }
 
-    private JPanel getNorthPanel_File() {
+    private JPanel getNorthPanel_File() throws ResourceException {
 	if (northPanel_File == null) {
 	    northPanel_File = new JPanel();
 	    northPanel_File.setBounds(0, 0, 586, 81);
@@ -83,7 +85,7 @@ public class CardFile extends JPanel {
 	return northPanel_File;
     }
 
-    private JLabel getLblStartTranslating() {
+    private JLabel getLblStartTranslating() throws ResourceException {
 	if (lblStartTranslating == null) {
 	    lblStartTranslating = new JLabel(
 		    root.getMessages().getString("label.file.title"));
@@ -95,7 +97,7 @@ public class CardFile extends JPanel {
 	return lblStartTranslating;
     }
 
-    private JLabel getLblDragText() {
+    private JLabel getLblDragText() throws ResourceException {
 	if (lblDragText == null) {
 	    lblDragText = new JLabel(
 		    root.getMessages().getString("label.file.dnd"));
@@ -107,7 +109,7 @@ public class CardFile extends JPanel {
 	return lblDragText;
     }
 
-    private JPanel getCenterPanel_File() {
+    private JPanel getCenterPanel_File() throws ResourceException {
 	if (centerPanel_File == null) {
 	    centerPanel_File = new JPanel();
 	    centerPanel_File.setBackground(SystemColor.window);
@@ -137,7 +139,7 @@ public class CardFile extends JPanel {
 	return lblDrag;
     }
 
-    private JPanel getDownPanel_File() {
+    private JPanel getDownPanel_File() throws ResourceException {
 	if (downPanel_File == null) {
 	    downPanel_File = new JPanel();
 	    downPanel_File.setBackground(SystemColor.window);
@@ -158,7 +160,7 @@ public class CardFile extends JPanel {
 	return backEmptyPanel_File;
     }
 
-    private JPanel getBackPanel_File() {
+    private JPanel getBackPanel_File() throws ResourceException {
 	if (backPanel_File == null) {
 	    backPanel_File = new JPanel();
 	    backPanel_File.setLayout(null);
@@ -171,7 +173,7 @@ public class CardFile extends JPanel {
 	return backPanel_File;
     }
 
-    private JLabel getLblBack_File() {
+    private JLabel getLblBack_File() throws ResourceException {
 	if (lblBack_File == null) {
 	    lblBack_File = new JLabel("<");
 	    lblBack_File.addMouseListener(new MouseAdapter() {
@@ -210,7 +212,7 @@ public class CardFile extends JPanel {
 	return btnBack_File;
     }
 
-    private JButton getBtnNext_File() {
+    private JButton getBtnNext_File() throws ResourceException {
 	if (btnNext_File == null) {
 	    btnNext_File = new JButton(
 		    root.getMessages().getString("button.next"));
@@ -275,12 +277,15 @@ public class CardFile extends JPanel {
 			complete = true;
 
 			if (f != null) {
-			    if (ResourceLoader.getFileExtension(f.getPath())
-				    .get().equals("properties")) {
-				root.chooseFile(f.getPath());
+			    if (LocaleFileProcessor
+				    .getFileExtension(f.getPath()).get()
+				    .equals("properties")) {
+
+				root.setFilePath(f.getPath());
 				txtFilePath.setText(f.getName());
 				btnNext_File.setEnabled(true);
 				savedDroppedFile = true;
+
 			    } else {
 				root.resetFileValues();
 				txtFilePath.setText("");
@@ -293,7 +298,11 @@ public class CardFile extends JPanel {
 		    e.printStackTrace();
 		} finally {
 		    event.dropComplete(complete);
-		    getLblDndWarning().setVisible(!savedDroppedFile);
+		    try {
+			getLblDndWarning().setVisible(!savedDroppedFile);
+		    } catch (ResourceException e) {
+			root.showErrorMessage(e.getMessage());
+		    }
 		}
 	    }
 	}
@@ -315,7 +324,7 @@ public class CardFile extends JPanel {
 	}
     }
 
-    private JTextField getTxtFilePath() {
+    private JTextField getTxtFilePath() throws ResourceException {
 	if (txtFilePath == null) {
 	    txtFilePath = new JTextField();
 	    txtFilePath.setBounds(156, 163, 178, 30);
@@ -339,7 +348,7 @@ public class CardFile extends JPanel {
 	    String path = fileChooser.getSelectedFile().getPath();
 	    String name = fileChooser.getSelectedFile().getName();
 
-	    root.chooseFile(path);
+	    root.setFilePath(path);
 	    txtFilePath.setText(name);
 	    btnNext_File.setEnabled(true);
 	    lblDndWarning.setVisible(false);
@@ -350,7 +359,7 @@ public class CardFile extends JPanel {
 	return fileChooser;
     }
 
-    private JButton getBtnBrowse() {
+    private JButton getBtnBrowse() throws ResourceException {
 	if (btnBrowse == null) {
 	    btnBrowse = new JButton(
 		    root.getMessages().getString("button.browse"));
@@ -367,7 +376,7 @@ public class CardFile extends JPanel {
 	return btnBrowse;
     }
 
-    private JLabel getLblDndWarning() {
+    private JLabel getLblDndWarning() throws ResourceException {
 	if (lblDndWarning == null) {
 	    lblDndWarning = new JLabel(
 		    root.getMessages().getString("label.file.wrong"));

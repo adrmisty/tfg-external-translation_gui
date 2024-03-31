@@ -7,7 +7,8 @@ import java.util.Properties;
 import com.theokanning.openai.completion.chat.ChatMessage;
 
 import ai.djl.modality.nlp.bert.BertTokenizer;
-import main.java.util.ResourceLoader;
+import main.java.util.exception.PropertiesException;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * From a set of properties, this class is used to build the set of relevant
@@ -21,7 +22,7 @@ public class ApiRequestBuilder {
 
     public static Properties settings;
 
-    public ApiRequestBuilder() {
+    public ApiRequestBuilder() throws PropertiesException {
 	settings = ResourceLoader.getApiSettings();
     }
 
@@ -39,10 +40,9 @@ public class ApiRequestBuilder {
      * @throws Exception
      */
     public List<ChatMessage> buildRequests(Properties properties,
-	    String targetLang) throws Exception {
+	    String targetLang) {
 
 	String command = String.format("Translate into %s:\n", targetLang);
-
 	String[] prompts = buildPrompts(command, properties);
 	return buildMessages(prompts);
     }

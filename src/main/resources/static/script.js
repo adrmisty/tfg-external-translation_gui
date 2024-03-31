@@ -94,41 +94,36 @@ class TranslationWeb {
     // Translate uploaded file
     translate(){
 
+        console.log("Translating now...");
+
         let file = document.getElementById('file').files[0];
 
-        // No selected file
-        if (file == null){
-            jq.del("article");
-            this.jq.del("section");
+        var formData = new FormData();
 
-        // Translate file
-        } else {
+        // Params
+        formData.append('file', file);
+        formData.append('targetLanguage', document.getElementById('language').value);
 
-            var formData = new FormData();
-
-            // Params
-            formData.append('file', file);
-            formData.append('targetLanguage', document.getElementById('language').value);
-            fetch('http://localhost:8080/translateFile', {
-                method:'POST',
-                body: formData
-            })
+        fetch('http://localhost:8080/translate', {
+            method:'POST',
+            body: formData
+        })
             .then(response => response.text())
             .then(results => {
                 this.jq.del('section');
                 this.jq.apSub('section', 'Your file has been translated correctly');
                 this.jq.new('section','textarea');
-                document.getElementsByTagName('textarea').innerHTML = results;
+                console.log(results);
+                document.getElementsByTagName('textarea').value = results;
             })
             .catch(error => {
                 this.jq.preSub("results", "There has been an issue while carrying out the file's translation.");
                 console.error('Error: ', error);
-            })
-        }
+        })
     }
 }
 
+
 var text = new TextUtil();
 var translator = new TranslationWeb(text);
-// Set supported languages to select
 translator.languages();
