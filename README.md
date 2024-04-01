@@ -7,18 +7,19 @@ _externalized translation service for programs_, using the large language model 
 Developed by **Adriana Rodríguez Flórez**, undergraduate student at the BSc in Computer Science
 and Software Engineering at the University of Oviedo (Asturias, Spain).
 
-## 💡 (1) To Do: código
+### (1) 💡 To Do: código
+* Set alt texts in application.
 * Deploy application in a Docker container.
 * Abstract app from AI model.
 * Secure the OS.
 * AI image description to generate alt texts.
 * Localize alt texts.
 
-## 💡 (2) To Do: test
+### (2) 💡 To Do: test
 * Unit tests.
 * Usability tests.
 
-## 💡 (3) To Do: doc
+### (3) 💡 To Do: doc
 * DOcumentation + memory.
 
 
