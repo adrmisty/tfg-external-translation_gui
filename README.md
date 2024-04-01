@@ -7,12 +7,20 @@ _externalized translation service for programs_, using the large language model 
 Developed by **Adriana Rodríguez Flórez**, undergraduate student at the BSc in Computer Science
 and Software Engineering at the University of Oviedo (Asturias, Spain).
 
-## 💡 To Do
+## 💡 (1) To Do: código
 * Deploy application in a Docker container.
-* Windows Speech API to read translations.
 * Abstract app from AI model.
 * Secure the OS.
-* Maybe use the AI to describe images (?).
+* AI image description to generate alt texts.
+* Localize alt texts.
+
+## 💡 (2) To Do: test
+* Unit tests.
+* Usability tests.
+
+## 💡 (3) To Do: doc
+* DOcumentation + memory.
+
 
 ## 🏛️ Architecture
 
@@ -20,12 +28,14 @@ and Software Engineering at the University of Oviedo (Asturias, Spain).
 * SQLite.
 
 ### Model
-The LLM used by the service corresponds with the ChatGPT-3.5 series. 
+For text translation, the LLM used by the service corresponds with the ChatGPT-3.5 series. 
 
 ### APIs
 * GUI: Swing
 * Model access: OpenAI ChatCompletionsAPI (service implemented for Java, provided by https://github.com/TheoKanning/openai-java).
-* Database management: JDBC (Java Database Connectivity).
+* Text to speech: Microsoft Azure COgnitive Speech AI (https://azure.microsoft.com/en-us/products/ai-services/ai-speech).
+* Image description: Hugging Face Image to Text captioning functionality (https://huggingface.co/tasks/image-to-text).
+* Database management: JDBC (Java Database Connectivity) for SQLite.
 
 
 
