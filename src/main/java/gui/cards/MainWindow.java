@@ -68,12 +68,12 @@ public class MainWindow extends JFrame {
      * @throws Exception
      */
     public MainWindow() throws Exception {
+	setIconImage(Toolkit.getDefaultToolkit()
+		.getImage(MainWindow.class.getResource("/img/icon.png")));
 
 	setBackground(SystemColor.window);
 	setResizable(false);
 	setAutoRequestFocus(false);
-	setIconImage(Toolkit.getDefaultToolkit()
-		.getImage(MainWindow.class.getResource("/img/icon.png")));
 	setTitle("FileLingual");
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setFont(ResourceLoader.getFont());

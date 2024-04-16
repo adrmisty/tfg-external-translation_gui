@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import main.java.rest.util.MultipartFileParser;
 import main.java.translation.api.ApiTranslation;
+import main.java.translation.api.openai.OpenAIApiTranslation;
 
 /**
  * Controller for REST web service that requests/retrieves translations from
@@ -25,7 +26,7 @@ public class TranslationController {
     public static ApiTranslation api_rest;
 
     public TranslationController() throws Exception {
-	api_rest = new ApiTranslation();
+	api_rest = new OpenAIApiTranslation();
     }
 
     /**

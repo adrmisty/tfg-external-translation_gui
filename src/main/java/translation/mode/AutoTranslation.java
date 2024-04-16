@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 import main.java.translation.api.ApiTranslation;
+import main.java.translation.api.openai.OpenAIApiTranslation;
 import main.java.translation.cache.TranslationCache;
 import main.java.util.exception.TranslationException;
 import main.java.util.file.LocaleFileWriter;
@@ -25,7 +26,7 @@ public class AutoTranslation implements TranslationMode {
 
     public AutoTranslation(LocaleFileWriter file) throws Exception {
 	this.file = file;
-	this.api = new ApiTranslation(); // API access
+	this.api = new OpenAIApiTranslation(); // API access
 	this.cache = new TranslationCache(); // Translation database
     }
 

@@ -10,7 +10,6 @@ and Software Engineering at the University of Oviedo (Asturias, Spain).
 
 ### (1) 💡 To Do: código
 * GUI: Set alt texts in application.
-* Architecture: Abstract app from AI model --> hacer que el traductor sea una interfaz, y que las implementaciones se basen en aplicar distintas IA. Mencionar la posibilidad futura de usar IAs locales.
 * Functionality: AI image description to generate alt texts.
 * Functionality: Localize alt texts.
 
