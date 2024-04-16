@@ -1,4 +1,4 @@
-package main.java.rest.util;
+package main.rest.util;
 
 import java.io.IOException;
 import java.io.InputStream;

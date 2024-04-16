@@ -122,7 +122,7 @@ public class ResourceLoader {
     /**
      * @return api key for Cognitive Speech API for TTS functionality
      */
-    public static String getSpeechApiKey() throws ResourceException {
+    public static String getAzureSpeechApiKey() throws ResourceException {
 	try {
 	    InputStream is = ResourceLoader.class
 		    .getResourceAsStream(CONFIG_FILE);
@@ -132,6 +132,40 @@ public class ResourceLoader {
 	} catch (Exception e) {
 	    throw new ResourceException(
 		    "ERROR: Could not load API key for Cognitive Speech.");
+	}
+    }
+
+    /**
+     * @return api key for Cognitive Computer Vision API for captioning
+     *         functionality
+     */
+    public static String getAzureVisionApiKey() throws ResourceException {
+	try {
+	    InputStream is = ResourceLoader.class
+		    .getResourceAsStream(CONFIG_FILE);
+	    Properties pr = new Properties();
+	    pr.load(is);
+	    return pr.getProperty("AZURE_CV_API_KEY_1");
+	} catch (Exception e) {
+	    throw new ResourceException(
+		    "ERROR: Could not load API key for Computer Vision.");
+	}
+    }
+
+    /**
+     * @return api key for Cognitive Computer Vision API for captioning
+     *         functionality
+     */
+    public static String getAzureVisionEndpoint() throws ResourceException {
+	try {
+	    InputStream is = ResourceLoader.class
+		    .getResourceAsStream(CONFIG_FILE);
+	    Properties pr = new Properties();
+	    pr.load(is);
+	    return pr.getProperty("AZURE_CV_ENDPOINT");
+	} catch (Exception e) {
+	    throw new ResourceException(
+		    "ERROR: Could not load endpoint for Computer Vision Azure resource.");
 	}
     }
 

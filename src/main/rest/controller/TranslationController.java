@@ -1,4 +1,4 @@
-package main.java.rest.controller;
+package main.rest.controller;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import main.java.rest.util.MultipartFileParser;
 import main.java.translation.ApiTranslation;
 import main.java.translation.api.openai.OpenAIApiTranslation;
+import main.rest.util.MultipartFileParser;
 
 /**
  * Controller for REST web service that requests/retrieves translations from

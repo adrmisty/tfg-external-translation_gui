@@ -99,7 +99,12 @@
 	    <artifactId>client-sdk</artifactId>
 	    <version>1.27.0</version>
 	</dependency>
-
+	<!-- https://mvnrepository.com/artifact/com.microsoft.azure.cognitiveservices/azure-cognitiveservices-computervision -->
+	<dependency>
+	    <groupId>com.microsoft.azure.cognitiveservices</groupId>
+	    <artifactId>azure-cognitiveservices-computervision</artifactId>
+	    <version>1.0.9-beta</version>
+	</dependency>
 </dependencies>
 
 </project>

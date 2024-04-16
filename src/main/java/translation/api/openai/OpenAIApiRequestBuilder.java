@@ -129,14 +129,17 @@ public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
 	return (requestsNeeded > 3 ? 3 : requestsNeeded);
     }
 
+    @Override
     public String getModel() {
 	return String.valueOf(settings.getProperty("_ENGINE"));
     }
 
+    @Override
     public double getTemperature() {
 	return Double.valueOf(settings.getProperty("_TEMPERATURE"));
     }
 
+    @Override
     public int getMaxTokens() {
 	return Integer.valueOf(settings.getProperty("_MAX_TOKENS"));
     }

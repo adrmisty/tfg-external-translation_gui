@@ -20,7 +20,7 @@ import main.java.util.properties.ResourceLoader;
  * @author Adriana R.F. (uo282798)
  * @version March 2024
  */
-public class Speech {
+public class Speaker {
 
     // Config for Cognitive Speech
     private SpeechConfig speech;
@@ -28,9 +28,9 @@ public class Speech {
     private SpeechSynthesizer synth;
 
     // Localize
-    public Speech() throws Exception {
+    public Speaker() throws Exception {
 	this.speech = SpeechConfig.fromSubscription(
-		ResourceLoader.getSpeechApiKey(), "westeurope");
+		ResourceLoader.getAzureSpeechApiKey(), "westeurope");
     }
 
     public void config(String language) throws Exception {

@@ -1,4 +1,4 @@
-package main.java.rest.config;
+package main.rest.config;
 
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;

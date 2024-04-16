@@ -3,7 +3,7 @@ package main.java.translation;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.speech.Speech;
+import main.java.speech.Speaker;
 import main.java.translation.mode.AutoTranslation;
 import main.java.translation.mode.ManualTranslation;
 import main.java.util.file.LocaleFileWriter;
@@ -24,7 +24,7 @@ public class Translator {
     private static LocaleFileWriter file;
 
     // Text to speech
-    private Speech speech;
+    private Speaker speech;
 
     // Translation mode
     private TranslationMode auto;
@@ -46,7 +46,7 @@ public class Translator {
      */
     public Translator(ResourceBundle messages) throws Exception {
 	file = new LocaleFileWriter(messages); // Results file
-	speech = new Speech(); // TTS
+	speech = new Speaker(); // TTS
 	reset(); // Initialization
     }
 
