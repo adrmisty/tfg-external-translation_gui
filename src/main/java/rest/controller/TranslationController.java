@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import main.java.rest.util.MultipartFileParser;
-import main.java.translation.api.ApiTranslation;
+import main.java.translation.ApiTranslation;
 import main.java.translation.api.openai.OpenAIApiTranslation;
 
 /**

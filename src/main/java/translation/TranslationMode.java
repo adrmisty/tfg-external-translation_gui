@@ -1,4 +1,4 @@
-package main.java.translation.mode;
+package main.java.translation;
 
 import java.util.Properties;
 

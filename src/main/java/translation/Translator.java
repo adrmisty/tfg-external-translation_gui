@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 import main.java.speech.Speech;
 import main.java.translation.mode.AutoTranslation;
 import main.java.translation.mode.ManualTranslation;
-import main.java.translation.mode.TranslationMode;
 import main.java.util.file.LocaleFileWriter;
 import main.java.util.properties.ResourceLoader;
 

@@ -3,7 +3,8 @@ package main.java.translation.mode;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import main.java.translation.api.ApiTranslation;
+import main.java.translation.ApiTranslation;
+import main.java.translation.TranslationMode;
 import main.java.translation.api.openai.OpenAIApiTranslation;
 import main.java.translation.cache.TranslationCache;
 import main.java.util.exception.TranslationException;

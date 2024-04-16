@@ -1,4 +1,4 @@
-package main.java.translation.api;
+package main.java.translation;
 
 import java.util.Properties;
 

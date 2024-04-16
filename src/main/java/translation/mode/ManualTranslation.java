@@ -2,6 +2,7 @@ package main.java.translation.mode;
 
 import java.util.Properties;
 
+import main.java.translation.TranslationMode;
 import main.java.util.file.LocaleFileWriter;
 
 /**
