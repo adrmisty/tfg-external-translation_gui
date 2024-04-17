@@ -279,7 +279,7 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
-			root.show("file");
+			root.show("image");
 		    } catch (Exception e1) {
 			root.showErrorMessage(e1.getMessage());
 		    }

@@ -3,6 +3,7 @@ package main.java.gui.cards;
 import java.awt.CardLayout;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -19,7 +20,7 @@ import javax.swing.JPanel;
 
 import main.java.gui.util.IDE;
 import main.java.gui.util.NumberedJMenuItem;
-import main.java.logic.image.Captioner;
+import main.java.logic.image.Vision;
 import main.java.logic.translation.Translator;
 import main.java.logic.util.exception.ResourceException;
 import main.java.logic.util.properties.ResourceLoader;
@@ -39,7 +40,7 @@ public class MainWindow extends JFrame {
     private Translator translator;
 
     // Image description
-    private Captioner captioner;
+    private Vision vision = new Vision();
 
     // Locale
     private ResourceBundle messages;
@@ -50,6 +51,7 @@ public class MainWindow extends JFrame {
     private JPanel cardMain; // Start/Home window
     private CardInfo cardInfo; // Information window
     private CardFile cardFile; // For uploading a file
+    private CardImage cardImage; // For uploading images to caption
     private CardMode cardMode; // For choosing a translation mode
     private CardAuto cardAuto; // For OpenAI translation
     private CardManual cardManual; // For manual translation
@@ -119,6 +121,7 @@ public class MainWindow extends JFrame {
 	contentPane.add(getCardMain());
 	contentPane.add(getCardInfo());
 	contentPane.add(getCardFile());
+	contentPane.add(getCardImage());
 	contentPane.add(getCardMode());
 	contentPane.add(getCardAuto());
 	contentPane.add(getCardManual());
@@ -150,6 +153,10 @@ public class MainWindow extends JFrame {
 	    break;
 	case "info":
 	    currentCard = cardInfo;
+	    mnLanguage.setEnabled(false);
+	    break;
+	case "image":
+	    currentCard = cardImage;
 	    mnLanguage.setEnabled(false);
 	    break;
 	case "mode":
@@ -289,6 +296,14 @@ public class MainWindow extends JFrame {
 	return cardFile;
     }
 
+    private JPanel getCardImage() throws ResourceException {
+	if (cardImage == null) {
+	    cardImage = new CardImage(this);
+	    cardImage.setVisible(false);
+	}
+	return cardImage;
+    }
+
     private JPanel getCardMode() throws ResourceException {
 	if (cardMode == null) {
 	    cardMode = new CardMode(this);
@@ -319,6 +334,19 @@ public class MainWindow extends JFrame {
 	    cardEnd.setVisible(false);
 	}
 	return cardEnd;
+    }
+
+    /*
+     * ######################## IMAGES #################################
+     */
+
+    /**
+     * Saves selected images paths for automatic description functionality.
+     * 
+     * @param selectedImages file array containing info of all images
+     */
+    public void setImages(File[] selectedImages) {
+	vision.setImages(selectedImages);
     }
 
     /*

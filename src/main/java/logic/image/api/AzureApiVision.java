@@ -3,7 +3,6 @@ package main.java.logic.image.api;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 
 import com.microsoft.azure.cognitiveservices.vision.computervision.ComputerVision;
@@ -27,6 +26,9 @@ public class AzureApiVision implements ApiVision {
     // Computer vision abstraction
     private ComputerVision cv;
 
+    // Files
+    private File[] files;
+
     public AzureApiVision() throws ResourceException {
 	ComputerVisionClient azureClient = ComputerVisionManager
 		.authenticate(ResourceLoader.getAzureVisionApiKey())
@@ -36,14 +38,21 @@ public class AzureApiVision implements ApiVision {
     }
 
     @Override
-    public Properties caption(List<String> paths) throws IOException {
+    public void setImages(File[] file) {
+	if (file != null) {
+	    this.files = file;
+	}
+    }
+
+    @Override
+    public Properties caption() throws IOException {
 	Properties pr = new Properties();
 	String caption;
-	String path;
+	File file;
 
-	for (int i = 0; i < paths.size(); i++) {
-	    path = paths.get(i);
-	    ImageDescription d = cv.describeImageInStream(getBytes(path), null);
+	for (int i = 0; i < files.length; i++) {
+	    file = files[i];
+	    ImageDescription d = cv.describeImageInStream(getBytes(file), null);
 	    caption = d.captions().get(0).text();
 
 	    System.out.println(caption);
@@ -54,13 +63,12 @@ public class AzureApiVision implements ApiVision {
     }
 
     /**
-     * @param path image path, as input
+     * @param file object representing image file
      * @return bytes object representing image data
      * @throws IOException in case file does not exist, or any other issue while
      *                     reading
      */
-    private byte[] getBytes(String path) throws IOException {
-	File imageFile = new File(path);
+    private byte[] getBytes(File imageFile) throws IOException {
 	FileInputStream inputStream = new FileInputStream(imageFile);
 
 	try {

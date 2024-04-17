@@ -1,34 +1,25 @@
 package main.java.gui.cards;
 
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.SystemColor;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.file.LocaleFileProcessor;
 import main.java.logic.util.properties.ResourceLoader;
 
 public class CardImage extends JPanel {
@@ -39,116 +30,86 @@ public class CardImage extends JPanel {
     /*
      * Panels
      */
-    private JPanel northPanel_File;
-    private JPanel centerPanel_File;
-    private JPanel downPanel_File;
+    private JPanel northPanel_Image;
+    private JPanel centerPanel_Image;
+    private JPanel downPanel_Image;
     private JPanel backEmptyPanel_File;
-    private JPanel backPanel_File;
+    private JPanel backPanel_Image;
 
     /*
      * Files
      */
     private JButton btnBrowse;
     boolean savedDroppedFile = false;
-    private JFileChooser fileChooser;
-
-    /*
-     * Labels & text
-     */
-    private JLabel lblDrag;
-    private JLabel lblDragText;
+    private JFileChooser imageChooser;
+    private String[] EXTENSIONS = { "jpg", "jpeg", "gif", "png", "bmp" };
     private JTextField txtFilePath;
-    private JLabel lblStartTranslating;
-    private JLabel lblBack_File;
-    private JButton btnBack_File;
-    private JButton btnNext_File;
-    private JButton btnHelp_File;
-    private JLabel lblDndWarning;
+    private JLabel lblImageCaptioning;
+    private JLabel lblBack_Image;
+    private JButton btnBack_Image;
+    private JButton btnNext_Image;
+    private JButton btnHelp_Image;
+    private JLabel lblImageOption;
+    private JButton btnNoImage;
+    private JLabel lblImageOption_1;
 
     public CardImage(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setLayout(null);
-	this.add(getNorthPanel_File());
-	this.add(getCenterPanel_File());
-	this.add(getDownPanel_File());
+	this.add(getNorthPanel_Image());
+	this.add(getCenterPanel_Image());
+	this.add(getDownPanel_Image());
     }
 
-    private JPanel getNorthPanel_File() throws ResourceException {
-	if (northPanel_File == null) {
-	    northPanel_File = new JPanel();
-	    northPanel_File.setBounds(0, 0, 586, 81);
-	    northPanel_File.setBackground(SystemColor.window);
-	    northPanel_File.setLayout(null);
-	    northPanel_File.add(getLblStartTranslating());
+    private JPanel getNorthPanel_Image() throws ResourceException {
+	if (northPanel_Image == null) {
+	    northPanel_Image = new JPanel();
+	    northPanel_Image.setBounds(0, 0, 586, 81);
+	    northPanel_Image.setBackground(SystemColor.window);
+	    northPanel_Image.setLayout(null);
+	    northPanel_Image.add(getLblImageCaptioning());
 	}
-	return northPanel_File;
+	return northPanel_Image;
     }
 
-    private JLabel getLblStartTranslating() throws ResourceException {
-	if (lblStartTranslating == null) {
-	    lblStartTranslating = new JLabel(
-		    root.getMessages().getString("label.file.title"));
-	    lblStartTranslating.setBounds(0, 0, 586, 80);
-	    lblStartTranslating.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblStartTranslating
+    private JLabel getLblImageCaptioning() throws ResourceException {
+	if (lblImageCaptioning == null) {
+	    lblImageCaptioning = new JLabel(
+		    root.getMessages().getString("label.image.title"));
+	    lblImageCaptioning.setBounds(0, 0, 586, 80);
+	    lblImageCaptioning.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblImageCaptioning
 		    .setFont(ResourceLoader.getFont().deriveFont(40f));
 	}
-	return lblStartTranslating;
+	return lblImageCaptioning;
     }
 
-    private JLabel getLblDragText() throws ResourceException {
-	if (lblDragText == null) {
-	    lblDragText = new JLabel(
-		    root.getMessages().getString("label.file.dnd"));
-	    lblDragText.setBounds(156, 84, 299, 19);
-	    lblDragText.setLabelFor(getLblDrag());
-	    lblDragText.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblDragText.setFont(ResourceLoader.getFont().deriveFont(15f));
+    private JPanel getCenterPanel_Image() throws ResourceException {
+	if (centerPanel_Image == null) {
+	    centerPanel_Image = new JPanel();
+	    centerPanel_Image.setBackground(SystemColor.window);
+	    centerPanel_Image.setBounds(0, 81, 586, 235);
+	    centerPanel_Image.setLayout(null);
+	    centerPanel_Image.add(getTxtFilePath());
+	    centerPanel_Image.add(getBtnBrowse());
+	    centerPanel_Image.add(getLblImageOption());
+	    centerPanel_Image.add(getBtnNoImage());
+	    centerPanel_Image.add(getLblImageOption_1());
 	}
-	return lblDragText;
+	return centerPanel_Image;
     }
 
-    private JPanel getCenterPanel_File() throws ResourceException {
-	if (centerPanel_File == null) {
-	    centerPanel_File = new JPanel();
-	    centerPanel_File.setBackground(SystemColor.window);
-	    centerPanel_File.setBounds(0, 81, 586, 235);
-	    centerPanel_File.setLayout(null);
-	    centerPanel_File.add(getLblDragText());
-	    centerPanel_File.add(getLblDrag());
-	    centerPanel_File.add(getTxtFilePath());
-	    centerPanel_File.add(getBtnBrowse());
-	    centerPanel_File.add(getLblDndWarning());
+    private JPanel getDownPanel_Image() throws ResourceException {
+	if (downPanel_Image == null) {
+	    downPanel_Image = new JPanel();
+	    downPanel_Image.setBackground(SystemColor.window);
+	    downPanel_Image.setBounds(0, 315, 586, 103);
+	    downPanel_Image.setLayout(new GridLayout(2, 4, 0, 0));
+	    downPanel_Image.add(getBackEmptyPanel_File());
+	    downPanel_Image.add(getBackPanel_Image());
 	}
-	return centerPanel_File;
-    }
-
-    private JLabel getLblDrag() {
-	if (lblDrag == null) {
-	    lblDrag = new JLabel("");
-	    lblDrag.setBounds(156, 11, 299, 141);
-	    lblDrag.setIcon(new ImageIcon(
-		    MainWindow.class.getResource("/img/dnd.png")));
-	    lblDrag.setToolTipText(
-		    root.getMessages().getString("tooltip.file"));
-
-	    // Drag and drop functionality
-	    new DropTarget(lblDrag, new DnDListener());
-	}
-	return lblDrag;
-    }
-
-    private JPanel getDownPanel_File() throws ResourceException {
-	if (downPanel_File == null) {
-	    downPanel_File = new JPanel();
-	    downPanel_File.setBackground(SystemColor.window);
-	    downPanel_File.setBounds(0, 315, 586, 103);
-	    downPanel_File.setLayout(new GridLayout(2, 4, 0, 0));
-	    downPanel_File.add(getBackEmptyPanel_File());
-	    downPanel_File.add(getBackPanel_File());
-	}
-	return downPanel_File;
+	return downPanel_Image;
     }
 
     private JPanel getBackEmptyPanel_File() {
@@ -160,38 +121,38 @@ public class CardImage extends JPanel {
 	return backEmptyPanel_File;
     }
 
-    private JPanel getBackPanel_File() throws ResourceException {
-	if (backPanel_File == null) {
-	    backPanel_File = new JPanel();
-	    backPanel_File.setLayout(null);
-	    backPanel_File.setBackground(SystemColor.window);
-	    backPanel_File.add(getLblBack_File());
-	    backPanel_File.add(getBtnBack_File());
-	    backPanel_File.add(getBtnNext_File());
-	    backPanel_File.add(getBtnHelp_File());
+    private JPanel getBackPanel_Image() throws ResourceException {
+	if (backPanel_Image == null) {
+	    backPanel_Image = new JPanel();
+	    backPanel_Image.setLayout(null);
+	    backPanel_Image.setBackground(SystemColor.window);
+	    backPanel_Image.add(getLblBack_Image());
+	    backPanel_Image.add(getBtnBack_Image());
+	    backPanel_Image.add(getBtnNext_Image());
+	    backPanel_Image.add(getBtnHelp_Image());
 	}
-	return backPanel_File;
+	return backPanel_Image;
     }
 
-    private JLabel getLblBack_File() throws ResourceException {
-	if (lblBack_File == null) {
-	    lblBack_File = new JLabel("<");
-	    lblBack_File.addMouseListener(new MouseAdapter() {
+    private JLabel getLblBack_Image() throws ResourceException {
+	if (lblBack_Image == null) {
+	    lblBack_Image = new JLabel("<");
+	    lblBack_Image.addMouseListener(new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
-		    btnBack_File.doClick();
+		    btnBack_Image.doClick();
 		}
 	    });
-	    lblBack_File.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblBack_File.setBounds(10, 11, 31, 37);
+	    lblBack_Image.setFont(ResourceLoader.getFont().deriveFont(15f));
+	    lblBack_Image.setBounds(10, 11, 31, 37);
 	}
-	return lblBack_File;
+	return lblBack_Image;
     }
 
-    private JButton getBtnBack_File() {
-	if (btnBack_File == null) {
-	    btnBack_File = new JButton("");
-	    btnBack_File.addActionListener(new ActionListener() {
+    private JButton getBtnBack_Image() {
+	if (btnBack_Image == null) {
+	    btnBack_Image = new JButton("");
+	    btnBack_Image.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
@@ -202,21 +163,21 @@ public class CardImage extends JPanel {
 		    }
 		}
 	    });
-	    btnBack_File.setIcon(new ImageIcon(
+	    btnBack_Image.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/home-icon.png")));
-	    btnBack_File.setMnemonic('h');
-	    btnBack_File.setBorder(null);
-	    btnBack_File.setBackground(SystemColor.window);
-	    btnBack_File.setBounds(20, 11, 31, 37);
+	    btnBack_Image.setMnemonic('h');
+	    btnBack_Image.setBorder(null);
+	    btnBack_Image.setBackground(SystemColor.window);
+	    btnBack_Image.setBounds(20, 11, 31, 37);
 	}
-	return btnBack_File;
+	return btnBack_Image;
     }
 
-    private JButton getBtnNext_File() throws ResourceException {
-	if (btnNext_File == null) {
-	    btnNext_File = new JButton(
+    private JButton getBtnNext_Image() throws ResourceException {
+	if (btnNext_Image == null) {
+	    btnNext_Image = new JButton(
 		    root.getMessages().getString("button.next"));
-	    btnNext_File.addActionListener(new ActionListener() {
+	    btnNext_Image.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
@@ -225,109 +186,39 @@ public class CardImage extends JPanel {
 			root.show("mode");
 		    } catch (Exception ex) {
 			root.showErrorMessage(ex,
-				root.getMessages().getString("error.file"));
+				root.getMessages().getString("error.image"));
 		    }
 		}
 	    });
-	    btnNext_File.setMnemonic('b');
-	    btnNext_File.setFont(ResourceLoader.getFont().deriveFont(14f));
-	    btnNext_File.setEnabled(false);
-	    btnNext_File.setBounds(421, 11, 115, 35);
+	    btnNext_Image.setMnemonic('b');
+	    btnNext_Image.setFont(ResourceLoader.getFont().deriveFont(14f));
+	    btnNext_Image.setEnabled(false);
+	    btnNext_Image.setBounds(421, 11, 115, 35);
 	}
-	return btnNext_File;
+	return btnNext_Image;
     }
 
-    private JButton getBtnHelp_File() {
-	if (btnHelp_File == null) {
-	    btnHelp_File = new JButton("");
-	    btnHelp_File.setIcon(new ImageIcon(
+    private JButton getBtnHelp_Image() {
+	if (btnHelp_Image == null) {
+	    btnHelp_Image = new JButton("");
+	    btnHelp_Image.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/help.png")));
-	    btnHelp_File.setToolTipText(
-		    root.getMessages().getString("tooltip.file"));
-	    btnHelp_File.setMnemonic('b');
-	    btnHelp_File.setFont(btnHelp_File.getFont().deriveFont(14f));
-	    btnHelp_File.setBorder(null);
-	    btnHelp_File.setBackground(SystemColor.window);
-	    btnHelp_File.setBounds(537, 7, 49, 41);
-	    btnHelp_File.setFocusable(false);
+	    btnHelp_Image.setToolTipText(
+		    root.getMessages().getString("tooltip.image"));
+	    btnHelp_Image.setMnemonic('b');
+	    btnHelp_Image.setFont(btnHelp_Image.getFont().deriveFont(14f));
+	    btnHelp_Image.setBorder(null);
+	    btnHelp_Image.setBackground(SystemColor.window);
+	    btnHelp_Image.setBounds(537, 7, 49, 41);
+	    btnHelp_Image.setFocusable(false);
 	}
-	return btnHelp_File;
-    }
-
-    class DnDListener implements DropTargetListener {
-
-	@Override
-	public void drop(DropTargetDropEvent event) {
-	    // Get dropped item data
-	    event.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-	    savedDroppedFile = false;
-	    Transferable tr = event.getTransferable();
-	    DataFlavor[] formats = tr.getTransferDataFlavors();
-	    boolean complete = false;
-	    File f = null;
-
-	    // Only check for files
-	    for (DataFlavor flavor : formats) {
-		try {
-		    if (flavor.isFlavorJavaFileListType()) {
-			@SuppressWarnings("unchecked")
-			List<File> files = (List<File>) tr
-				.getTransferData(flavor);
-			f = files.get(0);
-			complete = true;
-
-			if (f != null) {
-			    if (LocaleFileProcessor
-				    .getFileExtension(f.getPath()).get()
-				    .equals("properties")) {
-
-				root.setFilePath(f.getPath());
-				txtFilePath.setText(f.getName());
-				btnNext_File.setEnabled(true);
-				savedDroppedFile = true;
-
-			    } else {
-				root.resetFileValues();
-				txtFilePath.setText("");
-				lblDndWarning.setVisible(false);
-				btnNext_File.setEnabled(false);
-			    }
-			}
-		    }
-		} catch (Exception e) {
-		    e.printStackTrace();
-		} finally {
-		    event.dropComplete(complete);
-		    try {
-			getLblDndWarning().setVisible(!savedDroppedFile);
-		    } catch (ResourceException e) {
-			root.showErrorMessage(e.getMessage());
-		    }
-		}
-	    }
-	}
-
-	@Override
-	public void dragEnter(DropTargetDragEvent dtde) {
-	}
-
-	@Override
-	public void dragOver(DropTargetDragEvent dtde) {
-	}
-
-	@Override
-	public void dropActionChanged(DropTargetDragEvent dtde) {
-	}
-
-	@Override
-	public void dragExit(DropTargetEvent dte) {
-	}
+	return btnHelp_Image;
     }
 
     private JTextField getTxtFilePath() throws ResourceException {
 	if (txtFilePath == null) {
 	    txtFilePath = new JTextField();
-	    txtFilePath.setBounds(156, 163, 178, 30);
+	    txtFilePath.setBounds(59, 119, 178, 30);
 	    txtFilePath.setHorizontalAlignment(SwingConstants.CENTER);
 	    txtFilePath.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    txtFilePath.setEditable(false);
@@ -336,38 +227,52 @@ public class CardImage extends JPanel {
 	return txtFilePath;
     }
 
-    private JFileChooser getFileChooser() {
-	fileChooser = new JFileChooser("D:");
+    private JFileChooser getImageChooser() {
+	imageChooser = new JFileChooser("D:");
+	imageChooser.setFileFilter(new ImageFilter(10));
+	imageChooser.setMultiSelectionEnabled(true);
+	int returnVal = imageChooser.showOpenDialog(this);
+	File[] images;
 
-	FileNameExtensionFilter filter = new FileNameExtensionFilter(
-		root.getMessages().getString("label.filter"), "properties");
-	fileChooser.setFileFilter(filter);
-
-	int returnVal = fileChooser.showOpenDialog(this);
 	if (returnVal == JFileChooser.APPROVE_OPTION) {
-	    String path = fileChooser.getSelectedFile().getPath();
-	    String name = fileChooser.getSelectedFile().getName();
+	    File[] selectedImages = imageChooser.getSelectedFiles();
 
-	    root.setFilePath(path);
-	    txtFilePath.setText(name);
-	    btnNext_File.setEnabled(true);
-	    lblDndWarning.setVisible(false);
+	    if (selectedImages.length == 0) {
+		images = null;
+	    } else {
+		if (selectedImages.length > 10) {
+		    images = new File[10];
+		    for (int i = 0; i < 10; i++) {
+			images[i] = selectedImages[i];
+		    }
+
+		    JOptionPane.showMessageDialog(imageChooser,
+			    root.getMessages().getString("error.imagenumber"));
+		} else {
+		    images = selectedImages;
+		}
+		root.setImages(images);
+		txtFilePath.setText(images[0].getPath() + "...");
+		unlockButtons(false);
+	    }
+
 	} else {
-	    btnNext_File.setEnabled(false);
+	    unlockButtons(true);
 	}
 
-	return fileChooser;
+	return imageChooser;
     }
 
     private JButton getBtnBrowse() throws ResourceException {
 	if (btnBrowse == null) {
 	    btnBrowse = new JButton(
 		    root.getMessages().getString("button.browse"));
-	    btnBrowse.setBounds(349, 166, 107, 23);
+	    btnBrowse.setBounds(130, 160, 107, 23);
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    getFileChooser();
+		    unlockButtons(false);
+		    getImageChooser();
 		}
 	    });
 	    btnBrowse.setMnemonic('b');
@@ -376,16 +281,96 @@ public class CardImage extends JPanel {
 	return btnBrowse;
     }
 
-    private JLabel getLblDndWarning() throws ResourceException {
-	if (lblDndWarning == null) {
-	    lblDndWarning = new JLabel(
-		    root.getMessages().getString("label.file.wrong"));
-	    lblDndWarning.setForeground(new Color(220, 20, 60));
-	    lblDndWarning.setBounds(156, 200, 282, 14);
-	    lblDndWarning.setVisible(false);
-	    lblDndWarning.setFont(ResourceLoader.getFont().deriveFont(14f));
+    /**
+     * IMAGE FILTER
+     */
+
+    private class ImageFilter extends FileFilter {
+
+	private FileNameExtensionFilter filter;
+	private int limit;
+	private int count;
+
+	public ImageFilter(int limit) {
+	    this.filter = new FileNameExtensionFilter(
+		    root.getMessages().getString("label.image.filter"),
+		    EXTENSIONS);
+	    this.limit = limit;
 	}
-	return lblDndWarning;
+
+	@Override
+	public boolean accept(File f) {
+	    if (f.isDirectory()) {
+		return true;
+	    }
+	    if (!filter.accept(f)) {
+		return false;
+	    }
+	    count++;
+	    return count < limit;
+	}
+
+	@Override
+	public String getDescription() {
+	    return filter.getDescription();
+	}
+
     }
 
+    private JLabel getLblImageOption() throws ResourceException {
+	if (lblImageOption == null) {
+	    lblImageOption = new JLabel(
+		    root.getMessages().getString("label.image.option"));
+	    lblImageOption.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblImageOption.setForeground(SystemColor.textHighlight);
+	    lblImageOption.setFont(ResourceLoader.getFont().deriveFont(15f));
+	    lblImageOption.setBounds(10, 66, 283, 42);
+	}
+	return lblImageOption;
+    }
+
+    private JButton getBtnNoImage() throws ResourceException {
+	if (btnNoImage == null) {
+	    btnNoImage = new JButton(
+		    root.getMessages().getString("label.image.button"));
+	    btnNoImage.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    unlockButtons(true);
+		}
+	    });
+	    btnNoImage.setFont(ResourceLoader.getFont().deriveFont(20f));
+	    btnNoImage.setBounds(334, 119, 210, 52);
+	}
+	return btnNoImage;
+    }
+
+    private void unlockButtons(boolean noImage) {
+	btnNext_Image.setEnabled(noImage);
+
+	// Disable this button
+	btnNoImage.setFocusable(!noImage);
+	btnNoImage.setEnabled(!noImage);
+	btnNoImage.setSelected(noImage);
+
+	// Enable this other one
+	txtFilePath.setEnabled(noImage);
+	btnBrowse.setSelected(!noImage);
+
+	// Next
+	btnNext_Image.setEnabled(true);
+
+    }
+
+    private JLabel getLblImageOption_1() throws ResourceException {
+	if (lblImageOption_1 == null) {
+	    lblImageOption_1 = new JLabel(
+		    root.getMessages().getString("label.image.option2"));
+	    lblImageOption_1.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblImageOption_1.setForeground(SystemColor.textHighlight);
+	    lblImageOption_1.setFont(ResourceLoader.getFont().deriveFont(15f));
+	    lblImageOption_1.setBounds(303, 66, 283, 42);
+	}
+	return lblImageOption_1;
+    }
 }

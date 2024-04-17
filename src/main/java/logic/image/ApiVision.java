@@ -1,7 +1,7 @@
 package main.java.logic.image;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 
 /**
@@ -15,8 +15,14 @@ public interface ApiVision {
     /**
      * Automatic image description over a set of images.
      * 
-     * @param paths list of paths pointing to images to caption
      * @throws IOException in case of failure reading the image paths
      */
-    public Properties caption(List<String> paths) throws IOException;
+    public Properties caption() throws IOException;
+
+    /**
+     * Sets the images to caption.
+     * 
+     * @param files array of selected images
+     */
+    public void setImages(File[] files);
 }

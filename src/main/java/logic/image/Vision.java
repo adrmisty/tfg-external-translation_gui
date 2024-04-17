@@ -1,8 +1,11 @@
 package main.java.logic.image;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
+
+import main.java.logic.image.api.AzureApiVision;
+import main.java.logic.util.exception.ResourceException;
 
 /**
  * Manages automatic image description with Azure Cognitive Services Computer
@@ -17,14 +20,27 @@ public class Vision {
     // Azure Computer Vision API
     private ApiVision apiVision;
 
+    public Vision() throws ResourceException {
+	this.apiVision = new AzureApiVision();
+    }
+
     /**
      * Execution of automatic image captioning.
      * 
      * @param images list of paths pointing to images to caption
      * @throws IOException
      */
-    public Properties generate(List<String> imageUrls) throws IOException {
-	return apiVision.caption(imageUrls);
+    public Properties generate() throws IOException {
+	return apiVision.caption();
+    }
+
+    /**
+     * Saves files to caption.
+     * 
+     * @param file array containing image files
+     */
+    public void setImages(File[] file) {
+	apiVision.setImages(file);
     }
 
 }
