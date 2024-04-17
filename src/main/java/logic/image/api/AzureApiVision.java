@@ -46,6 +46,10 @@ public class AzureApiVision implements ApiVision {
 
     @Override
     public Properties caption() throws IOException {
+	if (this.files == null) {
+	    return null;
+	}
+
 	Properties pr = new Properties();
 	String caption;
 	File file;
@@ -54,9 +58,7 @@ public class AzureApiVision implements ApiVision {
 	    file = files[i];
 	    ImageDescription d = cv.describeImageInStream(getBytes(file), null);
 	    caption = d.captions().get(0).text();
-
-	    System.out.println(caption);
-	    pr.put("image_" + i, caption);
+	    pr.put("image." + i, caption);
 	}
 
 	return pr;

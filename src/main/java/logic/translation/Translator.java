@@ -155,6 +155,15 @@ public class Translator {
 	this.results = ResourceLoader.loadProperties(getSavedFilePath());
     }
 
+    /**
+     * Includes a set of properties in the new contents of the file.
+     * 
+     * @param properties to include (as if found in original file)
+     */
+    public void include(Properties properties) {
+	file.include(properties);
+    }
+
     /*
      * ######################## GET/SET ########################################
      */

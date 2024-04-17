@@ -140,6 +140,16 @@ public class LocaleFileWriter {
 	return writeTempResults(texts).toAbsolutePath().toString();
     }
 
+    /**
+     * Includes a set of properties, as if found in the original file (when in
+     * fact we are introducing them for the first time).
+     * 
+     * @param properties new info to add to "original" file
+     */
+    public void include(Properties properties) {
+	this.properties.putAll(properties);
+    }
+
     /*
      * SETTERS & GETTERS
      * ########################################################################

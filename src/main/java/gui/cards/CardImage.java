@@ -156,7 +156,7 @@ public class CardImage extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
-			root.show("main");
+			root.show("mode");
 		    } catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -182,8 +182,7 @@ public class CardImage extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 
 		    try {
-			root.inputFile();
-			root.show("mode");
+			root.show("auto");
 		    } catch (Exception ex) {
 			root.showErrorMessage(ex,
 				root.getMessages().getString("error.image"));

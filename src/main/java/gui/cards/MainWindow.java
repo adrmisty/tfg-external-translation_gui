@@ -168,11 +168,11 @@ public class MainWindow extends JFrame {
 	    cardManual.setLanguage(this.language);
 	    mnLanguage.setEnabled(false);
 	    break;
-	case "automatic":
+	case "auto":
 	    currentCard = cardAuto;
 	    // Start running automatic translation task
-	    cardAuto.run();
 	    mnLanguage.setEnabled(false);
+	    cardAuto.run();
 	    break;
 	case "end":
 	    currentCard = cardEnd;
@@ -213,6 +213,11 @@ public class MainWindow extends JFrame {
     }
 
     public void translate() throws Exception {
+	Properties captions = vision.captions();
+	if (captions != null) {
+	    translator.include(vision.captions());
+	}
+
 	Properties results = translator.translateTo(language);
 	if (results == null) { // Manual translation
 	    IDE.open(contentPane, translator.getSavedFilePath());

@@ -222,7 +222,7 @@ public class CardFile extends JPanel {
 
 		    try {
 			root.inputFile();
-			root.show("image");
+			root.show("mode");
 		    } catch (Exception ex) {
 			root.showErrorMessage(ex,
 				root.getMessages().getString("error.file"));

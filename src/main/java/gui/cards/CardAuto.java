@@ -82,7 +82,7 @@ public class CardAuto extends JPanel {
 	    @Override
 	    public void run() {
 		try {
-		    // Task execution
+		    // Task execution (captioning + translation)
 		    root.translate();
 		    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 

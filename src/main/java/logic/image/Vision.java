@@ -20,6 +20,9 @@ public class Vision {
     // Azure Computer Vision API
     private ApiVision apiVision;
 
+    // Results
+    private Properties results;
+
     public Vision() throws ResourceException {
 	this.apiVision = new AzureApiVision();
     }
@@ -30,8 +33,11 @@ public class Vision {
      * @param images list of paths pointing to images to caption
      * @throws IOException
      */
-    public Properties generate() throws IOException {
-	return apiVision.caption();
+    public Properties captions() throws IOException {
+	if (this.results == null) {
+	    this.results = apiVision.caption();
+	}
+	return this.results;
     }
 
     /**

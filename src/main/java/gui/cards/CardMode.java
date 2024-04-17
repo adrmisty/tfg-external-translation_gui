@@ -279,7 +279,7 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
-			root.show("image");
+			root.show("file");
 		    } catch (Exception e1) {
 			root.showErrorMessage(e1.getMessage());
 		    }
@@ -305,7 +305,7 @@ public class CardMode extends JPanel {
 		    root.setLanguage((String) comboBox.getSelectedItem());
 		    if (btnAutomatic_Mode.isSelected()) {
 			try {
-			    root.show("automatic");
+			    root.show("image");
 			} catch (Exception e1) {
 			    root.showErrorMessage(e1.getMessage());
 			}
