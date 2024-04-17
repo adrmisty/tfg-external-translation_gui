@@ -31,7 +31,7 @@ import main.java.logic.util.exception.ResourceException;
 import main.java.logic.util.file.LocaleFileProcessor;
 import main.java.logic.util.properties.ResourceLoader;
 
-public class CardFile extends JPanel {
+public class CardImage extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private MainWindow root;
@@ -65,7 +65,7 @@ public class CardFile extends JPanel {
     private JButton btnHelp_File;
     private JLabel lblDndWarning;
 
-    public CardFile(MainWindow root) throws ResourceException {
+    public CardImage(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setLayout(null);

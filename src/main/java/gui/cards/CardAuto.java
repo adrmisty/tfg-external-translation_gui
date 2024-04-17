@@ -18,8 +18,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import main.java.gui.util.BusyPanel;
-import main.java.util.exception.ResourceException;
-import main.java.util.properties.ResourceLoader;
+import main.java.logic.util.exception.ResourceException;
+import main.java.logic.util.properties.ResourceLoader;
 
 public class CardAuto extends JPanel {
 

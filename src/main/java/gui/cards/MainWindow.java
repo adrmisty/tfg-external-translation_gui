@@ -19,9 +19,10 @@ import javax.swing.JPanel;
 
 import main.java.gui.util.IDE;
 import main.java.gui.util.NumberedJMenuItem;
-import main.java.translation.Translator;
-import main.java.util.exception.ResourceException;
-import main.java.util.properties.ResourceLoader;
+import main.java.logic.image.Captioner;
+import main.java.logic.translation.Translator;
+import main.java.logic.util.exception.ResourceException;
+import main.java.logic.util.properties.ResourceLoader;
 
 /**
  * Main Window of the application, which consists of several different views
@@ -36,6 +37,9 @@ public class MainWindow extends JFrame {
 
     // API access for translation
     private Translator translator;
+
+    // Image description
+    private Captioner captioner;
 
     // Locale
     private ResourceBundle messages;
