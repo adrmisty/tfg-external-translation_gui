@@ -1,21 +1,24 @@
 package main.java.gui.cards;
 
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 
 import main.java.logic.util.exception.ResourceException;
@@ -39,7 +42,6 @@ public class CardMode extends JPanel {
     private JButton btnManual_Mode;
     private JButton btnAutomatic_Mode;
     private JLabel lblChooseTranslation;
-    private JComboBox<String> comboBox;
     private JLabel lblChoose;
     private JLabel lblLanguage;
     private JPanel backEmptyPanel_Mode;
@@ -48,6 +50,14 @@ public class CardMode extends JPanel {
     private JButton btnBack_Mode;
     private JButton btnNext_Mode;
     private JButton btnHelp_Mode;
+
+    /*
+     * Selected languages
+     */
+    private JComboBox<JCheckBox> comboBox;
+    private CheckComboBoxRenderer renderer;
+    private List<String> selectedLanguages;
+    private static int maxLangs = 3;
 
     public CardMode(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -124,6 +134,7 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    setSelectedButton(btnManual_Mode, btnAutomatic_Mode);
+		    maxLangs = 1;
 		    unlockNext();
 		}
 	    });
@@ -141,6 +152,7 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    setSelectedButton(btnAutomatic_Mode, btnManual_Mode);
+		    maxLangs = 3;
 		    try {
 			root.setMode(null);
 		    } catch (Exception e1) {
@@ -155,12 +167,21 @@ public class CardMode extends JPanel {
 	return btnAutomatic_Mode;
     }
 
-    private JComboBox<String> getComboBox() throws ResourceException {
+    private JComboBox<JCheckBox> getComboBox() throws ResourceException {
 	if (comboBox == null) {
-	    comboBox = new JComboBox<String>();
-	    comboBox.addItemListener(new ItemListener() {
+	    comboBox = new JComboBox<JCheckBox>();
+	    renderer = new CheckComboBoxRenderer();
+	    comboBox.setRenderer(renderer);
+	    comboBox.addActionListener(new ActionListener() {
 		@Override
-		public void itemStateChanged(ItemEvent e) {
+		public void actionPerformed(ActionEvent e) {
+
+		    comboBox.getItemAt(comboBox.getSelectedIndex())
+			    .setSelected(!renderer.isSelected());
+		    if (getSelectedCount() > maxLangs) {
+			comboBox.getItemAt(comboBox.getSelectedIndex())
+				.setSelected(false);
+		    }
 		    if (btnNext_Mode != null) {
 			unlockNext();
 		    }
@@ -173,6 +194,20 @@ public class CardMode extends JPanel {
 	return comboBox;
     }
 
+    private int getSelectedCount() {
+	// Do not count first item
+	this.selectedLanguages = new ArrayList<>();
+	int count = 0;
+	for (int i = 1; i < comboBox.getItemCount(); i++) {
+	    JCheckBox language = comboBox.getItemAt(i);
+	    if (language.isSelected()) {
+		this.selectedLanguages.add(language.getText());
+		count++;
+	    }
+	}
+	return count;
+    }
+
     /**
      * Sorts all the language in the combo box alphabetically, while having the
      * first element always being the same.
@@ -181,7 +216,7 @@ public class CardMode extends JPanel {
 	// Add all elements to combo box
 	List<String> languages = ResourceLoader
 		.getSupportedLanguages(root.getMessages());
-	String first = languages.get(0);
+	JCheckBox first = new JCheckBox(languages.get(0));
 
 	for (int i = 1; i < comboBox.getItemCount(); i++) {
 	    comboBox.addItem(comboBox.getItemAt(i));
@@ -189,11 +224,14 @@ public class CardMode extends JPanel {
 
 	Collections.sort(languages);
 	comboBox.removeAllItems();
+
+	first.setEnabled(false);
+	first.setSelected(false);
 	comboBox.addItem(first);
 
 	for (String s : languages) {
-	    if (!s.equals(first)) {
-		comboBox.addItem(s);
+	    if (!s.equals(first.getText())) {
+		comboBox.addItem(new JCheckBox(s));
 	    }
 	}
     }
@@ -302,7 +340,7 @@ public class CardMode extends JPanel {
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.setLanguage((String) comboBox.getSelectedItem());
+		    root.setLanguages(selectedLanguages);
 		    if (btnAutomatic_Mode.isSelected()) {
 			try {
 			    root.show("image");
@@ -346,6 +384,41 @@ public class CardMode extends JPanel {
 	comboBox.setSelectedIndex(0);
 	btnManual_Mode.setSelected(false);
 	btnAutomatic_Mode.setSelected(false);
+    }
+
+    /*
+     * COMBO BOX
+     */
+
+    // Renderer to display checkboxes in the combo box
+    class CheckComboBoxRenderer implements ListCellRenderer<Object> {
+
+	JCheckBox checkBox = new JCheckBox();
+
+	@Override
+	public Component getListCellRendererComponent(JList<?> list,
+		Object value, int index, boolean isSelected,
+		boolean cellHasFocus) {
+	    checkBox = (JCheckBox) value;
+	    checkBox.setSelected(((JCheckBox) value).isSelected());
+	    if (isSelected) {
+		checkBox.setBackground(list.getSelectionBackground());
+		checkBox.setForeground(list.getSelectionForeground());
+	    } else {
+		checkBox.setBackground(list.getBackground());
+		checkBox.setForeground(list.getForeground());
+	    }
+
+	    return checkBox;
+	}
+
+	public boolean isSelected() {
+	    return checkBox.isSelected();
+	}
+
+	public void select(boolean sel) {
+	    checkBox.setSelected(sel);
+	}
     }
 
 }

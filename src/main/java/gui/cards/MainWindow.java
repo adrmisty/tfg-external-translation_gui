@@ -60,7 +60,7 @@ public class MainWindow extends JFrame {
     // Files & translation
     private String filePath = "";
     private String dirPath = "";
-    private String language = "";
+    private List<String> languages = new ArrayList<>();
 
     /*
      * Language setting
@@ -165,7 +165,7 @@ public class MainWindow extends JFrame {
 	    break;
 	case "manual":
 	    currentCard = cardManual;
-	    cardManual.setLanguage(this.language);
+	    cardManual.setLanguage(this.languages.get(0));
 	    mnLanguage.setEnabled(false);
 	    break;
 	case "auto":
@@ -218,7 +218,7 @@ public class MainWindow extends JFrame {
 	    translator.include(vision.captions());
 	}
 
-	Properties results = translator.translateTo(language);
+	Properties results = translator.translateTo(languages);
 	if (results == null) { // Manual translation
 	    IDE.open(contentPane, translator.getSavedFilePath());
 	}
@@ -232,8 +232,8 @@ public class MainWindow extends JFrame {
 	IDE.open(contentPane, translator.review());
     }
 
-    public void setLanguage(String language) {
-	this.language = language;
+    public void setLanguages(List<String> languages) {
+	this.languages = languages;
     }
 
     public void setFilePath(String path) {

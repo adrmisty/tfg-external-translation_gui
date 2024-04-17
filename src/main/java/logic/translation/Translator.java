@@ -1,5 +1,6 @@
 package main.java.logic.translation;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -76,17 +77,22 @@ public class Translator {
 
     /**
      * Translates according to the specified translation mode, into a given
-     * target language.
+     * target language (can be more than 1! - and a maximum of 3).
      * 
-     * @param language format "Bulgarian, Bulgaria"
+     * @param languages list of languages in format format "Bulgarian, Bulgaria"
      * @return results in the form of a Properties object
      * @throws Exception in case of translation problems
      */
-    public Properties translateTo(String language) throws Exception {
+    public Properties translateTo(List<String> languages) throws Exception {
+	Properties results = new Properties();
+
 	// For file creation & processing
-	file.setTargetLanguage(language);
-	// Translation mode
-	this.results = mode.translate(language);
+	for (String language : languages) {
+	    file.setTargetLanguage(language);
+	    // Translation mode
+	    results.putAll(mode.translate(language));
+	}
+	this.results = results;
 	return this.results;
     }
 

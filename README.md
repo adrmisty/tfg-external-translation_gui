@@ -10,8 +10,6 @@ and Software Engineering at the University of Oviedo (Asturias, Spain).
 
 ### (1) 💡 To Do: código
 * GUI: Set alt texts in application.
-* Functionality: AI image description to generate alt texts.
-* Functionality: Localize alt texts.
 
 ### (2) 💡 To Do: test
 * Unit tests: tests de parámetros (correctos/incorrectos), manejos de excepciones...
@@ -27,13 +25,13 @@ and Software Engineering at the University of Oviedo (Asturias, Spain).
 * SQLite.
 
 ### Model
-For text translation, the LLM used by the service corresponds with the ChatGPT-3.5 series. 
+For text translation, the LLM used by the service corresponds with the ChatGPT-3.5 series provided by OpenAI. 
 
 ### APIs
 * GUI: Swing
-* Model access: OpenAI ChatCompletionsAPI (service implemented for Java, provided by https://github.com/TheoKanning/openai-java).
-* Text to speech: Microsoft Azure COgnitive Speech AI (https://azure.microsoft.com/en-us/products/ai-services/ai-speech).
-* Image description: Hugging Face Image to Text captioning functionality (https://huggingface.co/tasks/image-to-text).
+* Model access: OpenAI ChatCompletionsAPI (Java SDK service, provided by https://github.com/TheoKanning/openai-java).
+* Text to speech: Microsoft Azure AI Speech (https://azure.microsoft.com/en-us/products/ai-services/ai-speech).
+* Image description: Microsoft Azure AI Vision (https://azure.microsoft.com/en-us/products/ai-services/ai-vision).
 * Database management: JDBC (Java Database Connectivity) for SQLite.
 
 
