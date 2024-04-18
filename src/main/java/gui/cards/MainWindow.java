@@ -60,6 +60,7 @@ public class MainWindow extends JFrame {
     // Files & translation
     private String filePath = "";
     private String dirPath = "";
+    private boolean manualMode = false;
     private List<String> languages = new ArrayList<>();
 
     /*
@@ -177,7 +178,7 @@ public class MainWindow extends JFrame {
 	case "end":
 	    currentCard = cardEnd;
 	    // Set name to be shown on screen
-	    cardEnd.setSavedFileName(translator.getSavedFileName());
+	    cardEnd.setSavedFileName(translator.getSavedDirectory());
 	    mnLanguage.setEnabled(false);
 	    break;
 	default:
@@ -206,71 +207,6 @@ public class MainWindow extends JFrame {
     public void showErrorMessage(Exception e, String message) {
 	JOptionPane.showMessageDialog(this, message + " " + e.getMessage(),
 		"FileLingual", JOptionPane.ERROR_MESSAGE);
-    }
-
-    public void save() throws Exception {
-	translator.save(dirPath);
-    }
-
-    public void translate() throws Exception {
-	Properties captions = vision.captions();
-	if (captions != null) {
-	    translator.include(vision.captions());
-	}
-
-	Properties results = translator.translateTo(languages);
-	if (results == null) { // Manual translation
-	    IDE.open(contentPane, translator.getSavedFilePath());
-	}
-    }
-
-    public void textToSpeech(boolean start) throws Exception {
-	translator.toSpeech(start);
-    }
-
-    public void review() throws Exception {
-	IDE.open(contentPane, translator.review());
-    }
-
-    public void setLanguages(List<String> languages) {
-	this.languages = languages;
-    }
-
-    public void setFilePath(String path) {
-	this.filePath = path;
-    }
-
-    public void setDirPath(String path) {
-	this.dirPath = path;
-    }
-
-    public boolean isDirPath() {
-	return !dirPath.isBlank();
-    }
-
-    public void input() {
-	IDE.open(contentPane, translator.getSavedFilePath());
-    }
-
-    public void inputFile() throws Exception {
-	translator.input(filePath);
-    }
-
-    public void resetFileValues() {
-	this.filePath = "";
-	this.dirPath = "";
-    }
-
-    public void resetModeValues() {
-	cardMode.reset();
-    }
-
-    public void setMode(String path) throws Exception {
-	if (path == null) {
-	    translator.setAutoMode();
-	} else {
-	    translator.setManualMode(path);
-	}
     }
 
     /*
@@ -342,19 +278,6 @@ public class MainWindow extends JFrame {
     }
 
     /*
-     * ######################## IMAGES #################################
-     */
-
-    /**
-     * Saves selected images paths for automatic description functionality.
-     * 
-     * @param selectedImages file array containing info of all images
-     */
-    public void setImages(File[] selectedImages) {
-	vision.setImages(selectedImages);
-    }
-
-    /*
      * ######################## LOCALIZATION #################################
      */
 
@@ -388,6 +311,132 @@ public class MainWindow extends JFrame {
 
     public ResourceBundle getMessages() {
 	return this.messages;
+    }
+
+    /*
+     * ######################## IMAGES #################################
+     */
+
+    /**
+     * Saves selected images paths for automatic description functionality.
+     * 
+     * @param selectedImages file array containing info of all images
+     */
+    public void setImages(File[] selectedImages) {
+	vision.setImages(selectedImages);
+    }
+
+    /*
+     * ######################## TRANSLATION #################################
+     */
+
+    /**
+     * Saves all translated files to their respective destinations.
+     * 
+     * @throws Exception in case of issue saving to file
+     */
+    public void saveAll() throws Exception {
+	translator.saveAll();
+    }
+
+    /**
+     * Carries out all translations.
+     * 
+     * @throws Exception in case of issues with - translation api - vision api -
+     *                   writing to/from file
+     */
+    public void translate() throws Exception {
+	Properties captions = vision.captions();
+	if (captions != null) {
+	    translator.include(vision.captions());
+	}
+
+	translator.translateAll();
+	if (manualMode) { // Manual translation
+	    IDE.open(contentPane, translator.getSavedDirectory());
+	}
+    }
+
+    /**
+     * Reviews, from a system-dependent IDE, a given temporary file.
+     * 
+     * @param id integer identifier of the target file to review
+     * @throws Exception in case of issue retrieving translation results
+     */
+    public void review(int id) throws Exception {
+	IDE.open(contentPane, translator.review(id));
+    }
+
+    /**
+     * Establishes the languages to which the translator will carry out the
+     * translations.
+     * 
+     * @param languages list of strings, with the format "English, United
+     *                  States"
+     */
+    public void setLanguages(List<String> languages) {
+	translator.setTargetLanguages(languages);
+    }
+
+    /**
+     * @return true if the translator has a directory, false otherwise
+     */
+    public boolean hasDirectory() {
+	return !translator.getSavedDirectory().isBlank();
+    }
+
+    /**
+     * Inputs file defined in a given source path, to be processed and checked
+     * for mistakes.
+     * 
+     * @throws Exception in case the file is not correct
+     */
+    public void inputFile() throws Exception {
+	translator.input();
+    }
+
+    /**
+     * @param filePath of the source file that will be processed
+     */
+    public void from(String filePath) {
+	translator.from(filePath);
+    }
+
+    /**
+     * @param dirPath of directory where all files will be saved
+     * @throws Exception
+     */
+    public void to(String dirPath) throws Exception {
+	translator.to(dirPath);
+    }
+
+    /**
+     * Resets everything to their initial, blank state; so that translation
+     * process can be carriedo ut again.
+     * 
+     * @throws Exception in case of issues resetting
+     */
+    public void reset() throws Exception {
+	translator.reset();
+	cardMode.reset();
+	manualMode = false;
+    }
+
+    /**
+     * Sets translation mode (either manual or automatic).
+     * 
+     * @param path
+     * @throws Exception
+     */
+    public void setMode(String path) throws Exception {
+	translator.to(path);
+	if (path == null) {
+	    translator.setAutoMode();
+	    manualMode = false;
+	} else {
+	    translator.setManualMode();
+	    manualMode = true;
+	}
     }
 
 }

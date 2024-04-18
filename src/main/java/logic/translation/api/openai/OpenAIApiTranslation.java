@@ -10,8 +10,8 @@ import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 
-import main.java.logic.translation.ApiTranslation;
 import main.java.logic.translation.api.ApiRequestBuilder;
+import main.java.logic.translation.api.ApiTranslation;
 import main.java.logic.util.exception.PropertiesException;
 import main.java.logic.util.exception.TranslationException;
 import main.java.logic.util.properties.PropertiesUtil;

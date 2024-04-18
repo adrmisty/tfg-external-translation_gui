@@ -28,7 +28,6 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.file.LocaleFileProcessor;
 import main.java.logic.util.properties.ResourceLoader;
 
 public class CardFile extends JPanel {
@@ -254,7 +253,7 @@ public class CardFile extends JPanel {
 	return btnHelp_File;
     }
 
-    class DnDListener implements DropTargetListener {
+    private class DnDListener implements DropTargetListener {
 
 	@Override
 	public void drop(DropTargetDropEvent event) {
@@ -277,17 +276,16 @@ public class CardFile extends JPanel {
 			complete = true;
 
 			if (f != null) {
-			    if (LocaleFileProcessor
-				    .getFileExtension(f.getPath()).get()
-				    .equals("properties")) {
+			    if (ResourceLoader.getFileExtension(f.getPath())
+				    .get().equals("properties")) {
 
-				root.setFilePath(f.getPath());
+				root.from(f.getAbsolutePath());
 				txtFilePath.setText(f.getName());
 				btnNext_File.setEnabled(true);
 				savedDroppedFile = true;
 
 			    } else {
-				root.resetFileValues();
+				root.reset();
 				txtFilePath.setText("");
 				lblDndWarning.setVisible(false);
 				btnNext_File.setEnabled(false);
@@ -336,7 +334,7 @@ public class CardFile extends JPanel {
 	return txtFilePath;
     }
 
-    private JFileChooser getFileChooser() {
+    private JFileChooser getFileChooser() throws Exception {
 	fileChooser = new JFileChooser("D:");
 
 	FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -348,7 +346,7 @@ public class CardFile extends JPanel {
 	    String path = fileChooser.getSelectedFile().getPath();
 	    String name = fileChooser.getSelectedFile().getName();
 
-	    root.setFilePath(path);
+	    root.from(path);
 	    txtFilePath.setText(name);
 	    btnNext_File.setEnabled(true);
 	    lblDndWarning.setVisible(false);
@@ -367,7 +365,11 @@ public class CardFile extends JPanel {
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    getFileChooser();
+		    try {
+			getFileChooser();
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
+		    }
 		}
 	    });
 	    btnBrowse.setMnemonic('b');

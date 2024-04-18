@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -234,6 +235,15 @@ public class ResourceLoader {
 	    throw new ResourceException(
 		    "ERROR: Database not found among resources", DATABASE_NAME);
 	}
+    }
+
+    /**
+     * @param path absolute path to a file
+     * @return file extension of the file, if it exists
+     */
+    public static Optional<String> getFileExtension(String path) {
+	return Optional.ofNullable(path).filter(f -> f.contains("."))
+		.map(f -> f.substring(path.lastIndexOf(".") + 1));
     }
 
     /**

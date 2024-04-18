@@ -70,8 +70,8 @@ public class CardManual extends JPanel {
 	txtLanguage.setText("");
     }
 
-    private boolean getSaveFileChooser() {
-	if (root.isDirPath()) {
+    private boolean getSaveFileChooser() throws Exception {
+	if (root.hasDirectory()) {
 	    return true;
 	}
 
@@ -81,7 +81,8 @@ public class CardManual extends JPanel {
 
 	if (returnVal == JFileChooser.APPROVE_OPTION) {
 	    txtPath.setText(fileChooser.getSelectedFile().getPath());
-	    root.setDirPath(fileChooser.getSelectedFile().getAbsolutePath());
+	    root.to(
+		    fileChooser.getSelectedFile().getAbsolutePath());
 	    return true;
 	}
 	return false;
@@ -277,9 +278,13 @@ public class CardManual extends JPanel {
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    if (getSaveFileChooser()) {
-			btnTranslate_Manual.setEnabled(true);
-			btnNext_Manual.setEnabled(true);
+		    try {
+			if (getSaveFileChooser()) {
+			    btnTranslate_Manual.setEnabled(true);
+			    btnNext_Manual.setEnabled(true);
+			}
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
 		    }
 		}
 	    });

@@ -1,4 +1,4 @@
-package main.java.logic.translation;
+package main.java.logic.translation.api;
 
 import java.util.Properties;
 

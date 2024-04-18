@@ -126,7 +126,7 @@ public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
 	    requestsNeeded++; // Round up if there are remaining tokens
 	}
 
-	return (requestsNeeded > 3 ? 3 : requestsNeeded);
+	return (requestsNeeded > 1 ? 1 : requestsNeeded);
     }
 
     @Override

@@ -1,35 +1,32 @@
-package main.java.logic.util.file;
+package main.java.logic.file;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import main.java.logic.util.properties.ResourceLoader;
 
 /**
- * Localization alpha-2 codes and names parser for languages. Includes
- * functionalities to extract/derive language-country mappings, locale names for
- * i18n files, display names/codes for locale objects, and other processing
- * functionalities in terms of language names and codes.
+ * [UTILITY CLASS]
+ * 
+ * Parser for localization alpha-2 codes and language names.
+ * 
+ * Includes functionalities to extract/derive language-country mappings, locale
+ * names for i18n files, display names/codes for locale objects, and other
+ * processing functionalities in terms of language names and codes.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
  * @version March 2024
  */
-public class LanguageParser {
+public class LocaleParser {
 
     // Language-index-locale mappings
     private static Map<String, Locale> map;
     private static Map<String, Integer> localeLanguages = new HashMap<>();
     private static Map<Integer, String> englishLanguages = new HashMap<>();
 
-    public LanguageParser() { // for static calls
-
-    }
-
-    public LanguageParser(ResourceBundle messages) throws Exception {
+    public LocaleParser(ResourceBundle messages) throws Exception {
 	map = getMap();
 	localeLanguages = ResourceLoader.getMapSupportedLanguages(messages);
 	englishLanguages = ResourceLoader.getMapSupportedLanguages_English();
@@ -121,24 +118,6 @@ public class LanguageParser {
 	}
 
 	return new String[] { null, null };
-    }
-
-    /**
-     * Eliminate those instances in locale filenames of the type: "-Latn",
-     * "-Cyrl", "-Geor"... Also, replaces all hyphens with underscores so that
-     * resulting filename complies with format.
-     * 
-     * @param filename to remove the possible substring from
-     * @return filename without that alphabet indication
-     */
-    public String format(String filename) {
-	Pattern pattern = Pattern.compile("-[A-Za-z]+(?=-[A-Za-z]{2})");
-	Matcher matcher = pattern.matcher(filename);
-
-	// Replace matched instances with an empty string
-	String result = matcher.replaceAll("");
-
-	return result.replace("-", "_");
     }
 
     /*

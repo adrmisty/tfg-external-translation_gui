@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import main.java.logic.translation.ApiTranslation;
+import main.java.logic.translation.api.ApiTranslation;
 import main.java.logic.translation.api.openai.OpenAIApiTranslation;
 import main.rest.util.MultipartFileParser;
 

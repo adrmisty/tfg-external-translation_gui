@@ -1,42 +1,39 @@
 package main.java.logic.translation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.logic.speech.Speech;
+import main.java.logic.file.FileManager;
 import main.java.logic.translation.mode.AutoTranslation;
 import main.java.logic.translation.mode.ManualTranslation;
-import main.java.logic.util.file.LocaleFileWriter;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.logic.translation.mode.TranslationMode;
 
 /**
  * Translates a given input .properties file into another one in the specified
  * target language, via OpenAI's ChatCompletions API.
  * 
- * This translator manages a file writer and can access a database which serves
- * as a translation cache.
+ * This translator acts as a controller between file and translation tasks.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version March 2024
+ * @version April 2024
  */
 public class Translator {
 
-    private static LocaleFileWriter file;
-
-    // Text to speech
-    private Speech speech;
+    // All translation target file management
+    private static FileManager manager;
 
     // Translation mode
     private TranslationMode auto;
     private TranslationMode manual;
     private TranslationMode mode;
 
-    // Translations
-    private Properties results; // Translation results
+    // Target languages
+    private List<String> targetLanguages = new ArrayList<String>();
 
     /*
-     * ######################## PUBLIC METHODS #################################
+     * ######################## TRANSLATION #################################
      */
 
     /**
@@ -46,8 +43,8 @@ public class Translator {
      * @throws Exception in case of I/O issues with writing to file
      */
     public Translator(ResourceBundle messages) throws Exception {
-	file = new LocaleFileWriter(messages); // Results file
-	speech = new Speech(); // TTS
+	manager = new FileManager(messages); // Results file
+	// speech = new Speech(); // TTS
 	reset(); // Initialization
     }
 
@@ -58,7 +55,7 @@ public class Translator {
      */
     public void setAutoMode() throws Exception {
 	if (auto == null) {
-	    auto = new AutoTranslation(file);
+	    auto = new AutoTranslation(manager.getSourceFile());
 	}
 	this.mode = auto;
     }
@@ -68,97 +65,84 @@ public class Translator {
      * 
      * @param path to which manual writing will be done
      */
-    public void setManualMode(String path) {
+    public void setManualMode() {
 	if (manual == null) {
-	    manual = new ManualTranslation(file, path);
+	    manual = new ManualTranslation();
 	}
 	this.mode = manual;
     }
 
     /**
-     * Translates according to the specified translation mode, into a given
-     * target language (can be more than 1! - and a maximum of 3).
+     * Translates a source file, according to the specified translation mode,
+     * into a given target language (can be more than 1! - and a maximum of 3).
      * 
-     * @param languages list of languages in format format "Bulgarian, Bulgaria"
-     * @return results in the form of a Properties object
      * @throws Exception in case of translation problems
      */
-    public Properties translateTo(List<String> languages) throws Exception {
-	Properties results = new Properties();
+    public void translateAll() throws Exception {
 
-	// For file creation & processing
-	for (String language : languages) {
-	    file.setTargetLanguage(language);
-	    // Translation mode
-	    results.putAll(mode.translate(language));
+	for (String language : this.targetLanguages) {
+	    mode.translate(manager.newLanguage(language));
 	}
-	this.results = results;
-	return this.results;
     }
 
-    /**
-     * Configures to the target language, and has the Text-to-Speech
-     * functionality execute reading over the results. [i.e. if translated texts
-     * are in Bulgarian, voice type will be localized to Bulgarian so its accent
-     * is correctly captured]
-     * 
-     * @param boolean true if start playing, false if stop playing
-     * @throws Exception in case of issue with TTS configuration/run
+    /*
+     * ######################## FILES #################################
      */
-    public void toSpeech(boolean start) throws Exception {
-	if (start) {
-	    speech.speak(file.getTargetCode(), this.results);
-	} else {
-	    speech.stop();
-	}
-    }
 
     /**
-     * Inputs the file that the user wishes to translate, which must be
-     * compliant with i18n format.
+     * Inputs the file that the user wishes to translate, which is located in
+     * the formerly established file path.
      * 
-     * If not, an exception is thrown. Otherwise, the file is parsed and its
-     * relevant information saved for further processing.
+     * This file must be compliant with i18n format. If not, an exception is
+     * thrown. Otherwise, the file is parsed and its relevant information saved
+     * for further processing.
      * 
-     * @param path: absolute path to the file to be translated
      * @throws Exception if file is not format-compliant
      */
-    public void input(String path) throws Exception {
-	file.parse(path);
+    public void input() throws Exception {
+	manager.input();
     }
 
     /**
-     * Saves results onto chosen file path.
+     * Sets the absolute path from which the source file will be read.
      * 
-     * If said results have already been written to a temporary review file,
-     * they are copied onto the new path. Otherwise, results are written for the
-     * first time in the specified file path.
-     * 
-     * @param file path: absolute directory path where file should be saved
-     * @throws Exception
+     * @param directory path of the directory
      */
-    public void save(String path) throws Exception {
-	if (!file.isFileTemporary()) {
-	    file.write(path, this.results);
-	} else {
-	    file.saveReview(path);
-	    // Save review updates in results
-	    update();
-	}
+    public void from(String path) {
+	manager.from(path);
+    }
+
+    /**
+     * Sets the directory where all target files will be saved.
+     * 
+     * @param directory path of the directory
+     */
+    public void to(String directory) {
+	manager.to(directory);
+    }
+
+    /**
+     * Saves results of all translations.
+     * 
+     * For each file, if its results have already been written to a temporary
+     * review file, they are copied onto the new path. Otherwise, results are
+     * written for the first time in their specified file path.
+     * 
+     * @throws Exception in case of issue writing to file
+     */
+    public void saveAll() throws Exception {
+	manager.saveAll();
     }
 
     /**
      * Writes the results into a temporary file to be used for reviewing and
      * editing the translation.
      * 
-     * @throws Exception
+     * @param id integer identifier of target file to review
+     * @throws Exception in case of issue writing to file
      */
-    public String review() throws Exception {
-	return file.tempWrite(this.results);
-    }
-
-    public void update() throws Exception {
-	this.results = ResourceLoader.loadProperties(getSavedFilePath());
+    public String review(int id) throws Exception {
+	return manager.review(id);
     }
 
     /**
@@ -167,7 +151,7 @@ public class Translator {
      * @param properties to include (as if found in original file)
      */
     public void include(Properties properties) {
-	file.include(properties);
+	manager.include(properties);
     }
 
     /*
@@ -181,11 +165,11 @@ public class Translator {
      * @throws Exception in case of issue with DB
      */
     public void reset() throws Exception {
-	this.results = new Properties();
 	if (mode != null) {
 	    mode.reset();
 	}
-	file.reset();
+	this.targetLanguages = new ArrayList<>();
+	manager.reset();
     }
 
     /**
@@ -193,20 +177,29 @@ public class Translator {
      *         otherwise
      */
     public boolean isDone() {
-	return !results.isEmpty();
+	return manager.isDone();
     }
 
     /**
-     * @return saved file path of the newly-translated file
+     * @return directory where translated files will be stored
      */
-    public String getSavedFilePath() {
-	return file.getSavedFilePath();
+    public String getSavedDirectory() {
+	return manager.getTargetDirectory();
     }
 
     /**
-     * @return saved file name of the newly-translated file
+     * @return list of target languages with format "Bulgarian, Bulgaria"
      */
-    public String getSavedFileName() {
-	return file.getSavedFileName();
+    public List<String> getTargetLanguages() {
+	List<String> list = new ArrayList<String>(this.targetLanguages);
+	return list;
     }
+
+    /**
+     * @param languages list of target langs. translations will be processed in
+     */
+    public void setTargetLanguages(List<String> languages) {
+	this.targetLanguages = languages;
+    }
+
 }

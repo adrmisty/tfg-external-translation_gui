@@ -2,26 +2,17 @@ package main.java.logic.translation.mode;
 
 import java.util.Properties;
 
-import main.java.logic.translation.TranslationMode;
-import main.java.logic.util.file.LocaleFileWriter;
+import main.java.logic.file.TargetFile;
 
 /**
- * Manual translation mode (translator user interacts directly with file and
- * writes its desired translations on it).
+ * Manual translation mode. Virtually does nothing, as user interacts directly
+ * with IDE to create the translation.
  * 
  * 
  * @author Adriana R.F. (uo282798)
- * @version March 2024
+ * @version April 2024
  */
 public class ManualTranslation implements TranslationMode {
-
-    private String path;
-    private LocaleFileWriter file;
-
-    public ManualTranslation(LocaleFileWriter file, String path) {
-	this.file = file;
-	this.path = path;
-    }
 
     /**
      * Writes property keys into a new file so that the user can execute the
@@ -30,19 +21,8 @@ public class ManualTranslation implements TranslationMode {
      * @throws Exception in case of issue with I/O writing to file
      */
     @Override
-    public Properties translate(String language) throws Exception {
-	write();
+    public Properties translate(TargetFile f) throws Exception {
 	return null; // Nothing to save!
-    }
-
-    /**
-     * Writes automatic translation results to target file.
-     * 
-     * @throws Exception in case of writing issues
-     */
-    @Override
-    public void write() throws Exception {
-	file.manualWrite(path);
     }
 
     /**

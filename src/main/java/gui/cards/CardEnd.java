@@ -96,9 +96,8 @@ public class CardEnd extends JPanel {
 	    leftButton_End.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.resetFileValues();
-		    root.resetModeValues();
 		    try {
+			root.reset();
 			root.show("file");
 		    } catch (Exception e1) {
 			root.showErrorMessage(e1.getMessage());

@@ -3,12 +3,12 @@ package main.java.logic.translation.mode;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import main.java.logic.translation.ApiTranslation;
-import main.java.logic.translation.TranslationMode;
+import main.java.logic.file.SourceFile;
+import main.java.logic.file.TargetFile;
+import main.java.logic.translation.api.ApiTranslation;
 import main.java.logic.translation.api.openai.OpenAIApiTranslation;
 import main.java.logic.translation.cache.TranslationCache;
 import main.java.logic.util.exception.TranslationException;
-import main.java.logic.util.file.LocaleFileWriter;
 import main.java.logic.util.properties.PropertiesUtil;
 
 /**
@@ -23,12 +23,16 @@ public class AutoTranslation implements TranslationMode {
 
     private ApiTranslation api;
     private TranslationCache cache;
-    private LocaleFileWriter file;
 
-    public AutoTranslation(LocaleFileWriter file) throws Exception {
-	this.file = file;
+    // Source file
+    private SourceFile source;
+    // Current
+    private TargetFile target;
+
+    public AutoTranslation(SourceFile source) throws Exception {
 	this.api = new OpenAIApiTranslation(); // API access
 	this.cache = new TranslationCache(); // Translation database
+	this.source = source;
     }
 
     /**
@@ -44,28 +48,25 @@ public class AutoTranslation implements TranslationMode {
      * 
      * - 4. Updates caché with new translations.
      * 
+     * @param
      * @param target language: with format "English, United States"
      * 
      * @throws Exception if there is an error with API access
      */
     @Override
-    public Properties translate(String language) throws Exception {
+    public Properties translate(TargetFile target) throws Exception {
+	// New current target file
+	this.target = target;
+
 	// Checks whether some translations have already been made
 	fromCache();
 	// Translate strictly those that have never been translated before
-	Properties results = getAutoResults(language);
+	Properties results = getAutoResults(target.getTargetLanguage());
+	target.setResults(results);
 	// Update cache
 	toCache();
 	// Retrieve results
 	return results;
-    }
-
-    /**
-     * Writes automatic translation results to target file.
-     */
-    @Override
-    public void write() {
-
     }
 
     /**
@@ -75,6 +76,8 @@ public class AutoTranslation implements TranslationMode {
     public void reset() {
 	try {
 	    cache.reset();
+	    source = null;
+	    target = null;
 	} catch (SQLException e) {
 	    // Do nothing
 	}
@@ -90,8 +93,8 @@ public class AutoTranslation implements TranslationMode {
      */
     private void toCache() throws Exception {
 	if (api.getResults() != null) {
-	    cache.storeAll(api.getResults(), file.getProperties(),
-		    file.getTargetCode());
+	    cache.storeAll(api.getResults(), target.getContent(),
+		    target.getTargetCode());
 	}
     }
 
@@ -102,7 +105,7 @@ public class AutoTranslation implements TranslationMode {
      * @throws Exception in case of issue with DB
      */
     private void fromCache() throws Exception {
-	cache.match(file.getProperties(), file.getTargetCode());
+	cache.match(source.getContent(), target.getTargetCode());
     }
 
     /**

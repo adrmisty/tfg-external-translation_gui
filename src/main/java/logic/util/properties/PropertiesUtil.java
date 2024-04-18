@@ -90,4 +90,56 @@ public class PropertiesUtil {
 	return v;
     }
 
+    /**
+     * From the texts given as results, build the .properties-like text to be
+     * written onto the file.
+     * 
+     * @param targetLanguage: string specifying the target language of this
+     *                        translation
+     * @param text:           different translations returned by the translator
+     * @return succession of keys in the file
+     */
+    public static StringBuilder getKeysText(String targetLanguage,
+	    Properties props) {
+	StringBuilder sb = new StringBuilder("");
+	sb.append("# " + targetLanguage + "\n\n");
+
+	List<String> keys = getKeys(props);
+
+	for (String k : keys) {
+	    sb.append(k + "=\n");
+
+	}
+	return sb;
+    }
+
+    /**
+     * From the texts given as results, build the .properties-like text to be
+     * written onto the file.
+     * 
+     * @param targetLanguage: string specifying the target language of this
+     *                        translation
+     * @param text:           different translations returned by the translator
+     * @param properties:     properties object with key/vaue pairs
+     * @return complete text in the specific format
+     */
+    public static StringBuilder getValuesText(String targetLanguage,
+	    Properties texts) {
+	StringBuilder sb = new StringBuilder("");
+	sb.append("# " + targetLanguage + "\n\n");
+
+	String p;
+	List<String> keys = PropertiesUtil.getKeys(texts);
+	List<String> result = PropertiesUtil.getValues(texts);
+
+	for (int i = 0; i < keys.size(); i++) {
+	    p = keys.get(i) + "=" + result.get(i);
+	    sb.append(p);
+	    if (i < texts.size() - 1) {
+		sb.append("\n");
+	    }
+	}
+	return sb;
+    }
+
 }

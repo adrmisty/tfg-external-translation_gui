@@ -69,8 +69,8 @@ public class CardAuto extends JPanel {
 		try {
 		    // Task execution
 		    btnStop.setEnabled(true);
-		    root.textToSpeech(true);
-		    root.textToSpeech(false);
+		    // root.textToSpeech(true);
+		    // root.textToSpeech(false);
 		} catch (Exception ex) {
 		    root.showErrorMessage(ex.getMessage());
 		}
@@ -127,8 +127,8 @@ public class CardAuto extends JPanel {
 		root.getMessages().getString("label.auto.subtitle.loading"));
     }
 
-    private boolean getSaveFileChooser() {
-	if (root.isDirPath()) {
+    private boolean getSaveFileChooser() throws Exception {
+	if (root.hasDirectory()) {
 	    return true;
 	}
 
@@ -137,7 +137,7 @@ public class CardAuto extends JPanel {
 	int returnVal = fileChooser.showSaveDialog(this);
 
 	if (returnVal == JFileChooser.APPROVE_OPTION) {
-	    root.setDirPath(fileChooser.getSelectedFile().getAbsolutePath());
+	    root.to(fileChooser.getSelectedFile().getAbsolutePath());
 	    return true;
 	}
 	return false;
@@ -176,22 +176,24 @@ public class CardAuto extends JPanel {
 	    btnSave_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    if (getSaveFileChooser()) {
-			try {
-			    root.save();
+		    try {
+			if (getSaveFileChooser()) {
+			    root.saveAll();
 			    root.show("end");
-			} catch (Exception e1) {
-			    root.showErrorMessage(
-				    root.getMessages().getString("error.save"));
 			}
+		    } catch (Exception e1) {
+			root.showErrorMessage(
+				root.getMessages().getString("error.save"));
 		    }
 		}
+
 	    });
 	    btnSave_Auto.setFont(btnSave_Auto.getFont().deriveFont(20f));
 	    btnSave_Auto.setFocusable(false);
 	    btnSave_Auto.setBounds(306, 186, 187, 42);
 	}
 	return btnSave_Auto;
+
     }
 
     private JPanel getNorthPanel_Auto() {
@@ -308,7 +310,7 @@ public class CardAuto extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
-			root.review();
+			// root.review();
 		    } catch (Exception e1) {
 			root.showErrorMessage(
 				root.getMessages().getString("error.review"));
@@ -358,7 +360,7 @@ public class CardAuto extends JPanel {
 			speechTask.interrupt();
 			btnSpeech.setEnabled(true);
 			btnStop.setEnabled(false);
-			root.textToSpeech(false);
+			// root.textToSpeech(false);
 		    } catch (Exception e1) {
 			root.showErrorMessage(e1.getMessage());
 		    }
