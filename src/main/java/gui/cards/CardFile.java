@@ -1,7 +1,6 @@
 package main.java.gui.cards;
 
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -143,7 +142,7 @@ public class CardFile extends JPanel {
 	    downPanel_File = new JPanel();
 	    downPanel_File.setBackground(SystemColor.window);
 	    downPanel_File.setBounds(0, 315, 586, 103);
-	    downPanel_File.setLayout(new GridLayout(2, 4, 0, 0));
+	    downPanel_File.setLayout(null);
 	    downPanel_File.add(getBackEmptyPanel_File());
 	    downPanel_File.add(getBackPanel_File());
 	}
@@ -153,6 +152,7 @@ public class CardFile extends JPanel {
     private JPanel getBackEmptyPanel_File() {
 	if (backEmptyPanel_File == null) {
 	    backEmptyPanel_File = new JPanel();
+	    backEmptyPanel_File.setBounds(0, 0, 586, 51);
 	    backEmptyPanel_File.setLayout(null);
 	    backEmptyPanel_File.setBackground(SystemColor.window);
 	}
@@ -162,6 +162,7 @@ public class CardFile extends JPanel {
     private JPanel getBackPanel_File() throws ResourceException {
 	if (backPanel_File == null) {
 	    backPanel_File = new JPanel();
+	    backPanel_File.setBounds(0, 51, 586, 51);
 	    backPanel_File.setLayout(null);
 	    backPanel_File.setBackground(SystemColor.window);
 	    backPanel_File.add(getLblBack_File());

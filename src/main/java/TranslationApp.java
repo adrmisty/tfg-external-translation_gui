@@ -29,6 +29,7 @@ public class TranslationApp {
 		    // Log error
 		    Logger.getLogger(ResourceLoader.class.getName())
 			    .log(Level.SEVERE, null, e1);
+
 		    System.exit(0);
 		}
 	    }

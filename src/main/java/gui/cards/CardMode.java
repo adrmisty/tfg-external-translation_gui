@@ -1,25 +1,32 @@
 package main.java.gui.cards;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import main.java.logic.util.exception.ResourceException;
 import main.java.logic.util.properties.ResourceLoader;
@@ -44,7 +51,6 @@ public class CardMode extends JPanel {
     private JLabel lblChooseTranslation;
     private JLabel lblChoose;
     private JLabel lblLanguage;
-    private JPanel backEmptyPanel_Mode;
     private JPanel backPanel_Mode;
     private JLabel lblBack_Mode;
     private JButton btnBack_Mode;
@@ -54,19 +60,38 @@ public class CardMode extends JPanel {
     /*
      * Selected languages
      */
-    private JComboBox<JCheckBox> comboBox;
-    private CheckComboBoxRenderer renderer;
-    private List<String> selectedLanguages;
+    private JList<JCheckBox> languagesMenu;
+    private List<String> languages = new ArrayList<>();
+    private List<String> selectedLanguages = new ArrayList<>();
     private static int maxLangs = 3;
+    private JScrollPane scrollPane;
 
     public CardMode(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setBackground(SystemColor.window);
 	this.setLayout(null);
+	this.add(getDownPanel_Mode());
 	this.add(getNorthPanel_Mode());
 	this.add(getCenterPanel_Mode());
-	this.add(getDownPanel_Mode());
+    }
+
+    public void reset() throws ResourceException {
+	unselectAllItems();
+	selectedLanguages = new ArrayList<>();
+	unlockNext();
+	btnManual_Mode.setSelected(false);
+	btnAutomatic_Mode.doClick();
+	repaint();
+	revalidate();
+    }
+
+    public void unselectAllItems() {
+	ListModel<JCheckBox> model = languagesMenu.getModel();
+	languagesMenu.setSelectedIndices(new int[languages.size()]);
+	for (int i = 0; i < model.getSize(); i++) {
+	    model.getElementAt(i).setSelected(false);
+	}
     }
 
     private JPanel getNorthPanel_Mode() throws ResourceException {
@@ -83,9 +108,8 @@ public class CardMode extends JPanel {
     private JPanel getDownPanel_Mode() throws ResourceException {
 	if (downPanel_Mode == null) {
 	    downPanel_Mode = new JPanel();
-	    downPanel_Mode.setBounds(0, 315, 586, 98);
-	    downPanel_Mode.setLayout(new GridLayout(0, 1, 0, 0));
-	    downPanel_Mode.add(getBackEmptyPanel_Mode());
+	    downPanel_Mode.setBounds(0, 364, 586, 49);
+	    downPanel_Mode.setLayout(new BorderLayout(0, 0));
 	    downPanel_Mode.add(getBackPanel_Mode());
 	}
 	return downPanel_Mode;
@@ -94,12 +118,12 @@ public class CardMode extends JPanel {
     private JPanel getCenterPanel_Mode() throws ResourceException {
 	if (centerPanel_Mode == null) {
 	    centerPanel_Mode = new JPanel();
-	    centerPanel_Mode.setBounds(0, 80, 586, 236);
+	    centerPanel_Mode.setBounds(0, 80, 586, 284);
 	    centerPanel_Mode.setBackground(SystemColor.window);
 	    centerPanel_Mode.setLayout(null);
+	    centerPanel_Mode.add(getScrollPane());
 	    centerPanel_Mode.add(getBtnManual_Mode());
 	    centerPanel_Mode.add(getBtnAutomatic_Mode());
-	    centerPanel_Mode.add(getComboBox());
 	    centerPanel_Mode.add(getLblChoose());
 	    centerPanel_Mode.add(getLblLanguage());
 	}
@@ -107,6 +131,10 @@ public class CardMode extends JPanel {
     }
 
     private void setSelectedButton(JButton thisButton, JButton otherButton) {
+	unselectAllItems();
+	languagesMenu.setEnabled(true);
+	languagesMenu.setVisible(true);
+	languagesMenu.setOpaque(true);
 	thisButton.setSelected(true);
 	thisButton.setFocusable(true);
 	otherButton.setSelected(false);
@@ -116,7 +144,7 @@ public class CardMode extends JPanel {
     private boolean unlockNext() {
 	// Checks whether it is possible to enable the 'Next' button
 	if ((btnManual_Mode.isSelected() || btnAutomatic_Mode.isSelected())
-		&& comboBox.getSelectedIndex() > 0) {
+		&& !selectedLanguages.isEmpty()) {
 	    btnNext_Mode.setEnabled(true);
 	    return true;
 	} else {
@@ -138,7 +166,7 @@ public class CardMode extends JPanel {
 		    unlockNext();
 		}
 	    });
-	    btnManual_Mode.setBounds(67, 77, 210, 52);
+	    btnManual_Mode.setBounds(67, 44, 210, 52);
 	    btnManual_Mode.setFont(ResourceLoader.getFont().deriveFont(20f));
 	}
 	return btnManual_Mode;
@@ -162,46 +190,101 @@ public class CardMode extends JPanel {
 		}
 	    });
 	    btnAutomatic_Mode.setFont(ResourceLoader.getFont().deriveFont(20f));
-	    btnAutomatic_Mode.setBounds(305, 77, 210, 52);
+	    btnAutomatic_Mode.setBounds(305, 44, 210, 52);
+	    btnAutomatic_Mode.doClick();
 	}
 	return btnAutomatic_Mode;
     }
 
-    private JComboBox<JCheckBox> getComboBox() throws ResourceException {
-	if (comboBox == null) {
-	    comboBox = new JComboBox<JCheckBox>();
-	    renderer = new CheckComboBoxRenderer();
-	    comboBox.setRenderer(renderer);
-	    comboBox.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
+    private JList<JCheckBox> getLanguagesMenu() throws ResourceException {
+	if (languagesMenu == null) {
+	    DefaultListModel<JCheckBox> model = new DefaultListModel<JCheckBox>();
+	    model.addAll(populateMenu());
+	    languagesMenu = new JList<JCheckBox>(model);
+	    languagesMenu.setEnabled(false);
+	    languagesMenu.setBackground(SystemColor.window);
+	    languagesMenu.setOpaque(false);
+	    languagesMenu.setFont(ResourceLoader.getFont());
+	    languagesMenu.setFont(ResourceLoader.getFont().deriveFont(15f));
+	    languagesMenu.setSelectionMode(
+		    ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+	    languagesMenu.setCellRenderer(new CBRenderer());
 
-		    comboBox.getItemAt(comboBox.getSelectedIndex())
-			    .setSelected(!renderer.isSelected());
-		    if (getSelectedCount() > maxLangs) {
-			comboBox.getItemAt(comboBox.getSelectedIndex())
-				.setSelected(false);
-		    }
-		    if (btnNext_Mode != null) {
-			unlockNext();
+	    languagesMenu.addListSelectionListener(new ListSelectionListener() {
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+		    if (!e.getValueIsAdjusting()) {
+			int selectedIndex = languagesMenu.getSelectedIndex();
+			JCheckBox selectedCheckBox = null;
+
+			if (selectedIndex == -1) {
+			    selectedCheckBox = languagesMenu.getModel()
+				    .getElementAt(0);
+			} else if (selectedIndex > -1) {
+			    selectedCheckBox = languagesMenu.getModel()
+				    .getElementAt(selectedIndex);
+			}
+
+			boolean toSelect = !selectedCheckBox.isSelected();
+			selectedCheckBox.setSelected(toSelect);
+			if (!selectedLanguages.contains(
+				selectedLanguages.get(selectedIndex))) {
+			    selectedLanguages.add(selectedCheckBox.getText());
+			} else {
+			    selectedLanguages
+				    .remove(selectedCheckBox.getText());
+			}
+
 		    }
 		}
 	    });
-	    comboBox.setBounds(158, 185, 280, 32);
-	    comboBox.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    sortComboBox();
+
 	}
-	return comboBox;
+	return languagesMenu;
     }
 
-    private int getSelectedCount() {
-	// Do not count first item
-	this.selectedLanguages = new ArrayList<>();
+    class CBRenderer extends JCheckBox implements ListCellRenderer<JCheckBox> {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	public Component getListCellRendererComponent(
+		JList<? extends JCheckBox> list, JCheckBox value, int index,
+		boolean isSelected, boolean cellHasFocus) {
+	    // Set the state of the checkbox based on the selected state of the
+	    // list cell
+	    setSelected(value.isSelected());
+	    setEnabled(value.isEnabled());
+	    setText(value.getText());
+	    setBackground(list.getBackground());
+	    setForeground(list.getForeground());
+	    setFont(list.getFont());
+	    setOpaque(true);
+
+	    if (countSelectedItems() >= maxLangs) {
+		if (!value.isSelected()) {
+		    setEnabled(false);
+		    setVisible(false);
+		}
+	    } else {
+		if (languagesMenu.isEnabled()) {
+		    setEnabled(true);
+		    setVisible(true);
+
+		}
+	    }
+
+	    return this;
+	}
+    }
+
+    private int countSelectedItems() {
 	int count = 0;
-	for (int i = 1; i < comboBox.getItemCount(); i++) {
-	    JCheckBox language = comboBox.getItemAt(i);
-	    if (language.isSelected()) {
-		this.selectedLanguages.add(language.getText());
+	ListModel<JCheckBox> model = languagesMenu.getModel();
+	for (int i = 0; i < model.getSize(); i++) {
+	    if (model.getElementAt(i).isSelected()) {
 		count++;
 	    }
 	}
@@ -209,31 +292,40 @@ public class CardMode extends JPanel {
     }
 
     /**
-     * Sorts all the language in the combo box alphabetically, while having the
-     * first element always being the same.
+     * Builds the JList model (alphabetically-sorted languages that make up a
+     * multi-selectable list).
+     * 
+     * @return list of selectable check box menu items
      */
-    private void sortComboBox() {
+    private List<JCheckBox> populateMenu() {
 	// Add all elements to combo box
-	List<String> languages = ResourceLoader
+	this.languages = ResourceLoader
 		.getSupportedLanguages(root.getMessages());
-	JCheckBox first = new JCheckBox(languages.get(0));
-
-	for (int i = 1; i < comboBox.getItemCount(); i++) {
-	    comboBox.addItem(comboBox.getItemAt(i));
-	}
-
 	Collections.sort(languages);
-	comboBox.removeAllItems();
 
-	first.setEnabled(false);
-	first.setSelected(false);
-	comboBox.addItem(first);
+	// Items
+	List<JCheckBox> items = new ArrayList<>();
+	for (int i = 0; i < languages.size(); i++) {
+	    String l = languages.get(i);
+	    JCheckBox newItem = new JCheckBox(l);
+	    items.add(newItem);
+	    newItem.addItemListener(new ItemListener() {
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+		    if (e.getStateChange() == ItemEvent.SELECTED) {
+			// Check if the maximum limit is reached
+			if (countSelectedItems() > maxLangs) {
+			    ((JCheckBox) e.getItem()).setSelected(false);
+			} else {
+			    selectedLanguages
+				    .add(((JCheckBox) e.getItem()).getText());
+			}
+		    }
+		}
 
-	for (String s : languages) {
-	    if (!s.equals(first.getText())) {
-		comboBox.addItem(new JCheckBox(s));
-	    }
+	    });
 	}
+	return items;
     }
 
     private JLabel getLblChoose() throws ResourceException {
@@ -242,7 +334,7 @@ public class CardMode extends JPanel {
 		    root.getMessages().getString("label.mode.type"));
 	    lblChoose.setForeground(SystemColor.textHighlight);
 	    lblChoose.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblChoose.setBounds(67, 44, 448, 22);
+	    lblChoose.setBounds(67, 11, 448, 22);
 	    lblChoose.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return lblChoose;
@@ -252,11 +344,11 @@ public class CardMode extends JPanel {
 	if (lblLanguage == null) {
 	    lblLanguage = new JLabel(
 		    root.getMessages().getString("label.mode.language"));
-	    lblLanguage.setLabelFor(getComboBox());
+	    lblLanguage.setLabelFor(getLanguagesMenu());
 	    lblLanguage.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblLanguage.setForeground(SystemColor.textHighlight);
 	    lblLanguage.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblLanguage.setBounds(67, 155, 448, 19);
+	    lblLanguage.setBounds(67, 119, 448, 19);
 	}
 	return lblLanguage;
     }
@@ -271,14 +363,6 @@ public class CardMode extends JPanel {
 		    .setFont(ResourceLoader.getFont().deriveFont(40f));
 	}
 	return lblChooseTranslation;
-    }
-
-    private JPanel getBackEmptyPanel_Mode() {
-	if (backEmptyPanel_Mode == null) {
-	    backEmptyPanel_Mode = new JPanel();
-	    backEmptyPanel_Mode.setBackground(SystemColor.window);
-	}
-	return backEmptyPanel_Mode;
     }
 
     private JPanel getBackPanel_Mode() throws ResourceException {
@@ -341,6 +425,9 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    root.setLanguages(selectedLanguages);
+		    for (String s : selectedLanguages) {
+			System.out.println(s);
+		    }
 		    if (btnAutomatic_Mode.isSelected()) {
 			try {
 			    root.show("image");
@@ -380,45 +467,12 @@ public class CardMode extends JPanel {
 	return btnHelp_Mode;
     }
 
-    public void reset() {
-	comboBox.setSelectedIndex(0);
-	btnManual_Mode.setSelected(false);
-	btnAutomatic_Mode.setSelected(false);
+    private JScrollPane getScrollPane() throws ResourceException {
+	if (scrollPane == null) {
+	    scrollPane = new JScrollPane();
+	    scrollPane.setBounds(155, 149, 280, 124);
+	    scrollPane.setViewportView(getLanguagesMenu());
+	}
+	return scrollPane;
     }
-
-    /*
-     * COMBO BOX
-     */
-
-    // Renderer to display checkboxes in the combo box
-    class CheckComboBoxRenderer implements ListCellRenderer<Object> {
-
-	JCheckBox checkBox = new JCheckBox();
-
-	@Override
-	public Component getListCellRendererComponent(JList<?> list,
-		Object value, int index, boolean isSelected,
-		boolean cellHasFocus) {
-	    checkBox = (JCheckBox) value;
-	    checkBox.setSelected(((JCheckBox) value).isSelected());
-	    if (isSelected) {
-		checkBox.setBackground(list.getSelectionBackground());
-		checkBox.setForeground(list.getSelectionForeground());
-	    } else {
-		checkBox.setBackground(list.getBackground());
-		checkBox.setForeground(list.getForeground());
-	    }
-
-	    return checkBox;
-	}
-
-	public boolean isSelected() {
-	    return checkBox.isSelected();
-	}
-
-	public void select(boolean sel) {
-	    checkBox.setSelected(sel);
-	}
-    }
-
 }
