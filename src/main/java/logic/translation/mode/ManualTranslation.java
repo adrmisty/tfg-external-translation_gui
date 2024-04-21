@@ -15,14 +15,19 @@ import main.java.logic.file.TargetFile;
 public class ManualTranslation implements TranslationMode {
 
     /**
-     * Writes property keys into a new file so that the user can execute the
-     * manual translation themselves.
+     * Does not carry out a translation process. Returns the properties found in
+     * its source file, since the only usable information from said file will be
+     * the keys themselves.
+     * 
+     * @param f target file to translate
+     * @return content of its source file
      * 
      * @throws Exception in case of issue with I/O writing to file
      */
     @Override
     public Properties translate(TargetFile f) throws Exception {
-	return null; // Nothing to save!
+	f.setResults(null);
+	return f.getContent(); // Nothing to save!
     }
 
     /**

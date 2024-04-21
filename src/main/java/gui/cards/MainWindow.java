@@ -53,13 +53,12 @@ public class MainWindow extends JFrame {
     private CardFile cardFile; // For uploading a file
     private CardImage cardImage; // For uploading images to caption
     private CardMode cardMode; // For choosing a translation mode
-    private CardAuto cardAuto; // For OpenAI translation
+    private CardAutoMode cardAutoMode; // For automatic translation settings
+    private CardAuto cardAuto; // For automatic translation
     private CardManual cardManual; // For manual translation
     private CardEnd cardEnd; // For ending the app
 
     // Files & translation
-    private String filePath = "";
-    private String dirPath = "";
     private boolean manualMode = false;
     private List<String> languages = new ArrayList<>();
 
@@ -111,6 +110,7 @@ public class MainWindow extends JFrame {
 	cardFile = null;
 	cardMode = null;
 	cardAuto = null;
+	cardAutoMode = null;
 	cardManual = null;
 	cardEnd = null;
 	mnLanguage = null;
@@ -124,6 +124,7 @@ public class MainWindow extends JFrame {
 	contentPane.add(getCardFile());
 	contentPane.add(getCardImage());
 	contentPane.add(getCardMode());
+	contentPane.add(getCardAutoMode());
 	contentPane.add(getCardAuto());
 	contentPane.add(getCardManual());
 	contentPane.add(getCardEnd());
@@ -162,6 +163,10 @@ public class MainWindow extends JFrame {
 	    break;
 	case "mode":
 	    currentCard = cardMode;
+	    mnLanguage.setEnabled(false);
+	    break;
+	case "automode":
+	    currentCard = cardAutoMode;
 	    mnLanguage.setEnabled(false);
 	    break;
 	case "manual":
@@ -261,6 +266,14 @@ public class MainWindow extends JFrame {
 	return cardAuto;
     }
 
+    private JPanel getCardAutoMode() throws ResourceException {
+	if (cardAutoMode == null) {
+	    cardAutoMode = new CardAutoMode(this);
+	    cardAutoMode.setVisible(false);
+	}
+	return cardAutoMode;
+    }
+
     private JPanel getCardManual() throws ResourceException {
 	if (cardManual == null) {
 	    cardManual = new CardManual(this);
@@ -353,36 +366,47 @@ public class MainWindow extends JFrame {
 
 	translator.translateAll();
 	if (manualMode) { // Manual translation
-	    IDE.open(contentPane, translator.getSavedDirectory());
+	    translator.saveAll();
+	    IDE.open(contentPane, translator.getManualPath());
 	}
     }
 
     /**
-     * Reviews, from a system-dependent IDE, a given temporary file.
+     * Establishes the languages the user has selected for
      * 
-     * @param id integer identifier of the target file to review
-     * @throws Exception in case of issue retrieving translation results
+     * @param languages list of strings, with the format "English, United
+     *                  States"
+     * @throws Exception
      */
-    public void review(int id) throws Exception {
-	IDE.open(contentPane, translator.review(id));
+    public void setSelectedLanguages(List<String> languages) throws Exception {
+	this.languages = languages;
+	if (languages.size() > 1) {
+	    // For card purposes (automatic translation)
+	    cardAutoMode.setTargetLanguages(languages);
+	} else {
+	    // Manual translation
+	    translator.setTargetLanguages(languages, null);
+	}
     }
 
     /**
      * Establishes the languages to which the translator will carry out the
-     * translations.
+     * translations, while also expressing which one will be the default (if
+     * any).
      * 
-     * @param languages list of strings, with the format "English, United
-     *                  States"
+     * @param languages   list of languages the translator will translate to
+     * @param defaultLang name of the target language that will be the default -
+     *                    if null, no target language is established
      */
-    public void setLanguages(List<String> languages) {
-	translator.setTargetLanguages(languages);
+    public void setLanguages(List<String> languages, String defaultLang) {
+	translator.setTargetLanguages(languages, defaultLang);
     }
 
     /**
      * @return true if the translator has a directory, false otherwise
      */
     public boolean hasDirectory() {
-	return !translator.getSavedDirectory().isBlank();
+	return translator.getSavedDirectory() != null;
     }
 
     /**
@@ -420,6 +444,18 @@ public class MainWindow extends JFrame {
 	translator.reset();
 	cardMode.reset();
 	manualMode = false;
+    }
+
+    /**
+     * Reviews all automatically-translated files (opens them in
+     * system-dependent IDE).
+     * 
+     * @throws Exception
+     */
+    public void review() throws Exception {
+	for (String path : translator.review()) {
+	    IDE.open(contentPane, path);
+	}
     }
 
     /**

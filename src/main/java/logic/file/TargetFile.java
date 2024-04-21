@@ -28,6 +28,7 @@ public class TargetFile {
 
     // Language
     private Locale targetLanguage; // "az-AZ"
+    private boolean isAuto;
 
     // Content in target language
     private Properties content = new Properties();
@@ -40,9 +41,11 @@ public class TargetFile {
     private Path temporaryFile;
     private boolean isFileTemporary = false;
 
-    public TargetFile(SourceFile source, String targetLanguage)
-	    throws Exception {
+    public TargetFile(SourceFile source, String targetLanguage,
+	    boolean isDefault, boolean isAuto) throws Exception {
 	this.sourceFile = source;
+	this.isDefault = isDefault;
+	this.isAuto = isAuto;
 	this.targetLanguage = source.getParser().getLocale(targetLanguage);
     }
 
@@ -55,7 +58,11 @@ public class TargetFile {
      * @param content results of translation, to be saved onto target file
      */
     public void setResults(Properties content) {
-	this.content = content;
+	if (content == null) {
+	    this.content = sourceFile.getContent();
+	} else {
+	    this.content = content;
+	}
     }
 
     /**
@@ -131,12 +138,22 @@ public class TargetFile {
     }
 
     /**
+     * @return true/false, whether this translation is a product of automatic
+     *         translation or not
+     */
+    public boolean isFileAuto() {
+	return isAuto;
+    }
+
+    /**
      * @param path directory path where all target files are saved with a
      *             specific name (bundle name + locale code)
      */
     private void setFilePath(String path) {
-	this.fileName = setFileName();
-	this.filePath = (path + "/" + this.fileName).replaceAll("\\d", "");
+	if (path != null) {
+	    this.filePath = (path + "/" + getFileName()).replaceAll("\\d", "");
+	}
+
     }
 
     /**
@@ -144,6 +161,9 @@ public class TargetFile {
      *         bundle and should have an alpha-2 code (if non-default)
      */
     public String getFileName() {
+	if (fileName == null) {
+	    this.fileName = setFileName();
+	}
 	return fileName;
     }
 
@@ -158,6 +178,9 @@ public class TargetFile {
      * @return absolute file path of this target file
      */
     public String getFilePath() {
+	if (filePath == null) {
+	    setFilePath(null);
+	}
 	return filePath;
     }
 
@@ -178,6 +201,13 @@ public class TargetFile {
 	    localName = sourceFile.getBundleName() + ".properties";
 	}
 	return format(localName);
+    }
+
+    /**
+     * @return content of its source file
+     */
+    public Properties getSourceContent() {
+	return sourceFile.getContent();
     }
 
     /**

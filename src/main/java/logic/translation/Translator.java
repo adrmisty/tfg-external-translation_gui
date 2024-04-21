@@ -26,11 +26,12 @@ public class Translator {
 
     // Translation mode
     private TranslationMode auto;
-    private TranslationMode manual;
     private TranslationMode mode;
+    private TranslationMode manual;
 
     // Target languages
     private List<String> targetLanguages = new ArrayList<String>();
+    private String defaultLanguage = null;
 
     /*
      * ######################## TRANSLATION #################################
@@ -73,6 +74,20 @@ public class Translator {
     }
 
     /**
+     * @return absolute path of manually-translated file
+     */
+    public String getManualPath() {
+	return manager.getManualPath();
+    }
+
+    /**
+     * @return absolute path of manually-translated file
+     */
+    public List<String> getAutoPaths() {
+	return manager.getAutoPaths();
+    }
+
+    /**
      * Translates a source file, according to the specified translation mode,
      * into a given target language (can be more than 1! - and a maximum of 3).
      * 
@@ -80,8 +95,10 @@ public class Translator {
      */
     public void translateAll() throws Exception {
 
+	boolean automatic = (mode instanceof AutoTranslation);
 	for (String language : this.targetLanguages) {
-	    mode.translate(manager.newLanguage(language));
+	    mode.translate(manager.newLanguage(language,
+		    language.equals(defaultLanguage), automatic));
 	}
     }
 
@@ -135,14 +152,15 @@ public class Translator {
     }
 
     /**
-     * Writes the results into a temporary file to be used for reviewing and
-     * editing the translation.
+     * Retrieves results of all automatically-translated, with review purposes.
+     * These results are processed and returned in a temporary file that can be
+     * edited and reviewed by the user.
      * 
-     * @param id integer identifier of target file to review
+     * @return list of paths to all temporary files
      * @throws Exception in case of issue writing to file
      */
-    public String review(int id) throws Exception {
-	return manager.review(id);
+    public List<String> review() throws Exception {
+	return manager.review();
     }
 
     /**
@@ -196,10 +214,17 @@ public class Translator {
     }
 
     /**
-     * @param languages list of target langs. translations will be processed in
+     * Sets the respective target and default language(s) for the translation.
+     * 
+     * @param languages   list of target langs. translations will be processed
+     *                    in
+     * @param defaultLang default language for these translations
      */
-    public void setTargetLanguages(List<String> languages) {
+    public void setTargetLanguages(List<String> languages, String defaultLang) {
 	this.targetLanguages = languages;
+	if (defaultLang != null) {
+	    this.defaultLanguage = defaultLang;
+	}
     }
 
 }

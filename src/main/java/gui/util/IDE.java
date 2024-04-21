@@ -3,6 +3,7 @@ package main.java.gui.util;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -58,6 +59,18 @@ public class IDE {
 	    JOptionPane.showMessageDialog(frame,
 		    "Oops! Desktop is not supported :(", "Error",
 		    JOptionPane.ERROR_MESSAGE);
+	}
+    }
+
+    /**
+     * Opens and IDE for editing several files.
+     * 
+     * @param panel relative to which the IDE will be opened
+     * @param paths list of the files to edit
+     */
+    public static void open(JPanel frame, List<String> paths) {
+	for (String path : paths) {
+	    open(frame, path);
 	}
     }
 

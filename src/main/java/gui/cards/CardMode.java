@@ -76,23 +76,81 @@ public class CardMode extends JPanel {
 	this.add(getCenterPanel_Mode());
     }
 
+    /**
+     * ########## GUI FLOW ########## - Resetting values - Resetting parameters
+     */
+
     public void reset() throws ResourceException {
-	unselectAllItems();
+	resetSelections(btnAutomatic_Mode, btnManual_Mode);
 	selectedLanguages = new ArrayList<>();
-	unlockNext();
-	btnManual_Mode.setSelected(false);
-	btnAutomatic_Mode.doClick();
 	repaint();
 	revalidate();
     }
 
-    public void unselectAllItems() {
-	ListModel<JCheckBox> model = languagesMenu.getModel();
-	languagesMenu.setSelectedIndices(new int[languages.size()]);
-	for (int i = 0; i < model.getSize(); i++) {
-	    model.getElementAt(i).setSelected(false);
+    private void setLanguages() throws Exception {
+	if (btnManual_Mode.isSelected() && selectedLanguages.size() > 1) {
+	    selectedLanguages.remove(0);
+	}
+	root.setSelectedLanguages(selectedLanguages);
+    }
+
+    private void resetSelections(JButton thisButton, JButton otherButton) {
+	// Erase all selections in language menu
+	unselectAllItems();
+
+	// Select new button
+	thisButton.setSelected(true);
+	thisButton.setFocusable(true);
+
+	// Unselect previous ones
+	otherButton.setSelected(false);
+	otherButton.setFocusable(false);
+
+	// Disable 'next' button
+	btnNext_Mode.setEnabled(false);
+
+	// Change text and maximum languages
+	changeMaxLangs();
+    }
+
+    private boolean unlockNext() {
+	// Checks whether it is possible to enable the 'Next' button
+	if ((btnManual_Mode.isSelected() || btnAutomatic_Mode.isSelected())
+		&& !selectedLanguages.isEmpty()) {
+	    btnNext_Mode.setEnabled(true);
+	    return true;
+	} else {
+	    btnNext_Mode.setEnabled(false);
+	    return false;
 	}
     }
+
+    private void changeMaxLangs() {
+	maxLangs = (maxLangs == 3 ? 1 : 3);
+	String og = lblLanguage.getText();
+	String text = lblLanguage.getText().replaceAll("1", "3");
+	if (og.equals(text)) {
+	    text = lblLanguage.getText().replaceAll("3", "1");
+	}
+	lblLanguage.setText(text);
+
+    }
+
+    public void unselectAllItems() {
+	selectedLanguages = new ArrayList<>();
+	if (!languagesMenu.getSelectedValuesList().isEmpty()) {
+	    ListModel<JCheckBox> model = languagesMenu.getModel();
+	    languagesMenu.setSelectedIndices(new int[languages.size()]);
+	    for (int i = 0; i < model.getSize(); i++) {
+		model.getElementAt(i).setSelected(false);
+	    }
+	}
+    }
+
+    /**
+     * ########## GUI ELEMENTS ########## - Swing components - Languages menu +
+     * Checkbox renderer
+     */
 
     private JPanel getNorthPanel_Mode() throws ResourceException {
 	if (northPanel_Mode == null) {
@@ -122,35 +180,12 @@ public class CardMode extends JPanel {
 	    centerPanel_Mode.setBackground(SystemColor.window);
 	    centerPanel_Mode.setLayout(null);
 	    centerPanel_Mode.add(getScrollPane());
+	    centerPanel_Mode.add(getLblLanguage());
 	    centerPanel_Mode.add(getBtnManual_Mode());
 	    centerPanel_Mode.add(getBtnAutomatic_Mode());
 	    centerPanel_Mode.add(getLblChoose());
-	    centerPanel_Mode.add(getLblLanguage());
 	}
 	return centerPanel_Mode;
-    }
-
-    private void setSelectedButton(JButton thisButton, JButton otherButton) {
-	unselectAllItems();
-	languagesMenu.setEnabled(true);
-	languagesMenu.setVisible(true);
-	languagesMenu.setOpaque(true);
-	thisButton.setSelected(true);
-	thisButton.setFocusable(true);
-	otherButton.setSelected(false);
-	otherButton.setFocusable(false);
-    }
-
-    private boolean unlockNext() {
-	// Checks whether it is possible to enable the 'Next' button
-	if ((btnManual_Mode.isSelected() || btnAutomatic_Mode.isSelected())
-		&& !selectedLanguages.isEmpty()) {
-	    btnNext_Mode.setEnabled(true);
-	    return true;
-	} else {
-	    btnNext_Mode.setEnabled(false);
-	    return false;
-	}
     }
 
     private JButton getBtnManual_Mode() throws ResourceException {
@@ -161,9 +196,7 @@ public class CardMode extends JPanel {
 	    btnManual_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    setSelectedButton(btnManual_Mode, btnAutomatic_Mode);
-		    maxLangs = 1;
-		    unlockNext();
+		    resetSelections(btnManual_Mode, btnAutomatic_Mode);
 		}
 	    });
 	    btnManual_Mode.setBounds(67, 44, 210, 52);
@@ -179,19 +212,17 @@ public class CardMode extends JPanel {
 	    btnAutomatic_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    setSelectedButton(btnAutomatic_Mode, btnManual_Mode);
-		    maxLangs = 3;
+		    resetSelections(btnAutomatic_Mode, btnManual_Mode);
 		    try {
 			root.setMode(null);
 		    } catch (Exception e1) {
 			root.showErrorMessage(e1.getMessage());
 		    }
-		    unlockNext();
 		}
 	    });
 	    btnAutomatic_Mode.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    btnAutomatic_Mode.setBounds(305, 44, 210, 52);
-	    btnAutomatic_Mode.doClick();
+	    btnAutomatic_Mode.setSelected(true);
 	}
 	return btnAutomatic_Mode;
     }
@@ -201,7 +232,6 @@ public class CardMode extends JPanel {
 	    DefaultListModel<JCheckBox> model = new DefaultListModel<JCheckBox>();
 	    model.addAll(populateMenu());
 	    languagesMenu = new JList<JCheckBox>(model);
-	    languagesMenu.setEnabled(false);
 	    languagesMenu.setBackground(SystemColor.window);
 	    languagesMenu.setOpaque(false);
 	    languagesMenu.setFont(ResourceLoader.getFont());
@@ -227,13 +257,9 @@ public class CardMode extends JPanel {
 
 			boolean toSelect = !selectedCheckBox.isSelected();
 			selectedCheckBox.setSelected(toSelect);
-			if (!selectedLanguages.contains(
-				selectedLanguages.get(selectedIndex))) {
-			    selectedLanguages.add(selectedCheckBox.getText());
-			} else {
-			    selectedLanguages
-				    .remove(selectedCheckBox.getText());
-			}
+
+			// Check whether app can proceed to next card
+			unlockNext();
 
 		    }
 		}
@@ -424,22 +450,16 @@ public class CardMode extends JPanel {
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.setLanguages(selectedLanguages);
-		    for (String s : selectedLanguages) {
-			System.out.println(s);
-		    }
-		    if (btnAutomatic_Mode.isSelected()) {
-			try {
-			    root.show("image");
-			} catch (Exception e1) {
-			    root.showErrorMessage(e1.getMessage());
-			}
-		    } else {
-			try {
+		    try {
+			setLanguages();
+			if (btnAutomatic_Mode.isSelected()) {
+			    root.setMode(null);
+			    root.show("automode");
+			} else {
 			    root.show("manual");
-			} catch (Exception e1) {
-			    root.showErrorMessage(e1.getMessage());
 			}
+		    } catch (Exception e1) {
+			root.showErrorMessage(e1.getMessage());
 		    }
 		}
 	    });

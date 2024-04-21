@@ -71,12 +71,16 @@ public class FileManager {
     /**
      * Establishes new target translation file.
      * 
-     * @param language target in format "English, United States"
+     * @param language  target in format "English, United States"
+     * @param isDefault boolean true if this file will be the default one, false
+     *                  otherwise
+     * @param isAuto    boolean true if this is for automatic translation or not
      * @return new target file for this language
      * @throws Exception if specified Locale is not supported yet
      */
-    public TargetFile newLanguage(String language) throws Exception {
-	TargetFile f = new TargetFile(sourceFile, language);
+    public TargetFile newLanguage(String language, boolean isDefault,
+	    boolean isAuto) throws Exception {
+	TargetFile f = new TargetFile(sourceFile, language, isDefault, isAuto);
 	this.targetFiles.add(f);
 	return f;
     }
@@ -96,9 +100,7 @@ public class FileManager {
 	    } else {
 		saveReview(f);
 	    }
-
 	}
-
     }
 
     /**
@@ -112,8 +114,31 @@ public class FileManager {
      */
     public String save(TargetFile f) throws Exception {
 	String path = f.save(targetDirectory);
-	writeResults(path, f, false);
+	writeResults(path, f, f.isFileAuto());
 	return path;
+    }
+
+    /**
+     * Returns the absolute path of the manually-translated file (only a
+     * possible one).
+     * 
+     * @return path of manually translated file
+     */
+    public String getManualPath() {
+	return targetFiles.get(0).getFilePath();
+    }
+
+    /**
+     * Returns the absolute paths of all auto-translated file.
+     * 
+     * @return list with paths of all translated files
+     */
+    public List<String> getAutoPaths() {
+	List<String> paths = new ArrayList<>();
+	for (TargetFile f : targetFiles) {
+	    paths.add(f.getFilePath());
+	}
+	return paths;
     }
 
     /**
@@ -154,15 +179,17 @@ public class FileManager {
      * 
      * Writes the results into a temporary file which, if the user wants, can be
      * disposed of. Otherwise, they can save the results into a specific
-     * directory.
+     * directory. This process is done for all files.
      * 
-     * @param id integer identifier of target file to review
-     * @return path to temporary file (so user can open it in an IDE)
+     * @return list of paths to temporary file (so user can open it in an IDE)
      * @throws Exception
      */
-    public String review(int id) throws Exception {
-	return writeTempResults(targetFiles.get(id)).toAbsolutePath()
-		.toString();
+    public List<String> review() throws Exception {
+	List<String> paths = new ArrayList<>();
+	for (TargetFile f : targetFiles) {
+	    paths.add(writeTempResults(f).toAbsolutePath().toString());
+	}
+	return paths;
     }
 
     /**
@@ -224,13 +251,13 @@ public class FileManager {
      * @param boolean    keys true if only keys must be written, false otherwise
      * @throws Exception in case of I/O exception
      */
-    private void writeResults(String path, TargetFile f, boolean keys)
+    private void writeResults(String path, TargetFile f, boolean auto)
 	    throws Exception {
 	BufferedWriter writer = new BufferedWriter(new FileWriter(path));
 	String lang = f.getTargetLanguage();
 	Properties pr = f.getContent();
 
-	if (keys) {
+	if (auto) {
 	    writer.write(PropertiesUtil.getValuesText(lang, pr).toString());
 	} else {
 	    writer.write(PropertiesUtil.getKeysText(lang, pr).toString());

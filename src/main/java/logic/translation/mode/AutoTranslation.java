@@ -48,8 +48,8 @@ public class AutoTranslation implements TranslationMode {
      * 
      * - 4. Updates caché with new translations.
      * 
-     * @param
-     * @param target language: with format "English, United States"
+     * @param target target file to translate
+     * @return results of automatic translation
      * 
      * @throws Exception if there is an error with API access
      */

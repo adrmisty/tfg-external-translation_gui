@@ -81,8 +81,7 @@ public class CardManual extends JPanel {
 
 	if (returnVal == JFileChooser.APPROVE_OPTION) {
 	    txtPath.setText(fileChooser.getSelectedFile().getPath());
-	    root.to(
-		    fileChooser.getSelectedFile().getAbsolutePath());
+	    root.to(fileChooser.getSelectedFile().getAbsolutePath());
 	    return true;
 	}
 	return false;
@@ -118,6 +117,7 @@ public class CardManual extends JPanel {
 			root.setMode(fileChooser.getSelectedFile()
 				.getAbsolutePath());
 			root.translate();
+			btnNext_Manual.setEnabled(true);
 		    } catch (Exception e1) {
 			root.showErrorMessage(
 				root.getMessages().getString("error.manual"));
@@ -241,6 +241,7 @@ public class CardManual extends JPanel {
 	if (btnNext_Manual == null) {
 	    btnNext_Manual = new JButton(
 		    root.getMessages().getString("button.next"));
+	    btnNext_Manual.setEnabled(false);
 	    btnNext_Manual.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -253,7 +254,6 @@ public class CardManual extends JPanel {
 	    });
 	    btnNext_Manual.setMnemonic('b');
 	    btnNext_Manual.setFont(ResourceLoader.getFont().deriveFont(14f));
-	    btnNext_Manual.setEnabled(false);
 	    btnNext_Manual.setBounds(461, 11, 115, 35);
 	}
 	return btnNext_Manual;

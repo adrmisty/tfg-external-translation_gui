@@ -310,7 +310,7 @@ public class CardAuto extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
-			// root.review();
+			root.review();
 		    } catch (Exception e1) {
 			root.showErrorMessage(
 				root.getMessages().getString("error.review"));
