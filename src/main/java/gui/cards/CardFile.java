@@ -1,5 +1,6 @@
 package main.java.gui.cards;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.SystemColor;
 import java.awt.datatransfer.DataFlavor;
@@ -40,7 +41,6 @@ public class CardFile extends JPanel {
     private JPanel northPanel_File;
     private JPanel centerPanel_File;
     private JPanel downPanel_File;
-    private JPanel backEmptyPanel_File;
     private JPanel backPanel_File;
 
     /*
@@ -87,7 +87,7 @@ public class CardFile extends JPanel {
 	if (lblStartTranslating == null) {
 	    lblStartTranslating = new JLabel(
 		    root.getMessages().getString("label.file.title"));
-	    lblStartTranslating.setBounds(0, 0, 586, 80);
+	    lblStartTranslating.setBounds(0, 0, 586, 110);
 	    lblStartTranslating.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblStartTranslating
 		    .setFont(ResourceLoader.getFont().deriveFont(40f));
@@ -99,7 +99,8 @@ public class CardFile extends JPanel {
 	if (lblDragText == null) {
 	    lblDragText = new JLabel(
 		    root.getMessages().getString("label.file.dnd"));
-	    lblDragText.setBounds(156, 84, 299, 19);
+	    lblDragText.setForeground(Color.decode("#0089d6"));
+	    lblDragText.setBounds(151, 100, 281, 19);
 	    lblDragText.setLabelFor(getLblDrag());
 	    lblDragText.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblDragText.setFont(ResourceLoader.getFont().deriveFont(15f));
@@ -111,7 +112,7 @@ public class CardFile extends JPanel {
 	if (centerPanel_File == null) {
 	    centerPanel_File = new JPanel();
 	    centerPanel_File.setBackground(SystemColor.window);
-	    centerPanel_File.setBounds(0, 81, 586, 235);
+	    centerPanel_File.setBounds(0, 81, 586, 281);
 	    centerPanel_File.setLayout(null);
 	    centerPanel_File.add(getLblDragText());
 	    centerPanel_File.add(getLblDrag());
@@ -125,7 +126,7 @@ public class CardFile extends JPanel {
     private JLabel getLblDrag() {
 	if (lblDrag == null) {
 	    lblDrag = new JLabel("");
-	    lblDrag.setBounds(156, 11, 299, 141);
+	    lblDrag.setBounds(142, 23, 305, 141);
 	    lblDrag.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/dnd.png")));
 	    lblDrag.setToolTipText(
@@ -141,28 +142,16 @@ public class CardFile extends JPanel {
 	if (downPanel_File == null) {
 	    downPanel_File = new JPanel();
 	    downPanel_File.setBackground(SystemColor.window);
-	    downPanel_File.setBounds(0, 315, 586, 103);
-	    downPanel_File.setLayout(null);
-	    downPanel_File.add(getBackEmptyPanel_File());
+	    downPanel_File.setBounds(0, 362, 586, 56);
+	    downPanel_File.setLayout(new BorderLayout(0, 0));
 	    downPanel_File.add(getBackPanel_File());
 	}
 	return downPanel_File;
     }
 
-    private JPanel getBackEmptyPanel_File() {
-	if (backEmptyPanel_File == null) {
-	    backEmptyPanel_File = new JPanel();
-	    backEmptyPanel_File.setBounds(0, 0, 586, 51);
-	    backEmptyPanel_File.setLayout(null);
-	    backEmptyPanel_File.setBackground(SystemColor.window);
-	}
-	return backEmptyPanel_File;
-    }
-
     private JPanel getBackPanel_File() throws ResourceException {
 	if (backPanel_File == null) {
 	    backPanel_File = new JPanel();
-	    backPanel_File.setBounds(0, 51, 586, 51);
 	    backPanel_File.setLayout(null);
 	    backPanel_File.setBackground(SystemColor.window);
 	    backPanel_File.add(getLblBack_File());
@@ -204,7 +193,7 @@ public class CardFile extends JPanel {
 	    });
 	    btnBack_File.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/home-icon.png")));
-	    btnBack_File.setMnemonic('h');
+	    btnBack_File.setMnemonic('b');
 	    btnBack_File.setBorder(null);
 	    btnBack_File.setBackground(SystemColor.window);
 	    btnBack_File.setBounds(20, 11, 31, 37);
@@ -229,7 +218,7 @@ public class CardFile extends JPanel {
 		    }
 		}
 	    });
-	    btnNext_File.setMnemonic('b');
+	    btnNext_File.setMnemonic('n');
 	    btnNext_File.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_File.setEnabled(false);
 	    btnNext_File.setBounds(421, 11, 115, 35);
@@ -244,7 +233,7 @@ public class CardFile extends JPanel {
 		    MainWindow.class.getResource("/img/help.png")));
 	    btnHelp_File.setToolTipText(
 		    root.getMessages().getString("tooltip.file"));
-	    btnHelp_File.setMnemonic('b');
+	    btnHelp_File.setMnemonic('h');
 	    btnHelp_File.setFont(btnHelp_File.getFont().deriveFont(14f));
 	    btnHelp_File.setBorder(null);
 	    btnHelp_File.setBackground(SystemColor.window);
@@ -326,7 +315,7 @@ public class CardFile extends JPanel {
     private JTextField getTxtFilePath() throws ResourceException {
 	if (txtFilePath == null) {
 	    txtFilePath = new JTextField();
-	    txtFilePath.setBounds(156, 163, 178, 30);
+	    txtFilePath.setBounds(122, 175, 212, 30);
 	    txtFilePath.setHorizontalAlignment(SwingConstants.CENTER);
 	    txtFilePath.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    txtFilePath.setEditable(false);
@@ -362,7 +351,7 @@ public class CardFile extends JPanel {
 	if (btnBrowse == null) {
 	    btnBrowse = new JButton(
 		    root.getMessages().getString("button.browse"));
-	    btnBrowse.setBounds(349, 166, 107, 23);
+	    btnBrowse.setBounds(348, 179, 107, 23);
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -373,7 +362,7 @@ public class CardFile extends JPanel {
 		    }
 		}
 	    });
-	    btnBrowse.setMnemonic('b');
+	    btnBrowse.setMnemonic('s');
 	    btnBrowse.setFont(ResourceLoader.getFont().deriveFont(14f));
 	}
 	return btnBrowse;
@@ -384,11 +373,10 @@ public class CardFile extends JPanel {
 	    lblDndWarning = new JLabel(
 		    root.getMessages().getString("label.file.wrong"));
 	    lblDndWarning.setForeground(new Color(220, 20, 60));
-	    lblDndWarning.setBounds(156, 200, 282, 14);
+	    lblDndWarning.setBounds(122, 215, 333, 14);
 	    lblDndWarning.setVisible(false);
 	    lblDndWarning.setFont(ResourceLoader.getFont().deriveFont(14f));
 	}
 	return lblDndWarning;
     }
-
 }

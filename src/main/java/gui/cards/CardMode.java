@@ -1,6 +1,7 @@
 package main.java.gui.cards;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -155,7 +156,7 @@ public class CardMode extends JPanel {
     private JPanel getNorthPanel_Mode() throws ResourceException {
 	if (northPanel_Mode == null) {
 	    northPanel_Mode = new JPanel();
-	    northPanel_Mode.setBounds(0, 0, 586, 81);
+	    northPanel_Mode.setBounds(0, 0, 586, 111);
 	    northPanel_Mode.setBackground(SystemColor.window);
 	    northPanel_Mode.setLayout(null);
 	    northPanel_Mode.add(getLblChooseTranslation());
@@ -166,7 +167,7 @@ public class CardMode extends JPanel {
     private JPanel getDownPanel_Mode() throws ResourceException {
 	if (downPanel_Mode == null) {
 	    downPanel_Mode = new JPanel();
-	    downPanel_Mode.setBounds(0, 364, 586, 49);
+	    downPanel_Mode.setBounds(0, 362, 586, 56);
 	    downPanel_Mode.setLayout(new BorderLayout(0, 0));
 	    downPanel_Mode.add(getBackPanel_Mode());
 	}
@@ -176,7 +177,7 @@ public class CardMode extends JPanel {
     private JPanel getCenterPanel_Mode() throws ResourceException {
 	if (centerPanel_Mode == null) {
 	    centerPanel_Mode = new JPanel();
-	    centerPanel_Mode.setBounds(0, 80, 586, 284);
+	    centerPanel_Mode.setBounds(0, 109, 586, 255);
 	    centerPanel_Mode.setBackground(SystemColor.window);
 	    centerPanel_Mode.setLayout(null);
 	    centerPanel_Mode.add(getScrollPane());
@@ -192,6 +193,7 @@ public class CardMode extends JPanel {
 	if (btnManual_Mode == null) {
 	    btnManual_Mode = new JButton(
 		    root.getMessages().getString("button.mode.manual"));
+	    btnManual_Mode.setMnemonic('m');
 	    btnManual_Mode.setFocusable(false);
 	    btnManual_Mode.addActionListener(new ActionListener() {
 		@Override
@@ -209,6 +211,7 @@ public class CardMode extends JPanel {
 	if (btnAutomatic_Mode == null) {
 	    btnAutomatic_Mode = new JButton(
 		    root.getMessages().getString("button.mode.auto"));
+	    btnAutomatic_Mode.setMnemonic('a');
 	    btnAutomatic_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -358,7 +361,8 @@ public class CardMode extends JPanel {
 	if (lblChoose == null) {
 	    lblChoose = new JLabel(
 		    root.getMessages().getString("label.mode.type"));
-	    lblChoose.setForeground(SystemColor.textHighlight);
+	    lblChoose.setLabelFor(getBtnAutomatic_Mode());
+	    lblChoose.setForeground(Color.decode("#0089d6"));
 	    lblChoose.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblChoose.setBounds(67, 11, 448, 22);
 	    lblChoose.setFont(ResourceLoader.getFont().deriveFont(15f));
@@ -372,9 +376,9 @@ public class CardMode extends JPanel {
 		    root.getMessages().getString("label.mode.language"));
 	    lblLanguage.setLabelFor(getLanguagesMenu());
 	    lblLanguage.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblLanguage.setForeground(SystemColor.textHighlight);
+	    lblLanguage.setForeground(Color.decode("#0089d6"));
 	    lblLanguage.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblLanguage.setBounds(67, 119, 448, 19);
+	    lblLanguage.setBounds(67, 107, 448, 19);
 	}
 	return lblLanguage;
     }
@@ -383,7 +387,7 @@ public class CardMode extends JPanel {
 	if (lblChooseTranslation == null) {
 	    lblChooseTranslation = new JLabel(
 		    root.getMessages().getString("label.mode.title"));
-	    lblChooseTranslation.setBounds(0, 0, 586, 81);
+	    lblChooseTranslation.setBounds(0, 0, 586, 111);
 	    lblChooseTranslation.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblChooseTranslation
 		    .setFont(ResourceLoader.getFont().deriveFont(40f));
@@ -474,6 +478,7 @@ public class CardMode extends JPanel {
     private JButton getBtnHelp_Mode() throws ResourceException {
 	if (btnHelp_Mode == null) {
 	    btnHelp_Mode = new JButton("");
+	    btnHelp_Mode.setMnemonic('h');
 	    btnHelp_Mode.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/help.png")));
 	    btnHelp_Mode.setBounds(537, 7, 49, 41);
@@ -490,7 +495,7 @@ public class CardMode extends JPanel {
     private JScrollPane getScrollPane() throws ResourceException {
 	if (scrollPane == null) {
 	    scrollPane = new JScrollPane();
-	    scrollPane.setBounds(155, 149, 280, 124);
+	    scrollPane.setBounds(154, 137, 280, 118);
 	    scrollPane.setViewportView(getLanguagesMenu());
 	}
 	return scrollPane;

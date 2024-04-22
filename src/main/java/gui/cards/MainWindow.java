@@ -7,7 +7,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -148,43 +147,44 @@ public class MainWindow extends JFrame {
 	case "main":
 	    currentCard = cardMain;
 	    mnLanguage.setEnabled(true);
+	    mnLanguage.setVisible(true);
 	    break;
 	case "file":
 	    currentCard = cardFile;
-	    mnLanguage.setEnabled(false);
+	    mnLanguage.setVisible(false);
 	    break;
 	case "info":
 	    currentCard = cardInfo;
-	    mnLanguage.setEnabled(false);
+	    mnLanguage.setVisible(false);
 	    break;
 	case "image":
 	    currentCard = cardImage;
-	    mnLanguage.setEnabled(false);
+	    mnLanguage.setVisible(false);
 	    break;
 	case "mode":
 	    currentCard = cardMode;
-	    mnLanguage.setEnabled(false);
+	    mnLanguage.setVisible(false);
 	    break;
 	case "automode":
 	    currentCard = cardAutoMode;
-	    mnLanguage.setEnabled(false);
+	    mnLanguage.setVisible(false);
 	    break;
 	case "manual":
 	    currentCard = cardManual;
 	    cardManual.setLanguage(this.languages.get(0));
-	    mnLanguage.setEnabled(false);
+	    mnLanguage.setVisible(false);
 	    break;
 	case "auto":
 	    currentCard = cardAuto;
 	    // Start running automatic translation task
-	    mnLanguage.setEnabled(false);
+	    mnLanguage.setVisible(false);
 	    cardAuto.run();
 	    break;
 	case "end":
 	    currentCard = cardEnd;
 	    // Set name to be shown on screen
 	    cardEnd.setSavedFileName(translator.getSavedDirectory());
-	    mnLanguage.setEnabled(false);
+	    mnLanguage.setVisible(false);
 	    break;
 	default:
 	    showErrorMessage("Card not available.");
@@ -297,8 +297,12 @@ public class MainWindow extends JFrame {
     private JMenu getMnLanguage() throws Exception {
 	if (mnLanguage == null) {
 	    menuBar = new JMenuBar();
-	    mnLanguage = new JMenu(this.messages.getString("menu.language"));
+
+	    String msg = this.messages.getString("menu.language");
+	    mnLanguage = new JMenu(msg);
 	    menuBar.add(mnLanguage);
+	    mnLanguage.setMnemonic(msg.charAt(0));
+	    mnLanguage.setDisplayedMnemonicIndex(0);
 	    setJMenuBar(menuBar);
 	    addMenuItems();
 	}
@@ -308,11 +312,11 @@ public class MainWindow extends JFrame {
     private void addMenuItems() throws Exception {
 	String[] items = ResourceLoader.getLanguageNames(messages);
 	List<JMenuItem> menuItems = new ArrayList<>();
-	Map<Integer, String> map = ResourceLoader.getLanguageCodes();
 
 	for (int i = 0; i < items.length; i++) {
+	    String code = items[i].split(" ")[1];
 	    menuItems.add(new NumberedJMenuItem(this, messages, items[i],
-		    map.get(i)));
+		    code.substring(1, code.length())));
 	    mnLanguage.add(menuItems.get(i));
 	}
     }

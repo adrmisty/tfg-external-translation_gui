@@ -1,6 +1,6 @@
 package main.java.gui.cards;
 
-import java.awt.GridLayout;
+import java.awt.Color;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,7 +33,6 @@ public class CardImage extends JPanel {
     private JPanel northPanel_Image;
     private JPanel centerPanel_Image;
     private JPanel downPanel_Image;
-    private JPanel backEmptyPanel_File;
     private JPanel backPanel_Image;
 
     /*
@@ -65,7 +64,7 @@ public class CardImage extends JPanel {
     private JPanel getNorthPanel_Image() throws ResourceException {
 	if (northPanel_Image == null) {
 	    northPanel_Image = new JPanel();
-	    northPanel_Image.setBounds(0, 0, 586, 81);
+	    northPanel_Image.setBounds(0, 0, 586, 111);
 	    northPanel_Image.setBackground(SystemColor.window);
 	    northPanel_Image.setLayout(null);
 	    northPanel_Image.add(getLblImageCaptioning());
@@ -77,7 +76,7 @@ public class CardImage extends JPanel {
 	if (lblImageCaptioning == null) {
 	    lblImageCaptioning = new JLabel(
 		    root.getMessages().getString("label.image.title"));
-	    lblImageCaptioning.setBounds(0, 0, 586, 80);
+	    lblImageCaptioning.setBounds(0, 0, 586, 111);
 	    lblImageCaptioning.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblImageCaptioning
 		    .setFont(ResourceLoader.getFont().deriveFont(40f));
@@ -89,7 +88,7 @@ public class CardImage extends JPanel {
 	if (centerPanel_Image == null) {
 	    centerPanel_Image = new JPanel();
 	    centerPanel_Image.setBackground(SystemColor.window);
-	    centerPanel_Image.setBounds(0, 81, 586, 235);
+	    centerPanel_Image.setBounds(0, 108, 586, 255);
 	    centerPanel_Image.setLayout(null);
 	    centerPanel_Image.add(getTxtFilePath());
 	    centerPanel_Image.add(getBtnBrowse());
@@ -104,26 +103,17 @@ public class CardImage extends JPanel {
 	if (downPanel_Image == null) {
 	    downPanel_Image = new JPanel();
 	    downPanel_Image.setBackground(SystemColor.window);
-	    downPanel_Image.setBounds(0, 315, 586, 103);
-	    downPanel_Image.setLayout(new GridLayout(2, 4, 0, 0));
-	    downPanel_Image.add(getBackEmptyPanel_File());
+	    downPanel_Image.setBounds(0, 362, 586, 56);
+	    downPanel_Image.setLayout(null);
 	    downPanel_Image.add(getBackPanel_Image());
 	}
 	return downPanel_Image;
     }
 
-    private JPanel getBackEmptyPanel_File() {
-	if (backEmptyPanel_File == null) {
-	    backEmptyPanel_File = new JPanel();
-	    backEmptyPanel_File.setLayout(null);
-	    backEmptyPanel_File.setBackground(SystemColor.window);
-	}
-	return backEmptyPanel_File;
-    }
-
     private JPanel getBackPanel_Image() throws ResourceException {
 	if (backPanel_Image == null) {
 	    backPanel_Image = new JPanel();
+	    backPanel_Image.setBounds(0, 0, 586, 51);
 	    backPanel_Image.setLayout(null);
 	    backPanel_Image.setBackground(SystemColor.window);
 	    backPanel_Image.add(getLblBack_Image());
@@ -217,7 +207,7 @@ public class CardImage extends JPanel {
     private JTextField getTxtFilePath() throws ResourceException {
 	if (txtFilePath == null) {
 	    txtFilePath = new JTextField();
-	    txtFilePath.setBounds(59, 119, 178, 30);
+	    txtFilePath.setBounds(59, 100, 178, 30);
 	    txtFilePath.setHorizontalAlignment(SwingConstants.CENTER);
 	    txtFilePath.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    txtFilePath.setEditable(false);
@@ -266,7 +256,7 @@ public class CardImage extends JPanel {
 	if (btnBrowse == null) {
 	    btnBrowse = new JButton(
 		    root.getMessages().getString("button.browse"));
-	    btnBrowse.setBounds(130, 160, 107, 23);
+	    btnBrowse.setBounds(130, 141, 107, 23);
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -320,10 +310,11 @@ public class CardImage extends JPanel {
 	if (lblImageOption == null) {
 	    lblImageOption = new JLabel(
 		    root.getMessages().getString("label.image.option"));
+	    lblImageOption.setLabelFor(getBtnBrowse());
 	    lblImageOption.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblImageOption.setForeground(SystemColor.textHighlight);
+	    lblImageOption.setForeground(Color.decode("#0089d6"));
 	    lblImageOption.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblImageOption.setBounds(10, 66, 283, 42);
+	    lblImageOption.setBounds(10, 47, 283, 42);
 	}
 	return lblImageOption;
     }
@@ -332,6 +323,7 @@ public class CardImage extends JPanel {
 	if (btnNoImage == null) {
 	    btnNoImage = new JButton(
 		    root.getMessages().getString("label.image.button"));
+	    btnNoImage.setMnemonic('n');
 	    btnNoImage.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -339,7 +331,7 @@ public class CardImage extends JPanel {
 		}
 	    });
 	    btnNoImage.setFont(ResourceLoader.getFont().deriveFont(20f));
-	    btnNoImage.setBounds(334, 119, 210, 52);
+	    btnNoImage.setBounds(336, 100, 210, 52);
 	}
 	return btnNoImage;
     }
@@ -365,10 +357,11 @@ public class CardImage extends JPanel {
 	if (lblImageOption_1 == null) {
 	    lblImageOption_1 = new JLabel(
 		    root.getMessages().getString("label.image.option2"));
+	    lblImageOption_1.setLabelFor(getBtnNoImage());
 	    lblImageOption_1.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblImageOption_1.setForeground(SystemColor.textHighlight);
+	    lblImageOption_1.setForeground(Color.decode("#0089d6"));
 	    lblImageOption_1.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblImageOption_1.setBounds(303, 66, 283, 42);
+	    lblImageOption_1.setBounds(303, 47, 283, 42);
 	}
 	return lblImageOption_1;
     }

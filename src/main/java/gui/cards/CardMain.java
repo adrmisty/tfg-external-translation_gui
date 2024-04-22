@@ -1,8 +1,8 @@
 package main.java.gui.cards;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -47,6 +47,7 @@ public class CardMain extends JPanel {
     private JLabel lblForLogo;
     private JLabel lblLogo;
     private JLabel lblFileLingual;
+    private JLabel lblLogo2;
 
     public CardMain(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -71,7 +72,7 @@ public class CardMain extends JPanel {
     private JPanel getDownPanel() throws ResourceException {
 	if (downPanel == null) {
 	    downPanel = new JPanel();
-	    downPanel.setBounds(0, 246, 586, 167);
+	    downPanel.setBounds(0, 308, 586, 105);
 	    downPanel.setBackground(SystemColor.window);
 	    downPanel.setLayout(null);
 	    downPanel.add(getSplitPane());
@@ -119,7 +120,8 @@ public class CardMain extends JPanel {
 		}
 	    });
 	    rightButton.setFont(ResourceLoader.getFont().deriveFont(20f));
-	    rightButton.setMnemonic('l');
+	    rightButton.setMnemonic('m');
+	    rightButton.setDisplayedMnemonicIndex(6);
 	    rightButton
 		    .setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	    Font font = rightButton.getFont();
@@ -135,7 +137,7 @@ public class CardMain extends JPanel {
 	if (splitPane == null) {
 	    splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 		    getLeftButton(), getRightButton());
-	    splitPane.setBounds(147, 30, 280, 35);
+	    splitPane.setBounds(162, 11, 280, 35);
 	}
 	return splitPane;
     }
@@ -144,7 +146,7 @@ public class CardMain extends JPanel {
 	if (centerPanel == null) {
 	    centerPanel = new JPanel();
 	    centerPanel.setBackground(SystemColor.window);
-	    centerPanel.setBounds(0, 110, 586, 136);
+	    centerPanel.setBounds(0, 110, 586, 200);
 	    centerPanel.setLayout(new BorderLayout(0, 0));
 	    centerPanel.add(getLblSlogan(), BorderLayout.NORTH);
 	    centerPanel.add(getLogoPanel());
@@ -167,9 +169,10 @@ public class CardMain extends JPanel {
 	if (logoPanel == null) {
 	    logoPanel = new JPanel();
 	    logoPanel.setBackground(SystemColor.window);
-	    logoPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+	    logoPanel.setLayout(null);
 	    logoPanel.add(getLblForLogo());
 	    logoPanel.add(getLblLogo());
+	    logoPanel.add(getLblLogo2());
 	}
 	return logoPanel;
     }
@@ -178,6 +181,10 @@ public class CardMain extends JPanel {
 	if (lblForLogo == null) {
 	    lblForLogo = new JLabel(
 		    root.getMessages().getString("label.poweredby"));
+	    lblForLogo.setLabelFor(getLblLogo());
+	    lblForLogo.setForeground(new Color(0, 0, 0));
+	    lblForLogo.setHorizontalAlignment(SwingConstants.RIGHT);
+	    lblForLogo.setBounds(0, 0, 250, 170);
 	    lblForLogo.setFont(ResourceLoader.getFont().deriveFont(20f));
 	}
 	return lblForLogo;
@@ -186,6 +193,7 @@ public class CardMain extends JPanel {
     private JLabel getLblLogo() {
 	if (lblLogo == null) {
 	    lblLogo = new JLabel("");
+	    lblLogo.setBounds(288, 75, 132, 45);
 	    lblLogo.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/openai-logo.png")));
 	    lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -202,4 +210,14 @@ public class CardMain extends JPanel {
 	return lblFileLingual;
     }
 
+    private JLabel getLblLogo2() {
+	if (lblLogo2 == null) {
+	    lblLogo2 = new JLabel("");
+	    lblLogo2.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/azure.png")));
+	    lblLogo2.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblLogo2.setBounds(278, 29, 144, 61);
+	}
+	return lblLogo2;
+    }
 }

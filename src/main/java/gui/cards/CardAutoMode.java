@@ -1,6 +1,7 @@
 package main.java.gui.cards;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -93,7 +94,7 @@ public class CardAutoMode extends JPanel {
     private JPanel getNorthPanel_AutoMode() throws ResourceException {
 	if (northPanel_AutoMode == null) {
 	    northPanel_AutoMode = new JPanel();
-	    northPanel_AutoMode.setBounds(0, 0, 586, 81);
+	    northPanel_AutoMode.setBounds(0, 0, 586, 111);
 	    northPanel_AutoMode.setBackground(SystemColor.window);
 	    northPanel_AutoMode.setLayout(null);
 	    northPanel_AutoMode.add(getLblAutoSettings());
@@ -104,7 +105,7 @@ public class CardAutoMode extends JPanel {
     private JPanel getDownPanel_AutoMode() throws ResourceException {
 	if (downPanel_AutoMode == null) {
 	    downPanel_AutoMode = new JPanel();
-	    downPanel_AutoMode.setBounds(0, 364, 586, 49);
+	    downPanel_AutoMode.setBounds(0, 362, 586, 56);
 	    downPanel_AutoMode.setLayout(new BorderLayout(0, 0));
 	    downPanel_AutoMode.add(getBackPanel_AutoMode());
 	}
@@ -114,7 +115,7 @@ public class CardAutoMode extends JPanel {
     private JPanel getCenterPanel_Mode() throws ResourceException {
 	if (centerPanel_Mode == null) {
 	    centerPanel_Mode = new JPanel();
-	    centerPanel_Mode.setBounds(0, 80, 586, 284);
+	    centerPanel_Mode.setBounds(0, 110, 586, 254);
 	    centerPanel_Mode.setBackground(SystemColor.window);
 	    centerPanel_Mode.setLayout(null);
 	    centerPanel_Mode.add(getLblDefault());
@@ -133,7 +134,7 @@ public class CardAutoMode extends JPanel {
 	    radioButton.setText(language);
 	    radioButton.setHorizontalAlignment(SwingConstants.LEFT);
 	    radioButton.setBackground(SystemColor.window);
-	    radioButton.setBounds(200, y, 200, 30);
+	    radioButton.setBounds(200, y, 250, 30);
 	    radioButton.setFont(ResourceLoader.getFont().deriveFont(14f));
 
 	    radioButton.addActionListener(new ActionListener() {
@@ -162,7 +163,7 @@ public class CardAutoMode extends JPanel {
 	if (lblDefault == null) {
 	    lblDefault = new JLabel(
 		    root.getMessages().getString("label.settings.default"));
-	    lblDefault.setForeground(SystemColor.textHighlight);
+	    lblDefault.setForeground(Color.decode("#0089d6"));
 	    lblDefault.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblDefault.setBounds(10, 31, 566, 22);
 	    lblDefault.setFont(ResourceLoader.getFont().deriveFont(18f));
@@ -181,7 +182,7 @@ public class CardAutoMode extends JPanel {
 	if (lblAutoSettings == null) {
 	    lblAutoSettings = new JLabel(
 		    root.getMessages().getString("label.settings.title"));
-	    lblAutoSettings.setBounds(0, 0, 586, 81);
+	    lblAutoSettings.setBounds(0, 0, 586, 111);
 	    lblAutoSettings.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblAutoSettings.setFont(ResourceLoader.getFont().deriveFont(40f));
 	}

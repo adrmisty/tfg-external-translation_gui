@@ -1,5 +1,6 @@
 package main.java.gui.cards;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -35,7 +36,6 @@ public class CardManual extends JPanel {
      * Labels & text
      */
     private JButton btnTranslate_Manual;
-    private JPanel backEmptyPanel_Manual;
     private JLabel lblBack_Manual;
     private JButton btnBack_Manual;
 
@@ -90,7 +90,7 @@ public class CardManual extends JPanel {
     private JPanel getCenterPanel_Auto() throws ResourceException {
 	if (centerPanel_Manual == null) {
 	    centerPanel_Manual = new JPanel();
-	    centerPanel_Manual.setBounds(0, 81, 586, 235);
+	    centerPanel_Manual.setBounds(0, 107, 586, 256);
 	    centerPanel_Manual.setLayout(null);
 	    centerPanel_Manual.setBackground(SystemColor.window);
 	    centerPanel_Manual.add(getBtnTranslate_Manual());
@@ -103,10 +103,11 @@ public class CardManual extends JPanel {
 	return centerPanel_Manual;
     }
 
-    private JButton getBtnTranslate_Manual() {
+    private JButton getBtnTranslate_Manual() throws ResourceException {
 	if (btnTranslate_Manual == null) {
 	    btnTranslate_Manual = new JButton(
 		    root.getMessages().getString("button.translate"));
+	    btnTranslate_Manual.setMnemonic('S');
 	    btnTranslate_Manual.setIcon(new ImageIcon(
 		    CardManual.class.getResource("/img/save-icon.png")));
 	    btnTranslate_Manual.setEnabled(false);
@@ -125,7 +126,7 @@ public class CardManual extends JPanel {
 		}
 	    });
 	    btnTranslate_Manual
-		    .setFont(btnTranslate_Manual.getFont().deriveFont(15f));
+		    .setFont(ResourceLoader.getFont().deriveFont(15f));
 	    btnTranslate_Manual.setFocusable(false);
 	    btnTranslate_Manual.setBounds(229, 165, 153, 42);
 	}
@@ -136,7 +137,7 @@ public class CardManual extends JPanel {
 	if (northPanel_Manual == null) {
 	    northPanel_Manual = new JPanel();
 	    northPanel_Manual.setBackground(SystemColor.window);
-	    northPanel_Manual.setBounds(0, 0, 586, 83);
+	    northPanel_Manual.setBounds(0, 0, 586, 111);
 	    northPanel_Manual.setLayout(null);
 	    northPanel_Manual.add(getLblManualTitle());
 	}
@@ -146,20 +147,11 @@ public class CardManual extends JPanel {
     private JPanel getDownPanel_Manual() throws ResourceException {
 	if (downPanel_Manual == null) {
 	    downPanel_Manual = new JPanel();
-	    downPanel_Manual.setBounds(0, 315, 586, 98);
+	    downPanel_Manual.setBounds(0, 362, 586, 56);
 	    downPanel_Manual.setLayout(new GridLayout(0, 1, 0, 0));
-	    downPanel_Manual.add(getBackEmptyPanel_Manual());
 	    downPanel_Manual.add(getBackPanel_Manual());
 	}
 	return downPanel_Manual;
-    }
-
-    private JPanel getBackEmptyPanel_Manual() {
-	if (backEmptyPanel_Manual == null) {
-	    backEmptyPanel_Manual = new JPanel();
-	    backEmptyPanel_Manual.setBackground(SystemColor.window);
-	}
-	return backEmptyPanel_Manual;
     }
 
     private JPanel getBackPanel_Manual() throws ResourceException {
@@ -217,7 +209,7 @@ public class CardManual extends JPanel {
 	if (lblLanguage == null) {
 	    lblLanguage = new JLabel(
 		    root.getMessages().getString("label.manual.language"));
-	    lblLanguage.setForeground(SystemColor.textHighlight);
+	    lblLanguage.setForeground(Color.decode("#0089d6"));
 	    lblLanguage.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblLanguage.setBounds(10, 63, 214, 32);
 	    lblLanguage.setFont(ResourceLoader.getFont().deriveFont(15f));
@@ -230,7 +222,7 @@ public class CardManual extends JPanel {
 	    lblFileLocation = new JLabel(
 		    root.getMessages().getString("label.manual.file"));
 	    lblFileLocation.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblFileLocation.setForeground(SystemColor.textHighlight);
+	    lblFileLocation.setForeground(Color.decode("#0089d6"));
 	    lblFileLocation.setFont(ResourceLoader.getFont().deriveFont(15f));
 	    lblFileLocation.setBounds(10, 98, 214, 32);
 	}
@@ -252,7 +244,7 @@ public class CardManual extends JPanel {
 		    }
 		}
 	    });
-	    btnNext_Manual.setMnemonic('b');
+	    btnNext_Manual.setMnemonic('n');
 	    btnNext_Manual.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_Manual.setBounds(461, 11, 115, 35);
 	}
@@ -271,7 +263,7 @@ public class CardManual extends JPanel {
 	return txtPath;
     }
 
-    private JButton getBtnBrowse() {
+    private JButton getBtnBrowse() throws ResourceException {
 	if (btnBrowse == null) {
 	    btnBrowse = new JButton(
 		    root.getMessages().getString("button.browse"));
@@ -289,7 +281,7 @@ public class CardManual extends JPanel {
 		}
 	    });
 	    btnBrowse.setMnemonic('b');
-	    btnBrowse.setFont(btnBrowse.getFont().deriveFont(14f));
+	    btnBrowse.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnBrowse.setBounds(410, 103, 115, 23);
 	}
 	return btnBrowse;
@@ -313,7 +305,7 @@ public class CardManual extends JPanel {
 		    root.getMessages().getString("label.manual.title"));
 	    lblManualTitle.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblManualTitle.setFont(ResourceLoader.getFont().deriveFont(40f));
-	    lblManualTitle.setBounds(0, 0, 586, 76);
+	    lblManualTitle.setBounds(0, 0, 586, 110);
 
 	}
 	return lblManualTitle;

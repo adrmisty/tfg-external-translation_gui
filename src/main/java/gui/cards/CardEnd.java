@@ -1,9 +1,7 @@
 package main.java.gui.cards;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,10 +36,11 @@ public class CardEnd extends JPanel {
     private JButton rightButton_End;
     private JLabel lblThanks;
     private JLabel lblSlogan_End;
-    private JPanel logoPanel_End;
-    private JLabel lblForLogo_End;
-    private JLabel lblLogo_End;
     private JLabel lblFileSave;
+    private JPanel logoPanel;
+    private JLabel lblForLogo;
+    private JLabel lblLogo;
+    private JLabel lblLogo2;
 
     public CardEnd(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -106,7 +105,7 @@ public class CardEnd extends JPanel {
 	    });
 	    leftButton_End.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/translate.png")));
-	    leftButton_End.setMnemonic('s');
+	    leftButton_End.setMnemonic('t');
 	    leftButton_End.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return leftButton_End;
@@ -124,7 +123,7 @@ public class CardEnd extends JPanel {
 	    });
 	    rightButton_End.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/exit.png")));
-	    rightButton_End.setMnemonic('l');
+	    rightButton_End.setMnemonic('e');
 	    rightButton_End.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return rightButton_End;
@@ -135,8 +134,8 @@ public class CardEnd extends JPanel {
 	    centerPanel_End = new JPanel();
 	    centerPanel_End.setBackground(SystemColor.window);
 	    centerPanel_End.setBounds(0, 119, 586, 127);
-	    centerPanel_End.setLayout(new BorderLayout(0, 0));
-	    centerPanel_End.add(getLogoPanel_End(), BorderLayout.SOUTH);
+	    centerPanel_End.setLayout(null);
+	    centerPanel_End.add(getLogoPanel());
 	}
 	return centerPanel_End;
     }
@@ -163,36 +162,6 @@ public class CardEnd extends JPanel {
 	return lblSlogan_End;
     }
 
-    private JPanel getLogoPanel_End() {
-	if (logoPanel_End == null) {
-	    logoPanel_End = new JPanel();
-	    logoPanel_End.setBackground(SystemColor.window);
-	    logoPanel_End.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-	    logoPanel_End.add(getLblForLogo_End());
-	    logoPanel_End.add(getLblLogo_End());
-	}
-	return logoPanel_End;
-    }
-
-    private JLabel getLblForLogo_End() {
-	if (lblForLogo_End == null) {
-	    lblForLogo_End = new JLabel(
-		    root.getMessages().getString("label.poweredby"));
-	    lblForLogo_End.setFont(lblForLogo_End.getFont().deriveFont(20f));
-	}
-	return lblForLogo_End;
-    }
-
-    private JLabel getLblLogo_End() {
-	if (lblLogo_End == null) {
-	    lblLogo_End = new JLabel("");
-	    lblLogo_End.setIcon(new ImageIcon(
-		    MainWindow.class.getResource("/img/openai-logo.png")));
-	    lblLogo_End.setHorizontalAlignment(SwingConstants.CENTER);
-	}
-	return lblLogo_End;
-    }
-
     private JLabel getLblFileSave() throws ResourceException {
 	if (lblFileSave == null) {
 	    lblFileSave = new JLabel();
@@ -209,4 +178,50 @@ public class CardEnd extends JPanel {
 		root.getMessages().getString("label.translated") + " " + name);
     }
 
+    private JPanel getLogoPanel() {
+	if (logoPanel == null) {
+	    logoPanel = new JPanel();
+	    logoPanel.setBounds(0, 0, 586, 127);
+	    logoPanel.setLayout(null);
+	    logoPanel.setBackground(SystemColor.window);
+	    logoPanel.add(getLblForLogo());
+	    logoPanel.add(getLblLogo());
+	    logoPanel.add(getLblLogo2());
+	}
+	return logoPanel;
+    }
+
+    private JLabel getLblForLogo() {
+	if (lblForLogo == null) {
+	    lblForLogo = new JLabel(
+		    root.getMessages().getString("label.poweredby"));
+	    lblForLogo.setHorizontalAlignment(SwingConstants.RIGHT);
+	    lblForLogo.setForeground(Color.BLACK);
+	    lblForLogo.setFont(lblForLogo.getFont().deriveFont(20f));
+	    lblForLogo.setBounds(0, 0, 250, 170);
+	}
+	return lblForLogo;
+    }
+
+    private JLabel getLblLogo() {
+	if (lblLogo == null) {
+	    lblLogo = new JLabel("");
+	    lblLogo.setIcon(new ImageIcon(
+		    CardEnd.class.getResource("/img/openai-logo.png")));
+	    lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblLogo.setBounds(288, 75, 132, 45);
+	}
+	return lblLogo;
+    }
+
+    private JLabel getLblLogo2() {
+	if (lblLogo2 == null) {
+	    lblLogo2 = new JLabel("");
+	    lblLogo2.setIcon(
+		    new ImageIcon(CardEnd.class.getResource("/img/azure.png")));
+	    lblLogo2.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblLogo2.setBounds(278, 29, 144, 61);
+	}
+	return lblLogo2;
+    }
 }

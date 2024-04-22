@@ -206,23 +206,6 @@ public class ResourceLoader {
     }
 
     /**
-     * @return language codes of the respective language names to which the app
-     *         can effectively be localized to
-     * @throws Exception in case of issues during IO and resource processing
-     */
-    public static Map<Integer, String> getLanguageCodes() throws Exception {
-	Map<Integer, String> map = new HashMap<Integer, String>();
-	URL res = ResourceLoader.class.getResource(LANGUAGE_CODES_FILE);
-	File f = new File(res.toURI());
-	List<String> list = Files.readAllLines(f.toPath());
-
-	for (int i = 0; i < list.size(); i++) {
-	    map.put(i, list.get(i));
-	}
-	return map;
-    }
-
-    /**
      * @return JDBC url of the translation database for the application
      * @throws ResourceException if database is not found in resource directory
      */

@@ -39,20 +39,17 @@ public class CardAuto extends JPanel {
      * Labels & text
      */
     private JButton btnSave_Auto;
-    private JLabel lblTitle_Auto;
-    private JPanel backEmptyPanel_Auto;
     private JLabel lblBack_Auto;
     private JButton btnBack_Auto;
 
     private JFileChooser fileChooser;
     private JLabel lblTime;
     private JButton btnReview_Auto;
-    private JButton btnSpeech;
-    private JButton btnStop;
 
     // Threads
     private Thread speechTask;
     private Thread translationTask;
+    private JLabel lblTitle_Auto;
 
     public CardAuto(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -61,21 +58,17 @@ public class CardAuto extends JPanel {
 	this.add(getNorthPanel_Auto());
 	this.add(getCenterPanel_Auto());
 	this.add(getDownPanel_Auto());
+	setBounds(100, 100, 587, 420);
 
 	// Text to speech thread
-	this.speechTask = new Thread(new Runnable() {
-	    @Override
-	    public void run() {
-		try {
-		    // Task execution
-		    btnStop.setEnabled(true);
-		    // root.textToSpeech(true);
-		    // root.textToSpeech(false);
-		} catch (Exception ex) {
-		    root.showErrorMessage(ex.getMessage());
-		}
-	    }
-	});
+	/*
+	 * this.speechTask = new Thread(new Runnable() {
+	 * 
+	 * @Override public void run() { try { // Task execution
+	 * btnStop.setEnabled(true); // root.textToSpeech(true); //
+	 * root.textToSpeech(false); } catch (Exception ex) {
+	 * root.showErrorMessage(ex.getMessage()); } } });
+	 */
 
 	// Translation task
 	this.translationTask = new Thread(new Runnable() {
@@ -110,7 +103,6 @@ public class CardAuto extends JPanel {
 	setCursor(Cursor.getDefaultCursor());
 	btnSave_Auto.setEnabled(true);
 	btnReview_Auto.setEnabled(true);
-	btnSpeech.setEnabled(true);
 	lblTitle_Auto.setText(
 		root.getMessages().getString("label.auto.title.success"));
 	lblTime.setText(
@@ -146,11 +138,10 @@ public class CardAuto extends JPanel {
     private JPanel getCenterPanel_Auto() throws ResourceException {
 	if (centerPanel_Automatic == null) {
 	    centerPanel_Automatic = new JPanel();
-	    centerPanel_Automatic.setBounds(0, 63, 586, 253);
+	    centerPanel_Automatic.setBounds(0, 109, 586, 255);
 	    centerPanel_Automatic.setLayout(null);
 	    centerPanel_Automatic.setBackground(SystemColor.window);
 	    centerPanel_Automatic.add(getBtnSave_Auto());
-	    centerPanel_Automatic.add(getLvlProgress_Auto_1());
 	    centerPanel_Automatic.add(getBusyPanel());
 	    centerPanel_Automatic.add(getLblTime());
 	    centerPanel_Automatic.add(getBtnReview_Auto());
@@ -161,7 +152,7 @@ public class CardAuto extends JPanel {
     private BusyPanel getBusyPanel() {
 	if (busyPanel == null) {
 	    busyPanel = new BusyPanel();
-	    busyPanel.setBounds(265, 63, 60, 60);
+	    busyPanel.setBounds(265, 37, 60, 60);
 	}
 	return busyPanel;
     }
@@ -170,6 +161,7 @@ public class CardAuto extends JPanel {
 	if (btnSave_Auto == null) {
 	    btnSave_Auto = new JButton(
 		    root.getMessages().getString("button.save"));
+	    btnSave_Auto.setMnemonic('s');
 	    btnSave_Auto.setIcon(new ImageIcon(
 		    CardAuto.class.getResource("/img/save-icon.png")));
 	    btnSave_Auto.setEnabled(false);
@@ -190,57 +182,34 @@ public class CardAuto extends JPanel {
 	    });
 	    btnSave_Auto.setFont(btnSave_Auto.getFont().deriveFont(20f));
 	    btnSave_Auto.setFocusable(false);
-	    btnSave_Auto.setBounds(306, 186, 187, 42);
+	    btnSave_Auto.setBounds(306, 172, 187, 42);
 	}
 	return btnSave_Auto;
 
     }
 
-    private JPanel getNorthPanel_Auto() {
+    private JPanel getNorthPanel_Auto() throws ResourceException {
 	if (northPanel_Auto == null) {
 	    northPanel_Auto = new JPanel();
 	    northPanel_Auto.setBackground(SystemColor.window);
-	    northPanel_Auto.setBounds(0, 0, 586, 65);
+	    northPanel_Auto.setBounds(0, 0, 586, 111);
 	    northPanel_Auto.setLayout(null);
+	    northPanel_Auto.add(getLblTitle_Auto());
 	}
 	return northPanel_Auto;
     }
 
-    private JLabel getLvlProgress_Auto_1() throws ResourceException {
-	if (lblTitle_Auto == null) {
-	    lblTitle_Auto = new JLabel(
-		    root.getMessages().getString("label.auto.title.loading"));
-	    lblTitle_Auto.setBounds(0, 0, 586, 52);
-	    lblTitle_Auto.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblTitle_Auto.setForeground(Color.BLACK);
-	    lblTitle_Auto.setFont(ResourceLoader.getFont().deriveFont(30f));
-	}
-	return lblTitle_Auto;
-    }
-
-    private JPanel getDownPanel_Auto() {
+    private JPanel getDownPanel_Auto() throws ResourceException {
 	if (downPanel_Auto == null) {
 	    downPanel_Auto = new JPanel();
-	    downPanel_Auto.setBounds(0, 315, 586, 98);
+	    downPanel_Auto.setBounds(0, 362, 586, 56);
 	    downPanel_Auto.setLayout(new GridLayout(0, 1, 0, 0));
-	    downPanel_Auto.add(getBackEmptyPanel_Auto());
 	    downPanel_Auto.add(getBackPanel_Auto());
 	}
 	return downPanel_Auto;
     }
 
-    private JPanel getBackEmptyPanel_Auto() {
-	if (backEmptyPanel_Auto == null) {
-	    backEmptyPanel_Auto = new JPanel();
-	    backEmptyPanel_Auto.setBackground(SystemColor.window);
-	    backEmptyPanel_Auto.setLayout(null);
-	    backEmptyPanel_Auto.add(getBtnSpeech());
-	    backEmptyPanel_Auto.add(getBtnStop());
-	}
-	return backEmptyPanel_Auto;
-    }
-
-    private JPanel getBackPanel_Auto() {
+    private JPanel getBackPanel_Auto() throws ResourceException {
 	if (backPanel_Auto == null) {
 	    backPanel_Auto = new JPanel();
 	    backPanel_Auto.setLayout(null);
@@ -251,7 +220,7 @@ public class CardAuto extends JPanel {
 	return backPanel_Auto;
     }
 
-    private JLabel getLblBack_Auto() {
+    private JLabel getLblBack_Auto() throws ResourceException {
 	if (lblBack_Auto == null) {
 	    lblBack_Auto = new JLabel("<");
 	    lblBack_Auto.addMouseListener(new MouseAdapter() {
@@ -260,7 +229,7 @@ public class CardAuto extends JPanel {
 		    btnBack_Auto.doClick();
 		}
 	    });
-	    lblBack_Auto.setFont(lblBack_Auto.getFont().deriveFont(15f));
+	    lblBack_Auto.setFont(ResourceLoader.getFont().deriveFont(15f));
 	    lblBack_Auto.setBounds(10, 11, 31, 37);
 	}
 	return lblBack_Auto;
@@ -294,10 +263,10 @@ public class CardAuto extends JPanel {
 	if (lblTime == null) {
 	    lblTime = new JLabel(root.getMessages()
 		    .getString("label.auto.subtitle.loading"));
-	    lblTime.setForeground(SystemColor.textHighlight);
+	    lblTime.setForeground(Color.decode("#0089d6"));
 	    lblTime.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblTime.setBounds(97, 143, 398, 32);
-	    lblTime.setFont(ResourceLoader.getFont().deriveFont(18f));
+	    lblTime.setBounds(10, 108, 566, 32);
+	    lblTime.setFont(ResourceLoader.getFont().deriveFont(25f));
 	}
 	return lblTime;
     }
@@ -306,6 +275,7 @@ public class CardAuto extends JPanel {
 	if (btnReview_Auto == null) {
 	    btnReview_Auto = new JButton(
 		    root.getMessages().getString("button.review"));
+	    btnReview_Auto.setMnemonic('r');
 	    btnReview_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -322,57 +292,20 @@ public class CardAuto extends JPanel {
 	    btnReview_Auto.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    btnReview_Auto.setFocusable(false);
 	    btnReview_Auto.setEnabled(false);
-	    btnReview_Auto.setBounds(97, 187, 187, 42);
+	    btnReview_Auto.setBounds(109, 173, 187, 42);
 	}
 	return btnReview_Auto;
     }
 
-    private JButton getBtnSpeech() {
-	if (btnSpeech == null) {
-	    btnSpeech = new JButton(root.getMessages().getString("button.tts"));
-	    btnSpeech.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    try {
-			speechTask.start();
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
-		}
-	    });
-	    btnSpeech.setIcon(
-		    new ImageIcon(CardAuto.class.getResource("/img/tts.png")));
-	    btnSpeech.setFont(btnSpeech.getFont().deriveFont(15f));
-	    btnSpeech.setFocusable(false);
-	    btnSpeech.setEnabled(false);
-	    btnSpeech.setBounds(174, 0, 236, 42);
+    private JLabel getLblTitle_Auto() throws ResourceException {
+	if (lblTitle_Auto == null) {
+	    lblTitle_Auto = new JLabel(
+		    root.getMessages().getString("label.auto.title.loading"));
+	    lblTitle_Auto.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblTitle_Auto.setForeground(Color.BLACK);
+	    lblTitle_Auto.setFont(ResourceLoader.getFont().deriveFont(40f));
+	    lblTitle_Auto.setBounds(0, 0, 586, 111);
 	}
-	return btnSpeech;
-    }
-
-    private JButton getBtnStop() {
-	if (btnStop == null) {
-	    btnStop = new JButton((String) null);
-	    btnStop.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    try {
-			speechTask.interrupt();
-			btnSpeech.setEnabled(true);
-			btnStop.setEnabled(false);
-			// root.textToSpeech(false);
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
-		}
-	    });
-	    btnStop.setEnabled(false);
-	    btnStop.setIcon(
-		    new ImageIcon(CardAuto.class.getResource("/img/stop.png")));
-	    btnStop.setFont(btnStop.getFont().deriveFont(15f));
-	    btnStop.setFocusable(false);
-	    btnStop.setBounds(420, 0, 49, 42);
-	}
-	return btnStop;
+	return lblTitle_Auto;
     }
 }

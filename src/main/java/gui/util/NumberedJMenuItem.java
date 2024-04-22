@@ -17,6 +17,8 @@ public class NumberedJMenuItem extends JMenuItem {
 	    String text, String language) {
 	super(text);
 	this.language_code = language;
+	this.setMnemonic(this.language_code.charAt(0));
+	this.setDisplayedMnemonicIndex(0);
 
 	this.addActionListener(new ActionListener() {
 	    @Override

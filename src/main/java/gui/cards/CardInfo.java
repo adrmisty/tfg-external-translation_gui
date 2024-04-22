@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,7 +41,6 @@ public class CardInfo extends JPanel {
     private JPanel centerPanel_Info;
     private JPanel titlePanel_Info;
     private JPanel authorPanel;
-    private JPanel backEmptyPanel_Info;
     private JPanel backPanel_Info;
 
     /*
@@ -50,9 +48,6 @@ public class CardInfo extends JPanel {
      */
     private JTextArea lblProject;
     private JLabel lblUnioviLogo;
-    private JLabel lblEmpty_2;
-    private JLabel lblEmpty_2_1;
-    private JLabel lblEmpty_2_1_1;
     private JLabel lblAuthor;
     private JLabel lblEmail;
     private JLabel lblEmpty_3;
@@ -68,7 +63,7 @@ public class CardInfo extends JPanel {
 	this.setLayout(null);
 	this.add(getNorthPanel_Info());
 	this.add(getCenterPanel_Info());
-	this.add(getDownPanel_Info());
+	add(getDownPanel_Info());
     }
 
     private JPanel getNorthPanel_Info() throws ResourceException {
@@ -85,10 +80,9 @@ public class CardInfo extends JPanel {
     private JPanel getDownPanel_Info() throws ResourceException {
 	if (downPanel_Info == null) {
 	    downPanel_Info = new JPanel();
-	    downPanel_Info.setBounds(0, 310, 586, 103);
+	    downPanel_Info.setBounds(0, 358, 586, 56);
 	    downPanel_Info.setBackground(SystemColor.window);
-	    downPanel_Info.setLayout(new GridLayout(2, 4, 0, 0));
-	    downPanel_Info.add(getBackEmptyPanel_Info());
+	    downPanel_Info.setLayout(new BorderLayout(0, 0));
 	    downPanel_Info.add(getBackPanel_Info());
 	}
 	return downPanel_Info;
@@ -109,14 +103,11 @@ public class CardInfo extends JPanel {
     private JPanel getCenterPanel_Info() throws ResourceException {
 	if (centerPanel_Info == null) {
 	    centerPanel_Info = new JPanel();
-	    centerPanel_Info.setBounds(0, 142, 586, 168);
+	    centerPanel_Info.setBounds(0, 142, 586, 218);
 	    centerPanel_Info.setBackground(SystemColor.window);
-	    centerPanel_Info.setLayout(new BorderLayout(0, 0));
-	    centerPanel_Info.add(getLblEmpty_2_1_1(), BorderLayout.NORTH);
-	    centerPanel_Info.add(getLblEmpty_2_1(), BorderLayout.WEST);
-	    centerPanel_Info.add(getLblEmpty_2(), BorderLayout.EAST);
-	    centerPanel_Info.add(getTextDescription(), BorderLayout.CENTER);
-	    centerPanel_Info.add(getAuthorPanel(), BorderLayout.SOUTH);
+	    centerPanel_Info.setLayout(null);
+	    centerPanel_Info.add(getTextDescription());
+	    centerPanel_Info.add(getAuthorPanel());
 	}
 	return centerPanel_Info;
     }
@@ -133,34 +124,10 @@ public class CardInfo extends JPanel {
 	return lblUnioviLogo;
     }
 
-    private JLabel getLblEmpty_2() {
-	if (lblEmpty_2 == null) {
-	    lblEmpty_2 = new JLabel(" ");
-	    lblEmpty_2.setFont(new Font("Tahoma", Font.PLAIN, 40));
-	}
-	return lblEmpty_2;
-    }
-
-    private JLabel getLblEmpty_2_1() {
-	if (lblEmpty_2_1 == null) {
-	    lblEmpty_2_1 = new JLabel(" ");
-	    lblEmpty_2_1.setFont(new Font("Tahoma", Font.PLAIN, 40));
-	}
-	return lblEmpty_2_1;
-    }
-
-    private JLabel getLblEmpty_2_1_1() {
-	if (lblEmpty_2_1_1 == null) {
-	    lblEmpty_2_1_1 = new JLabel(" ");
-	    lblEmpty_2_1_1.setBackground(SystemColor.window);
-	    lblEmpty_2_1_1.setFont(new Font("Tahoma", Font.PLAIN, 20));
-	}
-	return lblEmpty_2_1_1;
-    }
-
     private JPanel getAuthorPanel() throws ResourceException {
 	if (authorPanel == null) {
 	    authorPanel = new JPanel();
+	    authorPanel.setBounds(0, 133, 586, 51);
 	    authorPanel.setBackground(SystemColor.window);
 	    authorPanel.setLayout(new BorderLayout(0, 0));
 	    authorPanel.add(getLblEmpty_3(), BorderLayout.NORTH);
@@ -201,7 +168,7 @@ public class CardInfo extends JPanel {
 		    }
 		}
 	    });
-	    lblEmail.setForeground(Color.BLUE.darker());
+	    lblEmail.setForeground(Color.decode("#0089d6"));
 	    lblEmail.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblEmail.setFont(ResourceLoader.getFont().deriveFont(15f));
 	    lblEmail.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -229,6 +196,7 @@ public class CardInfo extends JPanel {
     private JTextPane getTextDescription() throws ResourceException {
 	if (textDescription == null) {
 	    textDescription = new JTextPane();
+	    textDescription.setBounds(13, 25, 560, 116);
 	    textDescription.setBackground(SystemColor.window);
 	    textDescription.setEditable(false);
 	    textDescription.setText(
@@ -242,15 +210,6 @@ public class CardInfo extends JPanel {
 	    doc.setParagraphAttributes(0, doc.getLength(), center, false);
 	}
 	return textDescription;
-    }
-
-    private JPanel getBackEmptyPanel_Info() {
-	if (backEmptyPanel_Info == null) {
-	    backEmptyPanel_Info = new JPanel();
-	    backEmptyPanel_Info.setLayout(null);
-	    backEmptyPanel_Info.setBackground(SystemColor.window);
-	}
-	return backEmptyPanel_Info;
     }
 
     private JPanel getBackPanel_Info() throws ResourceException {
