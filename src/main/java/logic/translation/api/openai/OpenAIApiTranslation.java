@@ -39,7 +39,7 @@ public class OpenAIApiTranslation implements ApiTranslation {
      * 
      * @throws PropertiesException
      */
-    public OpenAIApiTranslation() throws Exception {
+    public OpenAIApiTranslation() {
 	service = new OpenAiService(ResourceLoader.getApiKey(),
 		Duration.ofSeconds(TIMEOUT));
 	apiReq = new OpenAIApiRequestBuilder();
@@ -69,8 +69,8 @@ public class OpenAIApiTranslation implements ApiTranslation {
      * @param properties Properties object containing localization texts
      * @param targetLang target language that the user wishes to translate to
      * 
-     * @return prompt: string containing all texts to translate
-     * @throws Exception in case of empty properties or API error
+     * @return prompt: string containing all texts to translate @ in case of
+     * empty properties or API error
      */
     private List<ChatMessage> getRequests(Properties properties,
 	    String targetLang) throws TranslationException {
@@ -81,8 +81,7 @@ public class OpenAIApiTranslation implements ApiTranslation {
 	if (!properties.isEmpty()) {
 	    messages = apiReq.buildRequests(properties, targetLang);
 	} else {
-	    throw new TranslationException(
-		    "No properties content has been indicated in the specified file.");
+	    throw new TranslationException();
 	}
 
 	return messages;

@@ -40,10 +40,10 @@ public class Translator {
     /**
      * Creates a generic translator.
      * 
-     * @param messages localization settings chosen by the user
-     * @throws Exception in case of I/O issues with writing to file
+     * @param messages localization settings chosen by the user @ in case of I/O
+     * issues with writing to file
      */
-    public Translator(ResourceBundle messages) throws Exception {
+    public Translator(ResourceBundle messages) {
 	manager = new FileManager(messages); // Results file
 	// speech = new Speech(); // TTS
 	reset(); // Initialization
@@ -52,9 +52,9 @@ public class Translator {
     /**
      * Sets automatic translation mode.
      * 
-     * @throws Exception with problems creating the API access service
+     * @ with problems creating the API access service
      */
-    public void setAutoMode() throws Exception {
+    public void setAutoMode() {
 	if (auto == null) {
 	    auto = new AutoTranslation(manager.getSourceFile());
 	}
@@ -91,9 +91,9 @@ public class Translator {
      * Translates a source file, according to the specified translation mode,
      * into a given target language (can be more than 1! - and a maximum of 3).
      * 
-     * @throws Exception in case of translation problems
+     * @ in case of translation problems
      */
-    public void translateAll() throws Exception {
+    public void translateAll() {
 
 	boolean automatic = (mode instanceof AutoTranslation);
 	for (String language : this.targetLanguages) {
@@ -114,9 +114,9 @@ public class Translator {
      * thrown. Otherwise, the file is parsed and its relevant information saved
      * for further processing.
      * 
-     * @throws Exception if file is not format-compliant
+     * @ if file is not format-compliant
      */
-    public void input() throws Exception {
+    public void input() {
 	manager.input();
     }
 
@@ -145,9 +145,9 @@ public class Translator {
      * review file, they are copied onto the new path. Otherwise, results are
      * written for the first time in their specified file path.
      * 
-     * @throws Exception in case of issue writing to file
+     * @ in case of issue writing to file
      */
-    public void saveAll() throws Exception {
+    public void saveAll() {
 	manager.saveAll();
     }
 
@@ -156,10 +156,10 @@ public class Translator {
      * These results are processed and returned in a temporary file that can be
      * edited and reviewed by the user.
      * 
-     * @return list of paths to all temporary files
-     * @throws Exception in case of issue writing to file
+     * @return list of paths to all temporary files @ in case of issue writing
+     * to file
      */
-    public List<String> review() throws Exception {
+    public List<String> review() {
 	return manager.review();
     }
 
@@ -180,9 +180,9 @@ public class Translator {
      * Resets all remaining file-related information, to [re-]start the
      * translation process. [Optionally: remove everything from the DB]
      * 
-     * @throws Exception in case of issue with DB
+     * @ in case of issue with DB
      */
-    public void reset() throws Exception {
+    public void reset() {
 	if (mode != null) {
 	    mode.reset();
 	}

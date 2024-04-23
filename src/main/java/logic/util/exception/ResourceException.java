@@ -10,12 +10,14 @@ public class ResourceException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public ResourceException(String message, String resourceName) {
-	super(message + ": [" + resourceName + "]");
+    public String resourceName;
+
+    public ResourceException(String resourceName) {
+	super();
     }
 
-    public ResourceException(String message) {
-	super(message);
+    public String getResourceName() {
+	return resourceName;
     }
 
 }

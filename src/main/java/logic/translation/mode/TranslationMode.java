@@ -19,9 +19,8 @@ public interface TranslationMode {
      * @param target file with a specific target language
      * 
      * @return properties translated to another language
-     * @throws Exception in case of issues during the translation process
      */
-    public Properties translate(TargetFile target) throws Exception;
+    public Properties translate(TargetFile target);
 
     /**
      * Resets all associated information in this translation mode.

@@ -21,6 +21,7 @@ import main.java.gui.util.IDE;
 import main.java.gui.util.NumberedJMenuItem;
 import main.java.logic.image.Vision;
 import main.java.logic.translation.Translator;
+import main.java.logic.util.exception.ImageException;
 import main.java.logic.util.exception.ResourceException;
 import main.java.logic.util.properties.ResourceLoader;
 
@@ -70,9 +71,9 @@ public class MainWindow extends JFrame {
     /**
      * Create the frame.
      * 
-     * @throws Exception
+     * @
      */
-    public MainWindow() throws Exception {
+    public MainWindow() {
 	setIconImage(Toolkit.getDefaultToolkit()
 		.getImage(MainWindow.class.getResource("/img/icon.png")));
 
@@ -99,10 +100,9 @@ public class MainWindow extends JFrame {
      * Initializes the window's components to a specific Locale.
      * 
      * @param locale specified by user or, in case of first launch, system's
-     *               default
-     * @throws Exception in case of localization error
+     *               default @ in case of localization error
      */
-    public void initWindow(Locale locale) throws Exception {
+    public void initWindow(Locale locale) {
 	contentPane.removeAll();
 	cardMain = null;
 	cardInfo = null;
@@ -137,10 +137,10 @@ public class MainWindow extends JFrame {
     /**
      * Shows a new card in the main window.
      * 
-     * @param String identificating the new card to show
-     * @throws Exception if the card to show is not recognised
+     * @param String identificating the new card to show @ if the card to show
+     * is not recognised
      */
-    public void show(String newCard) throws Exception {
+    public void show(String newCard) {
 	currentCard.setVisible(false);
 
 	switch (newCard) {
@@ -171,6 +171,7 @@ public class MainWindow extends JFrame {
 	    break;
 	case "manual":
 	    currentCard = cardManual;
+	    cardManual.reset();
 	    cardManual.setLanguage(this.languages.get(0));
 	    mnLanguage.setVisible(false);
 	    break;
@@ -294,7 +295,7 @@ public class MainWindow extends JFrame {
      * ######################## LOCALIZATION #################################
      */
 
-    private JMenu getMnLanguage() throws Exception {
+    private JMenu getMnLanguage() {
 	if (mnLanguage == null) {
 	    menuBar = new JMenuBar();
 
@@ -309,7 +310,7 @@ public class MainWindow extends JFrame {
 	return mnLanguage;
     }
 
-    private void addMenuItems() throws Exception {
+    private void addMenuItems() {
 	String[] items = ResourceLoader.getLanguageNames(messages);
 	List<JMenuItem> menuItems = new ArrayList<>();
 
@@ -321,7 +322,7 @@ public class MainWindow extends JFrame {
 	}
     }
 
-    public void localize(Locale locale) throws Exception {
+    public void localize(Locale locale) {
 	this.messages = ResourceBundle.getBundle("Messages", locale);
 	this.translator = new Translator(this.messages);
     }
@@ -350,23 +351,35 @@ public class MainWindow extends JFrame {
     /**
      * Saves all translated files to their respective destinations.
      * 
-     * @throws Exception in case of issue saving to file
+     * @ in case of issue saving to file
      */
-    public void saveAll() throws Exception {
+    public void saveAll() {
 	translator.saveAll();
     }
 
     /**
-     * Carries out all translations.
-     * 
-     * @throws Exception in case of issues with - translation api - vision api -
-     *                   writing to/from file
+     * Carries out automatic image captioning.
      */
-    public void translate() throws Exception {
-	Properties captions = vision.captions();
-	if (captions != null) {
-	    translator.include(vision.captions());
+    public void describe() {
+
+	try {
+	    Properties captions = vision.captions();
+	    if (captions != null) {
+		translator.include(vision.captions());
+	    }
+	} catch (ImageException ie) {
+
 	}
+    }
+
+    /**
+     * Carries out all translations (+ image description).
+     * 
+     * @ in case of issues with - translation api - vision api - writing to/from
+     * file
+     */
+    public void translate() {
+	describe();
 
 	translator.translateAll();
 	if (manualMode) { // Manual translation
@@ -379,13 +392,12 @@ public class MainWindow extends JFrame {
      * Establishes the languages the user has selected for
      * 
      * @param languages list of strings, with the format "English, United
-     *                  States"
-     * @throws Exception
+     *                  States" @
      */
-    public void setSelectedLanguages(List<String> languages) throws Exception {
+    public void setLanguageAndMode(List<String> languages, boolean isManual) {
 	this.languages = languages;
-	if (languages.size() > 1) {
-	    // For card purposes (automatic translation)
+	if (!isManual) {
+	    // Automatic translation
 	    cardAutoMode.setTargetLanguages(languages);
 	} else {
 	    // Manual translation
@@ -417,9 +429,9 @@ public class MainWindow extends JFrame {
      * Inputs file defined in a given source path, to be processed and checked
      * for mistakes.
      * 
-     * @throws Exception in case the file is not correct
+     * @ in case the file is not correct
      */
-    public void inputFile() throws Exception {
+    public void inputFile() {
 	translator.input();
     }
 
@@ -431,10 +443,9 @@ public class MainWindow extends JFrame {
     }
 
     /**
-     * @param dirPath of directory where all files will be saved
-     * @throws Exception
+     * @param dirPath of directory where all files will be saved @
      */
-    public void to(String dirPath) throws Exception {
+    public void to(String dirPath) {
 	translator.to(dirPath);
     }
 
@@ -442,9 +453,9 @@ public class MainWindow extends JFrame {
      * Resets everything to their initial, blank state; so that translation
      * process can be carriedo ut again.
      * 
-     * @throws Exception in case of issues resetting
+     * @ in case of issues resetting
      */
-    public void reset() throws Exception {
+    public void reset() {
 	translator.reset();
 	cardMode.reset();
 	manualMode = false;
@@ -454,9 +465,9 @@ public class MainWindow extends JFrame {
      * Reviews all automatically-translated files (opens them in
      * system-dependent IDE).
      * 
-     * @throws Exception
+     * @
      */
-    public void review() throws Exception {
+    public void review() {
 	for (String path : translator.review()) {
 	    IDE.open(contentPane, path);
 	}
@@ -465,10 +476,9 @@ public class MainWindow extends JFrame {
     /**
      * Sets translation mode (either manual or automatic).
      * 
-     * @param path
-     * @throws Exception
+     * @param path @
      */
-    public void setMode(String path) throws Exception {
+    public void setMode(String path) {
 	translator.to(path);
 	if (path == null) {
 	    translator.setAutoMode();

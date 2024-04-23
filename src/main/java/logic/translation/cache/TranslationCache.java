@@ -72,8 +72,7 @@ public class TranslationCache {
      * @param results:   all translations
      * @param originals: original, untranslated texts
      * @param language:  alpha2 code of the target language
-     * @throws SQLException
-     * @throws Exception
+     * @throws SQLException @
      */
     public void storeAll(Properties results, Properties originals,
 	    String language) throws TranslationException, SQLException {
@@ -108,11 +107,10 @@ public class TranslationCache {
      * 
      * @param properties object containing set of translations to be fully
      *                   computed or not
-     * @param language   alpha2 code of the language
-     * @throws Exception in case of error with database access, writing
-     *                   to/from...
+     * @param language   alpha2 code of the language @ in case of error with
+     * database access, writing to/from...
      */
-    public void match(Properties properties, String language) throws Exception {
+    public void match(Properties properties, String language) {
 
 	// Initialize
 	this.inCache = new Properties();
@@ -210,8 +208,7 @@ public class TranslationCache {
      * @param language: language code
      * @return String representing the translation into the language of said
      *         text, null otherwise
-     * @throws SQLException
-     * @throws Exception    in case of SQL error or hashing error
+     * @throws SQLException @ in case of SQL error or hashing error
      */
     private String getTranslation(String text, String language)
 	    throws SQLException {
@@ -243,8 +240,7 @@ public class TranslationCache {
      * 
      * @param text to compute the hash of
      * @return hexadecimal hash representation
-     * @throws NoSuchAlgorithmException
-     * @throws Exception                with issues computing hash
+     * @throws NoSuchAlgorithmException @ with issues computing hash
      */
     private String hash(String text) throws NoSuchAlgorithmException {
 	return HashUtil.getHash(text);

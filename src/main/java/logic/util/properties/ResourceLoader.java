@@ -29,7 +29,7 @@ import main.java.logic.util.exception.ResourceException;
  * in /resources/ and to application's resource bundle).
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version March 2024
+ * @version April 2024
  */
 public class ResourceLoader {
 
@@ -37,7 +37,6 @@ public class ResourceLoader {
      * File paths to respective resources
      */
     private final static String LANGUAGES_FILE = "/locale/languages_en_US.txt";
-    private final static String LANGUAGE_CODES_FILE = "/locale/language_codes.txt";
     private final static String FONT_FILE = "/img/sf-pro.otf";
     private final static String API_PROPERTIES_FILE = "/properties/api.properties";
     private final static String CONFIG_FILE = "/properties/config.properties";
@@ -66,9 +65,7 @@ public class ResourceLoader {
 	    }
 	    return props;
 	} else {
-	    throw new PropertiesException(
-		    "The provided file does not comply with i18n-localization format",
-		    filepath);
+	    throw new PropertiesException(filepath, true);
 	}
     }
 
@@ -83,7 +80,7 @@ public class ResourceLoader {
 	    Font font = Font.createFont(Font.TRUETYPE_FONT, is);
 	    return font;
 	} catch (Exception e) {
-	    throw new ResourceException("ERROR: Could not load font for GUI.");
+	    throw new ResourceException(FONT_FILE);
 	}
     }
 
@@ -98,9 +95,7 @@ public class ResourceLoader {
 	    pr.load(is);
 	    return pr;
 	} catch (Exception e) {
-	    throw new PropertiesException(
-		    "ERROR: Could not load API settings due to errors in file",
-		    API_PROPERTIES_FILE);
+	    throw new PropertiesException(API_PROPERTIES_FILE, true);
 	}
     }
 
@@ -115,8 +110,7 @@ public class ResourceLoader {
 	    pr.load(is);
 	    return pr.getProperty("API_KEY");
 	} catch (Exception e) {
-	    throw new ResourceException(
-		    "ERROR: Could not load API key for LLM.");
+	    throw new ResourceException("OpenAI API key");
 	}
     }
 
@@ -131,8 +125,7 @@ public class ResourceLoader {
 	    pr.load(is);
 	    return pr.getProperty("AZURE_API_KEY_1");
 	} catch (Exception e) {
-	    throw new ResourceException(
-		    "ERROR: Could not load API key for Cognitive Speech.");
+	    throw new ResourceException("Azure Speech API key");
 	}
     }
 
@@ -148,8 +141,7 @@ public class ResourceLoader {
 	    pr.load(is);
 	    return pr.getProperty("AZURE_CV_API_KEY_1");
 	} catch (Exception e) {
-	    throw new ResourceException(
-		    "ERROR: Could not load API key for Computer Vision.");
+	    throw new ResourceException("Azure Vision API key");
 	}
     }
 
@@ -165,8 +157,7 @@ public class ResourceLoader {
 	    pr.load(is);
 	    return pr.getProperty("AZURE_CV_ENDPOINT");
 	} catch (Exception e) {
-	    throw new ResourceException(
-		    "ERROR: Could not load endpoint for Computer Vision Azure resource.");
+	    throw new ResourceException("Azure Vision API endpoint");
 	}
     }
 
@@ -190,19 +181,26 @@ public class ResourceLoader {
     /**
      * @return map of all supported languages of the program in English, with
      *         their index as key
-     * @throws Exception in case of issues during IO and resource processing
+     * @throws ResourceException in case of issues during IO and resource
+     *                           processing
      */
     public static Map<Integer, String> getMapSupportedLanguages_English()
-	    throws Exception {
-	URL res = ResourceLoader.class.getResource(LANGUAGES_FILE);
-	File f = new File(res.toURI());
-	List<String> list = Files.readAllLines(f.toPath());
-	Map<Integer, String> mapLanguages = new HashMap<Integer, String>();
+	    throws ResourceException {
 
-	for (int i = 0; i < list.size(); i++) {
-	    mapLanguages.put(i, list.get(i));
+	try {
+	    URL res = ResourceLoader.class.getResource(LANGUAGES_FILE);
+	    File f = new File(res.toURI());
+	    List<String> list = Files.readAllLines(f.toPath());
+	    Map<Integer, String> mapLanguages = new HashMap<Integer, String>();
+
+	    for (int i = 0; i < list.size(); i++) {
+		mapLanguages.put(i, list.get(i));
+	    }
+	    return mapLanguages;
+	} catch (Exception e) {
+	    throw new ResourceException(LANGUAGES_FILE);
 	}
-	return mapLanguages;
+
     }
 
     /**
@@ -215,8 +213,7 @@ public class ResourceLoader {
 	    String dbUrl = Paths.get(jdbc).toString();
 	    return ("jdbc:sqlite:" + dbUrl);
 	} catch (URISyntaxException e) {
-	    throw new ResourceException(
-		    "ERROR: Database not found among resources", DATABASE_NAME);
+	    throw new ResourceException(DATABASE_NAME);
 	}
     }
 

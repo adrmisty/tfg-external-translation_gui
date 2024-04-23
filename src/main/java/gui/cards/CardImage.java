@@ -61,6 +61,11 @@ public class CardImage extends JPanel {
 	this.add(getDownPanel_Image());
     }
 
+    public void reset() {
+	savedDroppedFile = false;
+	txtFilePath.setText("");
+    }
+
     private JPanel getNorthPanel_Image() throws ResourceException {
 	if (northPanel_Image == null) {
 	    northPanel_Image = new JPanel();
@@ -130,6 +135,7 @@ public class CardImage extends JPanel {
 	    lblBack_Image.addMouseListener(new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
+		    reset();
 		    btnBack_Image.doClick();
 		}
 	    });

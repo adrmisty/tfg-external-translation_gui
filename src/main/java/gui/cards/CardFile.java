@@ -72,6 +72,13 @@ public class CardFile extends JPanel {
 	this.add(getDownPanel_File());
     }
 
+    public void reset() throws Exception {
+	root.reset();
+	txtFilePath.setText("");
+	lblDndWarning.setVisible(false);
+	btnNext_File.setEnabled(false);
+    }
+
     private JPanel getNorthPanel_File() throws ResourceException {
 	if (northPanel_File == null) {
 	    northPanel_File = new JPanel();
@@ -184,10 +191,10 @@ public class CardFile extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
+			reset();
 			root.show("main");
 		    } catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			root.showErrorMessage(e1.getMessage());
 		    }
 		}
 	    });
@@ -275,10 +282,7 @@ public class CardFile extends JPanel {
 				savedDroppedFile = true;
 
 			    } else {
-				root.reset();
-				txtFilePath.setText("");
-				lblDndWarning.setVisible(false);
-				btnNext_File.setEnabled(false);
+				reset();
 			    }
 			}
 		    }

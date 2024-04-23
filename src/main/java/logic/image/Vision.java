@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import main.java.logic.image.api.AzureApiVision;
+import main.java.logic.util.exception.ImageException;
 import main.java.logic.util.exception.ResourceException;
 
 /**
@@ -32,8 +33,9 @@ public class Vision {
      * 
      * @param images list of paths pointing to images to caption
      * @throws IOException
+     * @throws ImageException
      */
-    public Properties captions() throws IOException {
+    public Properties captions() throws ImageException {
 	if (this.results == null) {
 	    this.results = apiVision.caption();
 	}

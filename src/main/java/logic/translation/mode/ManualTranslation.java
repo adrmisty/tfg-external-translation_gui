@@ -22,7 +22,6 @@ public class ManualTranslation implements TranslationMode {
      * @param f target file to translate
      * @return content of its source file
      * 
-     * @throws Exception in case of issue with I/O writing to file
      */
     @Override
     public Properties translate(TargetFile f) throws Exception {

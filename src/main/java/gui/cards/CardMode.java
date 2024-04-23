@@ -13,6 +13,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -64,7 +66,7 @@ public class CardMode extends JPanel {
     private JList<JCheckBox> languagesMenu;
     private List<String> languages = new ArrayList<>();
     private List<String> selectedLanguages = new ArrayList<>();
-    private static int maxLangs = 3;
+    private static int maxLangs = 1;
     private JScrollPane scrollPane;
 
     public CardMode(MainWindow root) throws ResourceException {
@@ -75,6 +77,7 @@ public class CardMode extends JPanel {
 	this.add(getDownPanel_Mode());
 	this.add(getNorthPanel_Mode());
 	this.add(getCenterPanel_Mode());
+	btnAutomatic_Mode.doClick();
     }
 
     /**
@@ -88,11 +91,11 @@ public class CardMode extends JPanel {
 	revalidate();
     }
 
-    private void setLanguages() throws Exception {
+    private void setLanguageAndMode() throws Exception {
 	if (btnManual_Mode.isSelected() && selectedLanguages.size() > 1) {
 	    selectedLanguages.remove(0);
 	}
-	root.setSelectedLanguages(selectedLanguages);
+	root.setLanguageAndMode(selectedLanguages, btnManual_Mode.isSelected());
     }
 
     private void resetSelections(JButton thisButton, JButton otherButton) {
@@ -128,13 +131,24 @@ public class CardMode extends JPanel {
 
     private void changeMaxLangs() {
 	maxLangs = (maxLangs == 3 ? 1 : 3);
-	String og = lblLanguage.getText();
-	String text = lblLanguage.getText().replaceAll("1", "3");
-	if (og.equals(text)) {
-	    text = lblLanguage.getText().replaceAll("3", "1");
-	}
-	lblLanguage.setText(text);
+	changeMaxLangsText();
+    }
 
+    private void changeMaxLangsText() {
+	// Define a regular expression pattern to match the last number in the
+	// string
+	String str = lblLanguage.getText();
+	Pattern pattern = Pattern.compile("\\d+(?!.*\\d)");
+	Matcher matcher = pattern.matcher(str);
+
+	if (matcher.find()) {
+	    // Last number position
+	    int start = matcher.start();
+	    int end = matcher.end();
+	    lblLanguage.setText(str.substring(0, start)
+		    + String.valueOf(maxLangs) + str.substring(end));
+	    ;
+	}
     }
 
     public void unselectAllItems() {
@@ -341,14 +355,19 @@ public class CardMode extends JPanel {
 	    newItem.addItemListener(new ItemListener() {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+		    // Selection
 		    if (e.getStateChange() == ItemEvent.SELECTED) {
-			// Check if the maximum limit is reached
 			if (countSelectedItems() > maxLangs) {
 			    ((JCheckBox) e.getItem()).setSelected(false);
 			} else {
 			    selectedLanguages
 				    .add(((JCheckBox) e.getItem()).getText());
 			}
+			// Deselection
+		    } else {
+			selectedLanguages
+				.remove(((JCheckBox) e.getItem()).getText());
+			System.out.println(selectedLanguages.size());
 		    }
 		}
 
@@ -431,6 +450,7 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
+			reset();
 			root.show("file");
 		    } catch (Exception e1) {
 			root.showErrorMessage(e1.getMessage());
@@ -455,9 +475,8 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    try {
-			setLanguages();
+			setLanguageAndMode();
 			if (btnAutomatic_Mode.isSelected()) {
-			    root.setMode(null);
 			    root.show("automode");
 			} else {
 			    root.show("manual");

@@ -47,7 +47,7 @@ public class CardAuto extends JPanel {
     private JButton btnReview_Auto;
 
     // Threads
-    private Thread speechTask;
+    // private Thread speechTask;
     private Thread translationTask;
     private JLabel lblTitle_Auto;
 
@@ -110,6 +110,7 @@ public class CardAuto extends JPanel {
     }
 
     public void reset() {
+	root.reset();
 	busyPanel.stop(true);
 	btnSave_Auto.setEnabled(false);
 	btnReview_Auto.setEnabled(false);
@@ -119,7 +120,7 @@ public class CardAuto extends JPanel {
 		root.getMessages().getString("label.auto.subtitle.loading"));
     }
 
-    private boolean getSaveFileChooser() throws Exception {
+    private boolean getSaveFileChooser() {
 	if (root.hasDirectory()) {
 	    return true;
 	}
@@ -241,8 +242,8 @@ public class CardAuto extends JPanel {
 	    btnBack_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    reset();
 		    try {
+			reset();
 			root.show("mode");
 		    } catch (Exception e1) {
 			root.showErrorMessage(e1.getMessage());

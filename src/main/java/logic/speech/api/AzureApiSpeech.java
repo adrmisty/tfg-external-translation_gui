@@ -8,6 +8,7 @@ import com.microsoft.cognitiveservices.speech.SpeechSynthesizer;
 
 import main.java.logic.speech.ApiSpeech;
 import main.java.logic.util.exception.ResourceException;
+import main.java.logic.util.exception.SpeechException;
 import main.java.logic.util.properties.PropertiesUtil;
 import main.java.logic.util.properties.ResourceLoader;
 
@@ -33,14 +34,18 @@ public class AzureApiSpeech implements ApiSpeech {
 
     @Override
     public void speak(String language, Properties properties)
-	    throws InterruptedException {
-	config(language);
-	List<String> values = PropertiesUtil.getValues(properties);
-	for (String v : values) {
-	    synth.SpeakText(v);
-	    Thread.sleep(1000);
+	    throws SpeechException {
+	try {
+	    config(language);
+	    List<String> values = PropertiesUtil.getValues(properties);
+	    for (String v : values) {
+		synth.SpeakText(v);
+		Thread.sleep(1000);
+	    }
+	    stop();
+	} catch (InterruptedException e) {
+	    throw new SpeechException();
 	}
-	stop();
     }
 
     @Override

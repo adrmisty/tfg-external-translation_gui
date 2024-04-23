@@ -172,6 +172,7 @@ public class CardManual extends JPanel {
 	    lblBack_Manual.addMouseListener(new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
+		    reset();
 		    btnBack_Manual.doClick();
 		}
 	    });

@@ -1,10 +1,12 @@
 package main.java.logic.file;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
 import main.java.logic.util.exception.PropertiesException;
+import main.java.logic.util.exception.ResourceException;
 import main.java.logic.util.properties.ResourceLoader;
 
 /**
@@ -25,7 +27,7 @@ public class SourceFile {
     private Properties content; // Complete information in file
     private String bundleName; // Bundle name for the app's .properties files
 
-    public SourceFile(ResourceBundle messages) throws Exception {
+    public SourceFile(ResourceBundle messages) throws ResourceException {
 	parser = new LocaleParser(messages);
     }
 
@@ -35,15 +37,14 @@ public class SourceFile {
      * of the source language it is written in).
      * 
      * @param filepath path to the .properties file
-     * @throws Exception in case input file is not i18n compliant
+     * @throws PropertiesException in case input file is not i18n compliant
+     * @throws IOException
      */
-    public void input(String filepath) throws Exception {
+    public void input(String filepath) throws PropertiesException, IOException {
 
 	if (!ResourceLoader.getFileExtension(filepath).get()
 		.equals("properties")) {
-	    throw new PropertiesException(
-		    "The indicated localization file is not i18n-compliant!",
-		    filepath);
+	    throw new PropertiesException(filepath, false);
 	}
 
 	// File path

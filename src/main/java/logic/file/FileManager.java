@@ -2,6 +2,7 @@ package main.java.logic.file;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import main.java.logic.util.exception.PropertiesException;
+import main.java.logic.util.exception.ResourceException;
 import main.java.logic.util.properties.PropertiesUtil;
 
 /**
@@ -33,7 +36,7 @@ public class FileManager {
     private String targetDirectory;
     private List<TargetFile> targetFiles = new ArrayList<>();
 
-    public FileManager(ResourceBundle messages) throws Exception {
+    public FileManager(ResourceBundle messages) throws ResourceException {
 	sourceFile = new SourceFile(messages);
     }
 
@@ -45,12 +48,13 @@ public class FileManager {
      * Retrieves all information found in a source file, if it is i18n-compliant
      * (source language, bundle name and its content).
      * 
-     * @param file path of the specified file
-     * @throws Exception if file cannot be found, there is an error in
-     *                   processing or the file does not comply with the desired
-     *                   format
+     * @param file path of the specified file @ if file cannot be found, there
+     *             is an error in processing or the file does not comply with
+     *             the desired format
+     * @throws IOException
+     * @throws PropertiesException
      */
-    public void input() throws Exception {
+    public void input() throws PropertiesException, IOException {
 	sourceFile.input(sourcePath);
     }
 
@@ -75,11 +79,11 @@ public class FileManager {
      * @param isDefault boolean true if this file will be the default one, false
      *                  otherwise
      * @param isAuto    boolean true if this is for automatic translation or not
-     * @return new target file for this language
-     * @throws Exception if specified Locale is not supported yet
+     * @return new target file for this language @ if specified Locale is not
+     *         supported yet
      */
     public TargetFile newLanguage(String language, boolean isDefault,
-	    boolean isAuto) throws Exception {
+	    boolean isAuto) {
 	TargetFile f = new TargetFile(sourceFile, language, isDefault, isAuto);
 	this.targetFiles.add(f);
 	return f;
@@ -89,10 +93,12 @@ public class FileManager {
      * Saves all files (including temporary ones) into the specified directory
      * path.
      * 
-     * @param path directory where all files will be saved
-     * @throws Exception in case of I/O or API issues
+     * @param path directory where all files will be saved @ in case of I/O or
+     *             API issues
+     * @throws IOException
+     * @throws PropertiesException
      */
-    public void saveAll() throws Exception {
+    public void saveAll() throws IOException, PropertiesException {
 
 	for (TargetFile f : targetFiles) {
 	    if (!f.isFileTemporary()) {
@@ -109,10 +115,10 @@ public class FileManager {
      * 
      * @param f target file
      * 
-     * @return file path of the translation file in the specific directory
-     * @throws Exception
+     * @return file path of the translation file in the specific directory @
+     * @throws IOException
      */
-    public String save(TargetFile f) throws Exception {
+    public String save(TargetFile f) throws IOException {
 	String path = f.save(targetDirectory);
 	writeResults(path, f, f.isFileAuto());
 	return path;
@@ -146,10 +152,10 @@ public class FileManager {
      * manual translation, they are prompted to write their translation onto the
      * new .properties file.
      * 
-     * @return file path of the translation file in the specific directory
-     * @throws Exception
+     * @return file path of the translation file in the specific directory @
+     * @throws IOException
      */
-    public String manualWrite() throws Exception {
+    public String manualWrite() throws IOException {
 	TargetFile f = targetFiles.get(0);
 	String path = f.save(targetDirectory);
 	writeResults(path, f, true);
@@ -167,10 +173,13 @@ public class FileManager {
      * From the temporary file that was used during reviewing, save these
      * results onto the specified directory.
      * 
-     * @param id integer identifier of the target file
-     * @throws Exception due to IOException or PropertiesException
+     * @param id integer identifier of the target file @ due to IOException or
+     *           PropertiesException
+     * @throws IOException
+     * @throws PropertiesException
      */
-    public void saveReview(TargetFile f) throws Exception {
+    public void saveReview(TargetFile f)
+	    throws PropertiesException, IOException {
 	f.saveReview(targetDirectory);
     }
 
@@ -181,10 +190,10 @@ public class FileManager {
      * disposed of. Otherwise, they can save the results into a specific
      * directory. This process is done for all files.
      * 
-     * @return list of paths to temporary file (so user can open it in an IDE)
-     * @throws Exception
+     * @return list of paths to temporary file (so user can open it in an IDE) @
+     * @throws IOException
      */
-    public List<String> review() throws Exception {
+    public List<String> review() throws IOException {
 	List<String> paths = new ArrayList<>();
 	for (TargetFile f : targetFiles) {
 	    paths.add(writeTempResults(f).toAbsolutePath().toString());
@@ -249,10 +258,10 @@ public class FileManager {
      * @param properties textual properties to parse
      * @param language   target display language
      * @param boolean    keys true if only keys must be written, false otherwise
-     * @throws Exception in case of I/O exception
+     * @throws IOException
      */
     private void writeResults(String path, TargetFile f, boolean auto)
-	    throws Exception {
+	    throws IOException {
 	BufferedWriter writer = new BufferedWriter(new FileWriter(path));
 	String lang = f.getTargetLanguage();
 	Properties pr = f.getContent();
@@ -270,10 +279,10 @@ public class FileManager {
      * 
      * @param results textual properties to parse
      * @param file    target file
-     * @return Path object representing the temporary file
-     * @throws Exception
+     * @return Path object representing the temporary file @
+     * @throws IOException
      */
-    private Path writeTempResults(TargetFile file) throws Exception {
+    private Path writeTempResults(TargetFile file) throws IOException {
 
 	String fileName = file.getFileName();
 	String name = fileName.substring(0, fileName.indexOf("."));

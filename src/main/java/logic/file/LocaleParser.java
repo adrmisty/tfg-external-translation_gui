@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import main.java.logic.util.exception.ResourceException;
 import main.java.logic.util.properties.ResourceLoader;
 
 /**
@@ -26,7 +27,7 @@ public class LocaleParser {
     private static Map<String, Integer> localeLanguages = new HashMap<>();
     private static Map<Integer, String> englishLanguages = new HashMap<>();
 
-    public LocaleParser(ResourceBundle messages) throws Exception {
+    public LocaleParser(ResourceBundle messages) throws ResourceException {
 	map = getMap();
 	localeLanguages = ResourceLoader.getMapSupportedLanguages(messages);
 	englishLanguages = ResourceLoader.getMapSupportedLanguages_English();
@@ -43,7 +44,7 @@ public class LocaleParser {
      * @param language display name also containing the country name
      * @return locale object representing the input
      */
-    public Locale getLocale(String language) throws Exception {
+    public Locale getLocale(String language) {
 
 	String input = getTranslatedLanguage(language);
 	String[] parts = input.split(", ");
@@ -148,10 +149,9 @@ public class LocaleParser {
      * in English.
      * 
      * @param language in the program's locale at the moment
-     * @return name of that language+country in English
-     * @throws Exception
+     * @return name of that language+country in English @
      */
-    private String getTranslatedLanguage(String language) throws Exception {
+    private String getTranslatedLanguage(String language) {
 	int index = localeLanguages.get(language);
 	return englishLanguages.get(index).toLowerCase();
     }

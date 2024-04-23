@@ -29,7 +29,7 @@ public class AutoTranslation implements TranslationMode {
     // Current
     private TargetFile target;
 
-    public AutoTranslation(SourceFile source) throws Exception {
+    public AutoTranslation(SourceFile source) {
 	this.api = new OpenAIApiTranslation(); // API access
 	this.cache = new TranslationCache(); // Translation database
 	this.source = source;
@@ -51,10 +51,10 @@ public class AutoTranslation implements TranslationMode {
      * @param target target file to translate
      * @return results of automatic translation
      * 
-     * @throws Exception if there is an error with API access
+     * @ if there is an error with API access
      */
     @Override
-    public Properties translate(TargetFile target) throws Exception {
+    public Properties translate(TargetFile target) {
 	// New current target file
 	this.target = target;
 
@@ -89,9 +89,9 @@ public class AutoTranslation implements TranslationMode {
      * 
      * @throws TranslationException
      * 
-     * @throws Exception            in case of issue with DB
+     * @ in case of issue with DB
      */
-    private void toCache() throws Exception {
+    private void toCache() {
 	if (api.getResults() != null) {
 	    cache.storeAll(api.getResults(), target.getContent(),
 		    target.getTargetCode());
@@ -102,9 +102,9 @@ public class AutoTranslation implements TranslationMode {
      * Retrieves those values already translated and present in the database,
      * and sets the group of properties to be translated and sent to the API.
      * 
-     * @throws Exception in case of issue with DB
+     * @ in case of issue with DB
      */
-    private void fromCache() throws Exception {
+    private void fromCache() {
 	cache.match(source.getContent(), target.getTargetCode());
     }
 
@@ -114,8 +114,8 @@ public class AutoTranslation implements TranslationMode {
      * of performance.
      * 
      * @param language format "English, United States"
-     * @return combined results (cache, API...)
-     * @throws Exception in case of error with API translation
+     * @return combined results (cache, API...) @ in case of error with API
+     * translation
      */
     private Properties getAutoResults(String language)
 	    throws TranslationException {

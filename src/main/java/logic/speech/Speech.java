@@ -3,6 +3,7 @@ package main.java.logic.speech;
 import java.util.Properties;
 
 import main.java.logic.speech.api.AzureApiSpeech;
+import main.java.logic.util.exception.SpeechException;
 
 /**
  * Manages text to speech with Windows' Cognitive Speech API. This class allows
@@ -27,10 +28,10 @@ public class Speech {
      * 
      * @param values list of sentences and texts to read out loud in a given
      *               language
-     * @throws InterruptedException
+     * @throws SpeechException
      */
     public void speak(String code, Properties properties)
-	    throws InterruptedException {
+	    throws SpeechException {
 	apiSpeech.speak(code, properties);
     }
 

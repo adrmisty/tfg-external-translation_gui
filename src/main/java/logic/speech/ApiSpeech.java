@@ -2,6 +2,8 @@ package main.java.logic.speech;
 
 import java.util.Properties;
 
+import main.java.logic.util.exception.SpeechException;
+
 /**
  * Interface for API access aimed at cognitive speech (text-to-speech
  * functionality).
@@ -17,10 +19,10 @@ public interface ApiSpeech {
      * 
      * @param code       identifier, as an alpha-2 code, of a language
      * @param properties set of textual properties to read
-     * @throws InterruptedException in case of API execution interruption
+     * @throws SpeechException in case of API execution interruption
      */
     public void speak(String language, Properties properties)
-	    throws InterruptedException;
+	    throws SpeechException;
 
     /**
      * Stops the execution of TTS.

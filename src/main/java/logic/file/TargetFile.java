@@ -42,7 +42,7 @@ public class TargetFile {
     private boolean isFileTemporary = false;
 
     public TargetFile(SourceFile source, String targetLanguage,
-	    boolean isDefault, boolean isAuto) throws Exception {
+	    boolean isDefault, boolean isAuto) {
 	this.sourceFile = source;
 	this.isDefault = isDefault;
 	this.isAuto = isAuto;
@@ -84,7 +84,8 @@ public class TargetFile {
      * @throws PropertiesException in case of issue updating contents of target
      *                             file
      */
-    public void saveReview(String directory) throws Exception {
+    public void saveReview(String directory)
+	    throws PropertiesException, IOException {
 	setFilePath(directory);
 	Path destination = Paths.get(getFilePath());
 	Files.move(temporaryFile, destination);

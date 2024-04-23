@@ -60,7 +60,7 @@ public class CardAutoMode extends JPanel {
 	this.setLayout(null);
 	this.add(getDownPanel_AutoMode());
 	this.add(getNorthPanel_AutoMode());
-	getButtonGroup();
+	setButtonGroup();
 	this.add(getCenterPanel_Mode());
     }
 
@@ -71,7 +71,10 @@ public class CardAutoMode extends JPanel {
     public void reset() throws ResourceException {
 	for (AbstractButton b : buttons) {
 	    buttonGroup.remove(b);
+	    centerPanel_Mode.remove(b);
 	}
+
+	buttons = new ArrayList<>();
     }
 
     /**
@@ -85,6 +88,8 @@ public class CardAutoMode extends JPanel {
 	    throws ResourceException {
 	this.languages = languages;
 	addButtons();
+	repaint();
+	revalidate();
     }
 
     /**
@@ -119,19 +124,34 @@ public class CardAutoMode extends JPanel {
 	    centerPanel_Mode.setBackground(SystemColor.window);
 	    centerPanel_Mode.setLayout(null);
 	    centerPanel_Mode.add(getLblDefault());
-	    getButtonGroup();
+	    setButtonGroup();
 	}
 	return centerPanel_Mode;
     }
 
     private List<AbstractButton> addButtons() throws ResourceException {
+	reset();
 	// For aesthetics
-	int y = 80;
+	int y = 50;
 	int SEP = 40;
 
-	for (String language : languages) {
+	for (int i = 0; i < languages.size() + 1; i++) {
 	    JRadioButton radioButton = new JRadioButton();
-	    radioButton.setText(language);
+	    if (i == 0) {
+		radioButton.setText(
+			root.getMessages().getString("button.settings.no"));
+		radioButton.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			defaultLanguage = null;
+		    }
+
+		});
+
+	    } else {
+		radioButton.setText(languages.get(i - 1));
+	    }
 	    radioButton.setHorizontalAlignment(SwingConstants.LEFT);
 	    radioButton.setBackground(SystemColor.window);
 	    radioButton.setBounds(200, y, 250, 30);
@@ -143,8 +163,6 @@ public class CardAutoMode extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 		    if (radioButton.isSelected()) {
 			defaultLanguage = radioButton.getText();
-		    } else {
-			defaultLanguage = null;
 		    }
 		}
 
@@ -165,17 +183,14 @@ public class CardAutoMode extends JPanel {
 		    root.getMessages().getString("label.settings.default"));
 	    lblDefault.setForeground(Color.decode("#0089d6"));
 	    lblDefault.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblDefault.setBounds(10, 31, 566, 22);
+	    lblDefault.setBounds(10, 11, 566, 22);
 	    lblDefault.setFont(ResourceLoader.getFont().deriveFont(18f));
 	}
 	return lblDefault;
     }
 
-    private ButtonGroup getButtonGroup() throws ResourceException {
-	if (buttonGroup == null) {
-	    buttonGroup = new ButtonGroup();
-	}
-	return buttonGroup;
+    private void setButtonGroup() throws ResourceException {
+	this.buttonGroup = new ButtonGroup();
     }
 
     private JLabel getLblAutoSettings() throws ResourceException {

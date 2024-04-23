@@ -7,17 +7,20 @@ import java.util.Locale;
  * (in terms of API access, speech algorithms...).
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version March 2024
+ * @version April 2024
  */
 public class LanguageException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public LanguageException(String message) {
-	super(message);
+    private Locale language;
+
+    public LanguageException(Locale language) {
+	super();
+	this.language = language;
     }
 
-    public LanguageException(String message, Locale locale) {
-	super(message + ": [" + locale.getDisplayLanguage() + "]");
+    public String getLanguage() {
+	return language.getDisplayLanguage();
     }
 }
