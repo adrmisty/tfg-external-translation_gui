@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import main.java.logic.util.exception.ImageException;
+import main.java.util.exception.ImageException;
 
 /**
  * Interface for API access aimed at image description.

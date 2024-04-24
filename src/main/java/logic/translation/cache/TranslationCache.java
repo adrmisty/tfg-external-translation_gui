@@ -10,11 +10,10 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Properties;
 
-import main.java.logic.util.db.HashUtil;
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.exception.TranslationException;
-import main.java.logic.util.properties.PropertiesUtil;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.db.HashUtil;
+import main.java.util.exception.TranslationException;
+import main.java.util.properties.PropertiesUtil;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * Builds and manages a database (SQLite) aimed at acting like a caché for
@@ -26,7 +25,7 @@ import main.java.logic.util.properties.ResourceLoader;
  * translated to and its effective translation.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version March 2024
+ * @version April 2024
  */
 public class TranslationCache {
 
@@ -37,6 +36,12 @@ public class TranslationCache {
     // Translations in cache
     private Properties notInCache; // Not found in cache
     private Properties inCache; // Translations found in the cache
+
+    // Queries
+    // No over-design, just hardcode them in here (we just need 2!)
+    private String FIND = "SELECT text_translation as text FROM translation_cache WHERE text_hash=? and language_code=?";
+    private String INSERT = "INSERT INTO translation_cache (text_hash, text_translation,"
+	    + " created_at, language_code) VALUES (?, ?, ?, ?)";
 
     /**
      * @return set of properties that are not translated and thus, not found in
@@ -55,13 +60,15 @@ public class TranslationCache {
     }
 
     /**
-     * Closes the connection to the cache database.
-     * 
-     * @throws SQLException in case of error with closing the connection
+     * Closes the connection to the cache database (if existing).
      */
-    public void closeConnection() throws SQLException {
-	if (connection != null && !connection.isClosed()) {
-	    connection.close();
+    public void closeConnection() {
+	try {
+	    if (connection != null && !connection.isClosed()) {
+		connection.close();
+	    }
+	} catch (SQLException e) {
+	    return;
 	}
     }
 
@@ -75,7 +82,7 @@ public class TranslationCache {
      * @throws SQLException @
      */
     public void storeAll(Properties results, Properties originals,
-	    String language) throws TranslationException, SQLException {
+	    String language) throws TranslationException {
 
 	for (String k : PropertiesUtil.getKeys(results)) {
 	    String text = originals.getProperty(k);
@@ -108,9 +115,11 @@ public class TranslationCache {
      * @param properties object containing set of translations to be fully
      *                   computed or not
      * @param language   alpha2 code of the language @ in case of error with
-     * database access, writing to/from...
+     *                   database access, writing to/from...
+     * @throws TranslationException
      */
-    public void match(Properties properties, String language) {
+    public void match(Properties properties, String language)
+	    throws TranslationException {
 
 	// Initialize
 	this.inCache = new Properties();
@@ -137,12 +146,14 @@ public class TranslationCache {
      */
 
     /**
+     * Establishes a connection to the SQLite database.
+     * 
+     * If not possible, rather than throwing a SQLException, no access is done
+     * to the database.
+     * 
      * @return established connection to the SQLite database
-     * @throws SQLException      in case of error with JDBC url or connection
-     *                           establishment
-     * @throws ResourceException in case of resource not found
      */
-    private Connection getConnection() throws SQLException {
+    private Connection getConnection() {
 	try {
 	    if (JDBC_URL == null) {
 		JDBC_URL = ResourceLoader.getJdbcUrl();
@@ -152,7 +163,7 @@ public class TranslationCache {
 	    }
 	    return connection;
 	} catch (Exception e) {
-	    throw new SQLException("ERROR: Could not load database");
+	    return null;
 	}
 
     }
@@ -162,20 +173,24 @@ public class TranslationCache {
      * query in the database. To avoid excessive memory usage, hash of the text
      * is stored instead of the text itself.
      * 
-     * @param text:           sentence to be translated to the target language
-     * @param translation:    translated text
-     * @param targetLanguage: alpha2 code of the target language (i.e. en_US)
+     * If the connection to the database is not possible, said translation won't
+     * be stored and no access will be carried out (either for retrieving or
+     * saving to DB).
+     * 
+     * @param text           sentence to be translated to the target language
+     * @param translation    translated text
+     * @param targetLanguage alpha2 code of the target language (i.e. en_US)
      * @throws SQLException in case of connection issue with DB
      */
     private boolean store(String text, String translation,
-	    String targetLanguage) throws SQLException {
+	    String targetLanguage) {
 
-	getConnection();
-	boolean stored;
+	boolean stored = false;
+	if (getConnection() == null) {
+	    return stored;
+	}
 
-	String insert = "INSERT INTO translation_cache (text_hash, text_translation,"
-		+ " created_at, language_code) VALUES (?, ?, ?, ?)";
-	try (PreparedStatement stmnt = connection.prepareStatement(insert)) {
+	try (PreparedStatement stmnt = connection.prepareStatement(INSERT)) {
 
 	    // Save hash, translation, language code and time stamp
 	    try {
@@ -206,17 +221,19 @@ public class TranslationCache {
      * 
      * @param text:     text in its original language
      * @param language: language code
+     * 
      * @return String representing the translation into the language of said
      *         text, null otherwise
-     * @throws SQLException @ in case of SQL error or hashing error
+     * 
+     * @throws TranslationException due to SQL or hashing error (retrieving a
+     *                              translation from the cache)
      */
     private String getTranslation(String text, String language)
-	    throws SQLException {
+	    throws TranslationException {
 	getConnection();
-	String find = "SELECT text_translation as text FROM translation_cache WHERE text_hash=? and language_code=?";
 	String trans = null;
 
-	try (PreparedStatement stmnt = connection.prepareStatement(find)) {
+	try (PreparedStatement stmnt = connection.prepareStatement(FIND)) {
 	    // Check primary key (hash of text + language code)
 	    try {
 		stmnt.setString(1, hash(text));
@@ -230,6 +247,8 @@ public class TranslationCache {
 	    if (rs.next()) {
 		trans = rs.getString("text");
 	    }
+	} catch (SQLException e) {
+	    throw new TranslationException(false);
 	}
 
 	return trans;

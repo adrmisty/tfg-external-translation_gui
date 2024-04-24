@@ -19,8 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardAutoMode extends JPanel {
 
@@ -239,12 +239,8 @@ public class CardAutoMode extends JPanel {
 	    btnBack_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			reset();
-			root.show("mode");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    reset();
+		    root.show("mode");
 		}
 	    });
 	    btnBack_Mode.setIcon(new ImageIcon(
@@ -265,12 +261,7 @@ public class CardAutoMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    root.setLanguages(languages, defaultLanguage);
-
-		    try {
-			root.show("image");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    root.show("image");
 
 		}
 

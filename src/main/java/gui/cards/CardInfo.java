@@ -25,8 +25,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardInfo extends JPanel {
 
@@ -163,8 +163,9 @@ public class CardInfo extends JPanel {
 			String url = "mailto:" + email;
 			Desktop.getDesktop().browse(new URI(url));
 		    } catch (IOException | URISyntaxException err) {
-			root.showErrorMessage(err,
-				root.getMessages().getString("error.email"));
+			root.showErrorMessage(new Exception(
+				root.getMessages().getString("error.email")),
+				false);
 		    }
 		}
 	    });
@@ -244,11 +245,7 @@ public class CardInfo extends JPanel {
 	    btnBack_Info.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			root.show("main");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    root.show("main");
 		}
 	    });
 	    btnBack_Info.setIcon(new ImageIcon(

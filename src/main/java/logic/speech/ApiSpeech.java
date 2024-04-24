@@ -2,7 +2,7 @@ package main.java.logic.speech;
 
 import java.util.Properties;
 
-import main.java.logic.util.exception.SpeechException;
+import main.java.util.exception.SpeechException;
 
 /**
  * Interface for API access aimed at cognitive speech (text-to-speech

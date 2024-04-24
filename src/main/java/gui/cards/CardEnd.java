@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardEnd extends JPanel {
 
@@ -95,12 +95,7 @@ public class CardEnd extends JPanel {
 	    leftButton_End.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			root.reset();
-			root.show("file");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    root.reset();
 		}
 	    });
 	    leftButton_End.setIcon(new ImageIcon(
@@ -198,7 +193,7 @@ public class CardEnd extends JPanel {
 	    lblForLogo.setHorizontalAlignment(SwingConstants.RIGHT);
 	    lblForLogo.setForeground(Color.BLACK);
 	    lblForLogo.setFont(lblForLogo.getFont().deriveFont(20f));
-	    lblForLogo.setBounds(0, 0, 250, 170);
+	    lblForLogo.setBounds(0, 0, 250, 127);
 	}
 	return lblForLogo;
     }
@@ -209,7 +204,7 @@ public class CardEnd extends JPanel {
 	    lblLogo.setIcon(new ImageIcon(
 		    CardEnd.class.getResource("/img/openai-logo.png")));
 	    lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblLogo.setBounds(288, 75, 132, 45);
+	    lblLogo.setBounds(285, 71, 132, 45);
 	}
 	return lblLogo;
     }
@@ -220,7 +215,7 @@ public class CardEnd extends JPanel {
 	    lblLogo2.setIcon(
 		    new ImageIcon(CardEnd.class.getResource("/img/azure.png")));
 	    lblLogo2.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblLogo2.setBounds(278, 29, 144, 61);
+	    lblLogo2.setBounds(275, 11, 144, 61);
 	}
 	return lblLogo2;
     }

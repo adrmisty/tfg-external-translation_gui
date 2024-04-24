@@ -1,5 +1,6 @@
 package main.java.logic.translation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -9,6 +10,9 @@ import main.java.logic.file.FileManager;
 import main.java.logic.translation.mode.AutoTranslation;
 import main.java.logic.translation.mode.ManualTranslation;
 import main.java.logic.translation.mode.TranslationMode;
+import main.java.util.exception.PropertiesException;
+import main.java.util.exception.ResourceException;
+import main.java.util.exception.TranslationException;
 
 /**
  * Translates a given input .properties file into another one in the specified
@@ -41,20 +45,23 @@ public class Translator {
      * Creates a generic translator.
      * 
      * @param messages localization settings chosen by the user @ in case of I/O
-     * issues with writing to file
+     *                 issues with writing to file
+     * 
+     * @throws ResourceException when resources are not found or
+     *                           incorrectly-formatted
      */
-    public Translator(ResourceBundle messages) {
+    public Translator(ResourceBundle messages) throws ResourceException {
 	manager = new FileManager(messages); // Results file
-	// speech = new Speech(); // TTS
 	reset(); // Initialization
     }
 
     /**
      * Sets automatic translation mode.
      * 
-     * @ with problems creating the API access service
+     * @throws ResourceException in case API access is not possible due to
+     *                           missing or incorrect resources
      */
-    public void setAutoMode() {
+    public void setAutoMode() throws ResourceException {
 	if (auto == null) {
 	    auto = new AutoTranslation(manager.getSourceFile());
 	}
@@ -91,9 +98,10 @@ public class Translator {
      * Translates a source file, according to the specified translation mode,
      * into a given target language (can be more than 1! - and a maximum of 3).
      * 
-     * @ in case of translation problems
+     * @throws TranslationException specifically caused by issues with automatic
+     *                              translation (api and database access)
      */
-    public void translateAll() {
+    public void translateAll() throws TranslationException {
 
 	boolean automatic = (mode instanceof AutoTranslation);
 	for (String language : this.targetLanguages) {
@@ -114,9 +122,18 @@ public class Translator {
      * thrown. Otherwise, the file is parsed and its relevant information saved
      * for further processing.
      * 
+     * @throws PropertiesException if the .properties file deviates from the
+     *                             expected format, including issues like
+     *                             invalid file name format or incorrect content
+     * 
+     * @throws IOException         when there are issues encountered during the
+     *                             process of reading from or writing to a file,
+     *                             such as file not found, permission denied, or
+     *                             disk full errors
+     * 
      * @ if file is not format-compliant
      */
-    public void input() {
+    public void input() throws PropertiesException, IOException {
 	manager.input();
     }
 
@@ -145,9 +162,17 @@ public class Translator {
      * review file, they are copied onto the new path. Otherwise, results are
      * written for the first time in their specified file path.
      * 
-     * @ in case of issue writing to file
+     * @throws PropertiesException if the .properties file deviates from the
+     *                             expected format, including issues like
+     *                             invalid file name format or incorrect content
+     * 
+     * @throws IOException         when there are issues encountered during the
+     *                             process of reading from or writing to a file,
+     *                             such as file not found, permission denied, or
+     *                             disk full errors
+     * 
      */
-    public void saveAll() {
+    public void saveAll() throws IOException, PropertiesException {
 	manager.saveAll();
     }
 
@@ -157,9 +182,12 @@ public class Translator {
      * edited and reviewed by the user.
      * 
      * @return list of paths to all temporary files @ in case of issue writing
-     * to file
+     *         to file
+     * 
+     * @throws IOException either IO or ResultsException, when impossible to
+     *                     save/review results
      */
-    public List<String> review() {
+    public List<String> review() throws IOException {
 	return manager.review();
     }
 
@@ -179,8 +207,6 @@ public class Translator {
     /**
      * Resets all remaining file-related information, to [re-]start the
      * translation process. [Optionally: remove everything from the DB]
-     * 
-     * @ in case of issue with DB
      */
     public void reset() {
 	if (mode != null) {

@@ -5,8 +5,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * [UTILITY CLASS]

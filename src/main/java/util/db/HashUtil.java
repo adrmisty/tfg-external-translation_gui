@@ -1,4 +1,4 @@
-package main.java.logic.util.db;
+package main.java.util.db;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

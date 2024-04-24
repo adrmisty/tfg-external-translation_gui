@@ -2,7 +2,7 @@ package main.java.logic.translation.api;
 
 import java.util.Properties;
 
-import main.java.logic.util.exception.TranslationException;
+import main.java.util.exception.TranslationException;
 
 /**
  * Interface for API access aimed at automatic translation.

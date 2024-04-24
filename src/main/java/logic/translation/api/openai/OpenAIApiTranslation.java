@@ -12,10 +12,11 @@ import com.theokanning.openai.service.OpenAiService;
 
 import main.java.logic.translation.api.ApiRequestBuilder;
 import main.java.logic.translation.api.ApiTranslation;
-import main.java.logic.util.exception.PropertiesException;
-import main.java.logic.util.exception.TranslationException;
-import main.java.logic.util.properties.PropertiesUtil;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.PropertiesException;
+import main.java.util.exception.ResourceException;
+import main.java.util.exception.TranslationException;
+import main.java.util.properties.PropertiesUtil;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * Provides access to OpenAI'S ChatCompletions API in order to request the
@@ -37,9 +38,14 @@ public class OpenAIApiTranslation implements ApiTranslation {
      * Creates an ApiTranslation object aimed to manage requests to the
      * ChatCompletionsAPI.
      * 
-     * @throws PropertiesException
+     * @throws PropertiesException (extending ResourceException) in case api
+     *                             settings provided in program properties are
+     *                             not valid
+     * 
+     * @throws ResourceException   in case API key necessary for OpenAI use is
+     *                             not found
      */
-    public OpenAIApiTranslation() {
+    public OpenAIApiTranslation() throws ResourceException {
 	service = new OpenAiService(ResourceLoader.getApiKey(),
 		Duration.ofSeconds(TIMEOUT));
 	apiReq = new OpenAIApiRequestBuilder();
@@ -70,7 +76,7 @@ public class OpenAIApiTranslation implements ApiTranslation {
      * @param targetLang target language that the user wishes to translate to
      * 
      * @return prompt: string containing all texts to translate @ in case of
-     * empty properties or API error
+     *         empty properties or API error
      */
     private List<ChatMessage> getRequests(Properties properties,
 	    String targetLang) throws TranslationException {

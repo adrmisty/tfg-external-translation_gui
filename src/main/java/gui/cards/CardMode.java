@@ -31,8 +31,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardMode extends JPanel {
 
@@ -91,7 +91,7 @@ public class CardMode extends JPanel {
 	revalidate();
     }
 
-    private void setLanguageAndMode() throws Exception {
+    private void setLanguageAndMode() {
 	if (btnManual_Mode.isSelected() && selectedLanguages.size() > 1) {
 	    selectedLanguages.remove(0);
 	}
@@ -130,7 +130,11 @@ public class CardMode extends JPanel {
     }
 
     private void changeMaxLangs() {
-	maxLangs = (maxLangs == 3 ? 1 : 3);
+	if (btnAutomatic_Mode.isSelected()) {
+	    maxLangs = 3;
+	} else {
+	    maxLangs = 1;
+	}
 	changeMaxLangsText();
     }
 
@@ -230,11 +234,7 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    resetSelections(btnAutomatic_Mode, btnManual_Mode);
-		    try {
-			root.setMode(null);
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    root.setMode(null);
 		}
 	    });
 	    btnAutomatic_Mode.setFont(ResourceLoader.getFont().deriveFont(20f));
@@ -449,12 +449,8 @@ public class CardMode extends JPanel {
 	    btnBack_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			reset();
-			root.show("file");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    reset();
+		    root.show("file");
 		}
 	    });
 	    btnBack_Mode.setIcon(new ImageIcon(
@@ -474,15 +470,11 @@ public class CardMode extends JPanel {
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			setLanguageAndMode();
-			if (btnAutomatic_Mode.isSelected()) {
-			    root.show("automode");
-			} else {
-			    root.show("manual");
-			}
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
+		    setLanguageAndMode();
+		    if (btnAutomatic_Mode.isSelected()) {
+			root.show("automode");
+		    } else {
+			root.show("manual");
 		    }
 		}
 	    });

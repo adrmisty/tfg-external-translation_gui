@@ -26,7 +26,6 @@ public interface ApiRequestBuilder {
      * @param targetLang language to which user is translating
      * @return list of chat messages (role: user -> content: prompt of the
      *         translation command)
-     * @throws Exception
      */
     public List<ChatMessage> buildRequests(Properties properties,
 	    String targetLang);

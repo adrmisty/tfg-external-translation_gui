@@ -17,9 +17,9 @@ import com.microsoft.azure.cognitiveservices.vision.computervision.ComputerVisio
 import com.microsoft.azure.cognitiveservices.vision.computervision.models.ImageDescription;
 
 import main.java.logic.image.ApiVision;
-import main.java.logic.util.exception.ImageException;
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ImageException;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * API access for image description functionality provided by Computer Vision
@@ -38,11 +38,15 @@ public class AzureApiVision implements ApiVision {
     private List<File> invalidFiles = new ArrayList<>();
 
     public AzureApiVision() throws ResourceException {
-	ComputerVisionClient azureClient = ComputerVisionManager
-		.authenticate(ResourceLoader.getAzureVisionApiKey())
-		.withEndpoint(ResourceLoader.getAzureVisionEndpoint());
+	try {
+	    ComputerVisionClient azureClient = ComputerVisionManager
+		    .authenticate(ResourceLoader.getAzureVisionApiKey())
+		    .withEndpoint(ResourceLoader.getAzureVisionEndpoint());
+	    this.cv = azureClient.computerVision();
+	} catch (Exception e) {
+	    throw new ResourceException(e.getLocalizedMessage());
+	}
 
-	this.cv = azureClient.computerVision();
     }
 
     @Override
@@ -62,13 +66,18 @@ public class AzureApiVision implements ApiVision {
 	Properties pr = new Properties();
 	String caption;
 	File file;
+	ImageDescription d;
 
 	for (int i = 0; i < files.length; i++) {
 	    file = files[i];
-	    validateImage(file);
-	    ImageDescription d = cv.describeImageInStream(getBytes(file), null);
-	    caption = d.captions().get(0).text();
-	    pr.put("image." + i, caption);
+	    try {
+		validateImage(file);
+		d = cv.describeImageInStream(getBytes(file), null);
+		caption = d.captions().get(0).text();
+		pr.put("image." + i, caption);
+	    } catch (Exception e) {
+		invalidFiles.add(file);
+	    }
 	}
 
 	if (!this.invalidFiles.isEmpty()) {
@@ -93,7 +102,7 @@ public class AzureApiVision implements ApiVision {
 	    int width = image.getWidth();
 	    int height = image.getHeight();
 
-	    if (width < 50 || height > 50) {
+	    if (width < 50 || height < 50) {
 		this.invalidFiles.add(file);
 	    }
 

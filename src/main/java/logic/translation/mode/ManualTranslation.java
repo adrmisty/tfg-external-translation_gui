@@ -3,6 +3,7 @@ package main.java.logic.translation.mode;
 import java.util.Properties;
 
 import main.java.logic.file.TargetFile;
+import main.java.util.exception.TranslationException;
 
 /**
  * Manual translation mode. Virtually does nothing, as user interacts directly
@@ -22,9 +23,10 @@ public class ManualTranslation implements TranslationMode {
      * @param f target file to translate
      * @return content of its source file
      * 
+     * @throws TranslationException not to do with logic, but rather with GUI
      */
     @Override
-    public Properties translate(TargetFile f) throws Exception {
+    public Properties translate(TargetFile f) throws TranslationException {
 	f.setResults(null);
 	return f.getContent(); // Nothing to save!
     }

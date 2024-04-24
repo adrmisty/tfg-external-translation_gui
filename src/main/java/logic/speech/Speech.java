@@ -3,7 +3,7 @@ package main.java.logic.speech;
 import java.util.Properties;
 
 import main.java.logic.speech.api.AzureApiSpeech;
-import main.java.logic.util.exception.SpeechException;
+import main.java.util.exception.SpeechException;
 
 /**
  * Manages text to speech with Windows' Cognitive Speech API. This class allows

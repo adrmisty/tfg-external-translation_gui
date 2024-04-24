@@ -8,9 +8,9 @@ import com.theokanning.openai.completion.chat.ChatMessage;
 
 import ai.djl.modality.nlp.bert.BertTokenizer;
 import main.java.logic.translation.api.ApiRequestBuilder;
-import main.java.logic.util.exception.PropertiesException;
-import main.java.logic.util.properties.PropertiesUtil;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.PropertiesException;
+import main.java.util.properties.PropertiesUtil;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * Used to build the set of relevant requests to be submitted to the Chat

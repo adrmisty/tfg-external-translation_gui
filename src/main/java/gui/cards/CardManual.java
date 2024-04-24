@@ -16,8 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardManual extends JPanel {
 
@@ -70,7 +70,7 @@ public class CardManual extends JPanel {
 	txtLanguage.setText("");
     }
 
-    private boolean getSaveFileChooser() throws Exception {
+    private boolean getSaveFileChooser() {
 	if (root.hasDirectory()) {
 	    return true;
 	}
@@ -114,15 +114,10 @@ public class CardManual extends JPanel {
 	    btnTranslate_Manual.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			root.setMode(fileChooser.getSelectedFile()
-				.getAbsolutePath());
-			root.translate();
-			btnNext_Manual.setEnabled(true);
-		    } catch (Exception e1) {
-			root.showErrorMessage(
-				root.getMessages().getString("error.manual"));
-		    }
+		    root.setMode(
+			    fileChooser.getSelectedFile().getAbsolutePath());
+		    root.translate();
+		    btnNext_Manual.setEnabled(true);
 		}
 	    });
 	    btnTranslate_Manual
@@ -189,11 +184,7 @@ public class CardManual extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    reset();
-		    try {
-			root.show("mode");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    root.show("mode");
 		}
 	    });
 	    btnBack_Manual.setIcon(new ImageIcon(
@@ -238,11 +229,7 @@ public class CardManual extends JPanel {
 	    btnNext_Manual.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			root.show("end");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    root.show("end");
 		}
 	    });
 	    btnNext_Manual.setMnemonic('n');
@@ -271,13 +258,8 @@ public class CardManual extends JPanel {
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			if (getSaveFileChooser()) {
-			    btnTranslate_Manual.setEnabled(true);
-			    btnNext_Manual.setEnabled(true);
-			}
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
+		    if (getSaveFileChooser()) {
+			btnTranslate_Manual.setEnabled(true);
 		    }
 		}
 	    });

@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import javax.swing.UIManager;
 
 import main.java.gui.cards.MainWindow;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.properties.ResourceLoader;
 
 public class TranslationApp {
 
@@ -25,6 +25,10 @@ public class TranslationApp {
 			    "com.formdev.flatlaf.themes.FlatMacLightLaf");
 		    MainWindow frame = new MainWindow();
 		    frame.setVisible(true);
+
+		    // Uncaught exceptions
+		    // The rest are explicitly caught and handled in
+		    // MainWindow.java
 		} catch (Exception e1) {
 		    // Log error
 		    Logger.getLogger(ResourceLoader.class.getName())

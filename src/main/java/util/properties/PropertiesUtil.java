@@ -1,4 +1,4 @@
-package main.java.logic.util.properties;
+package main.java.util.properties;
 
 import java.util.ArrayList;
 import java.util.Collection;

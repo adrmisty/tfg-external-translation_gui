@@ -1,4 +1,4 @@
-package main.java.logic.util.properties;
+package main.java.util.properties;
 
 import java.awt.Font;
 import java.io.BufferedReader;
@@ -21,8 +21,8 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.logic.util.exception.PropertiesException;
-import main.java.logic.util.exception.ResourceException;
+import main.java.util.exception.PropertiesException;
+import main.java.util.exception.ResourceException;
 
 /**
  * Access to resources of interest to the app and its GUI (both related to files

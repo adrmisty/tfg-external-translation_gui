@@ -5,9 +5,9 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.logic.util.exception.PropertiesException;
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.PropertiesException;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * Abstraction of a source localization file so that its information is readily

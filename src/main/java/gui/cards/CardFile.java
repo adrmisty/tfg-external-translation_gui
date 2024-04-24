@@ -27,8 +27,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardFile extends JPanel {
 
@@ -72,7 +72,7 @@ public class CardFile extends JPanel {
 	this.add(getDownPanel_File());
     }
 
-    public void reset() throws Exception {
+    public void reset() {
 	root.reset();
 	txtFilePath.setText("");
 	lblDndWarning.setVisible(false);
@@ -190,12 +190,8 @@ public class CardFile extends JPanel {
 	    btnBack_File.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			reset();
-			root.show("main");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    reset();
+		    root.show("main");
 		}
 	    });
 	    btnBack_File.setIcon(new ImageIcon(
@@ -215,14 +211,8 @@ public class CardFile extends JPanel {
 	    btnNext_File.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
-		    try {
-			root.inputFile();
-			root.show("mode");
-		    } catch (Exception ex) {
-			root.showErrorMessage(ex,
-				root.getMessages().getString("error.file"));
-		    }
+		    root.inputFile();
+		    root.show("mode");
 		}
 	    });
 	    btnNext_File.setMnemonic('n');
@@ -290,11 +280,7 @@ public class CardFile extends JPanel {
 		    e.printStackTrace();
 		} finally {
 		    event.dropComplete(complete);
-		    try {
-			getLblDndWarning().setVisible(!savedDroppedFile);
-		    } catch (ResourceException e) {
-			root.showErrorMessage(e.getMessage());
-		    }
+		    getLblDndWarning().setVisible(!savedDroppedFile);
 		}
 	    }
 	}
@@ -328,7 +314,7 @@ public class CardFile extends JPanel {
 	return txtFilePath;
     }
 
-    private JFileChooser getFileChooser() throws Exception {
+    private JFileChooser getFileChooser() {
 	fileChooser = new JFileChooser("D:");
 
 	FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -359,11 +345,7 @@ public class CardFile extends JPanel {
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			getFileChooser();
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    getFileChooser();
 		}
 	    });
 	    btnBrowse.setMnemonic('s');

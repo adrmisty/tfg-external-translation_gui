@@ -8,6 +8,8 @@ import java.util.ResourceBundle;
 import javax.swing.JMenuItem;
 
 import main.java.gui.cards.MainWindow;
+import main.java.util.exception.LanguageException;
+import main.java.util.exception.ResourceException;
 
 public class NumberedJMenuItem extends JMenuItem {
     private static final long serialVersionUID = 1L;
@@ -25,9 +27,12 @@ public class NumberedJMenuItem extends JMenuItem {
 	    public void actionPerformed(ActionEvent e) {
 		try {
 		    root.initWindow(new Locale(language_code));
-		} catch (Exception e1) {
+		} catch (ResourceException re) {
+		    // Handle exception:
+		    // Localization into this language is not available atm
+		    // Show error message + go on with application, no drama
 		    root.showErrorMessage(
-			    messages.getString("error.localization"));
+			    new LanguageException(messages, language), false);
 		}
 	    }
 	});

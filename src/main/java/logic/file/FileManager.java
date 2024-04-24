@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.logic.util.exception.PropertiesException;
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.PropertiesUtil;
+import main.java.util.exception.PropertiesException;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.PropertiesUtil;
 
 /**
  * Manager for the translation of one source file into 1 or more target files.

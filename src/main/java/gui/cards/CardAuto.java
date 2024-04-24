@@ -18,8 +18,8 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import main.java.gui.util.BusyPanel;
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardAuto extends JPanel {
 
@@ -74,21 +74,17 @@ public class CardAuto extends JPanel {
 	this.translationTask = new Thread(new Runnable() {
 	    @Override
 	    public void run() {
-		try {
-		    // Task execution (captioning + translation)
-		    root.translate();
-		    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		// Task execution (captioning + translation)
+		root.translate();
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-		    // Task finished, stop the busy panel
-		    SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-			    stopLoading();
-			}
-		    });
-		} catch (Exception ex) {
-		    root.showErrorMessage(ex.getMessage());
-		}
+		// Task finished, stop the busy panel
+		SwingUtilities.invokeLater(new Runnable() {
+		    @Override
+		    public void run() {
+			stopLoading();
+		    }
+		});
 	    }
 	});
     }
@@ -169,14 +165,9 @@ public class CardAuto extends JPanel {
 	    btnSave_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			if (getSaveFileChooser()) {
-			    root.saveAll();
-			    root.show("end");
-			}
-		    } catch (Exception e1) {
-			root.showErrorMessage(
-				root.getMessages().getString("error.save"));
+		    if (getSaveFileChooser()) {
+			root.saveAll();
+			root.show("end");
 		    }
 		}
 
@@ -242,12 +233,8 @@ public class CardAuto extends JPanel {
 	    btnBack_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			reset();
-			root.show("mode");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    reset();
+		    root.show("mode");
 		}
 	    });
 	    btnBack_Auto.setIcon(new ImageIcon(
@@ -280,12 +267,7 @@ public class CardAuto extends JPanel {
 	    btnReview_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			root.review();
-		    } catch (Exception e1) {
-			root.showErrorMessage(
-				root.getMessages().getString("error.review"));
-		    }
+		    root.review();
 		}
 	    });
 	    btnReview_Auto.setIcon(new ImageIcon(

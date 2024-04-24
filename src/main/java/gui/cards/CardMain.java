@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ResourceException;
+import main.java.util.properties.ResourceLoader;
 
 public class CardMain extends JPanel {
 
@@ -89,11 +89,7 @@ public class CardMain extends JPanel {
 	    leftButton.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    try {
-			root.show("file");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    root.show("file");
 		}
 	    });
 	    leftButton.setMnemonic('s');
@@ -112,11 +108,7 @@ public class CardMain extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    // Open information window
-		    try {
-			root.show("info");
-		    } catch (Exception e1) {
-			root.showErrorMessage(e1.getMessage());
-		    }
+		    root.show("info");
 		}
 	    });
 	    rightButton.setFont(ResourceLoader.getFont().deriveFont(20f));

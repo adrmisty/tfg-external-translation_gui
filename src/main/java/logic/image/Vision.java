@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import main.java.logic.image.api.AzureApiVision;
-import main.java.logic.util.exception.ImageException;
-import main.java.logic.util.exception.ResourceException;
+import main.java.util.exception.ImageException;
+import main.java.util.exception.ResourceException;
 
 /**
  * Manages automatic image description with Azure Cognitive Services Computer

@@ -9,8 +9,8 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import main.java.logic.util.exception.PropertiesException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.PropertiesException;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * Abstraction of a target localization file where translations will be written.

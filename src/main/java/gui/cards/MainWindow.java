@@ -4,6 +4,7 @@ import java.awt.CardLayout;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -14,16 +15,21 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import main.java.gui.util.ExceptionHandler;
 import main.java.gui.util.IDE;
 import main.java.gui.util.NumberedJMenuItem;
 import main.java.logic.image.Vision;
 import main.java.logic.translation.Translator;
-import main.java.logic.util.exception.ImageException;
-import main.java.logic.util.exception.ResourceException;
-import main.java.logic.util.properties.ResourceLoader;
+import main.java.util.exception.ImageException;
+import main.java.util.exception.LanguageException;
+import main.java.util.exception.PropertiesException;
+import main.java.util.exception.ResourceException;
+import main.java.util.exception.ResultsException;
+import main.java.util.exception.TranslationException;
+import main.java.util.exception.UIException;
+import main.java.util.properties.ResourceLoader;
 
 /**
  * Main Window of the application, which consists of several different views
@@ -40,7 +46,7 @@ public class MainWindow extends JFrame {
     private Translator translator;
 
     // Image description
-    private Vision vision = new Vision();
+    private Vision vision;
 
     // Locale
     private ResourceBundle messages;
@@ -71,9 +77,11 @@ public class MainWindow extends JFrame {
     /**
      * Create the frame.
      * 
+     * @throws ResourceException
+     * 
      * @
      */
-    public MainWindow() {
+    public MainWindow() throws ResourceException {
 	setIconImage(Toolkit.getDefaultToolkit()
 		.getImage(MainWindow.class.getResource("/img/icon.png")));
 
@@ -101,8 +109,9 @@ public class MainWindow extends JFrame {
      * 
      * @param locale specified by user or, in case of first launch, system's
      *               default @ in case of localization error
+     * @throws ResourceException
      */
-    public void initWindow(Locale locale) {
+    public void initWindow(Locale locale) throws ResourceException {
 	contentPane.removeAll();
 	cardMain = null;
 	cardInfo = null;
@@ -115,7 +124,11 @@ public class MainWindow extends JFrame {
 	mnLanguage = null;
 	menuBar = null;
 
+	// Localization
 	localize(locale);
+
+	// Image description
+	this.vision = new Vision();
 
 	// Card container
 	contentPane.add(getCardMain());
@@ -129,6 +142,7 @@ public class MainWindow extends JFrame {
 	contentPane.add(getCardEnd());
 	getMnLanguage();
 
+	cardMode.reset();
 	currentCard = cardMain;
 	validate();
 	repaint();
@@ -138,10 +152,11 @@ public class MainWindow extends JFrame {
      * Shows a new card in the main window.
      * 
      * @param String identificating the new card to show @ if the card to show
-     * is not recognised
+     *               is not recognised
      */
     public void show(String newCard) {
 	currentCard.setVisible(false);
+	mnLanguage.setVisible(false);
 
 	switch (newCard) {
 	case "main":
@@ -151,68 +166,51 @@ public class MainWindow extends JFrame {
 	    break;
 	case "file":
 	    currentCard = cardFile;
-	    mnLanguage.setVisible(false);
 	    break;
 	case "info":
 	    currentCard = cardInfo;
-	    mnLanguage.setVisible(false);
 	    break;
 	case "image":
 	    currentCard = cardImage;
-	    mnLanguage.setVisible(false);
 	    break;
 	case "mode":
 	    currentCard = cardMode;
-	    mnLanguage.setVisible(false);
 	    break;
 	case "automode":
 	    currentCard = cardAutoMode;
-	    mnLanguage.setVisible(false);
 	    break;
 	case "manual":
-	    currentCard = cardManual;
 	    cardManual.reset();
 	    cardManual.setLanguage(this.languages.get(0));
-	    mnLanguage.setVisible(false);
+	    currentCard = cardManual;
 	    break;
 	case "auto":
 	    currentCard = cardAuto;
 	    // Start running automatic translation task
-	    mnLanguage.setVisible(false);
 	    cardAuto.run();
 	    break;
 	case "end":
-	    currentCard = cardEnd;
 	    // Set name to be shown on screen
 	    cardEnd.setSavedFileName(translator.getSavedDirectory());
-	    mnLanguage.setVisible(false);
+	    currentCard = cardEnd;
 	    break;
 	default:
-	    showErrorMessage("Card not available.");
+	    // Unrecoverable
+	    ExceptionHandler.handle(this, new UIException(messages), true);
 	}
 
 	currentCard.setVisible(true);
     }
 
     /**
-     * Shows an error message on the screen explaining the malfunction.
+     * Handles the caught exception, depending on its type and the program's
+     * locale, as well as whether the application should be exited or not.
      * 
-     * @param message: explanation of the error
+     * @param exception object representing caught exception
+     * @param exit      boolean true if applicatin should be exited, or not
      */
-    public void showErrorMessage(String message) {
-	JOptionPane.showMessageDialog(this, message, "FileLingual",
-		JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
-     * Shows an error message on the screen explaining the malfunction.
-     * 
-     * @param additional message to add to error visualization
-     * @param Exception  thrown by a lower-level function
-     */
-    public void showErrorMessage(Exception e, String message) {
-	JOptionPane.showMessageDialog(this, message + " " + e.getMessage(),
-		"FileLingual", JOptionPane.ERROR_MESSAGE);
+    public void showErrorMessage(Exception e, boolean exit) {
+	ExceptionHandler.handle(this, e, exit);
     }
 
     /*
@@ -317,13 +315,26 @@ public class MainWindow extends JFrame {
 	for (int i = 0; i < items.length; i++) {
 	    String code = items[i].split(" ")[1];
 	    menuItems.add(new NumberedJMenuItem(this, messages, items[i],
-		    code.substring(1, code.length())));
+		    code.substring(1, code.length() - 1)));
 	    mnLanguage.add(menuItems.get(i));
 	}
     }
 
     public void localize(Locale locale) {
-	this.messages = ResourceBundle.getBundle("Messages", locale);
+	ResourceBundle retrieved = ResourceBundle.getBundle("Messages", locale);
+
+	// Not available locale!
+	if (!(locale.equals(Locale.getDefault()))
+		&& (retrieved.getLocale().equals(Locale.getDefault()))) {
+	    this.showErrorMessage(new LanguageException(messages, locale),
+		    false);
+	} else if (retrieved == null) {
+	    this.showErrorMessage(new ResourceException(messages,
+		    "Messages" + locale.toLanguageTag()), true);
+
+	}
+
+	this.messages = retrieved;
 	this.translator = new Translator(this.messages);
     }
 
@@ -350,11 +361,17 @@ public class MainWindow extends JFrame {
 
     /**
      * Saves all translated files to their respective destinations.
-     * 
-     * @ in case of issue saving to file
      */
     public void saveAll() {
-	translator.saveAll();
+
+	try {
+	    translator.saveAll();
+	} catch (PropertiesException pe) {
+	    this.showErrorMessage(new PropertiesException(messages,
+		    pe.getFilename(), pe.isContentRelated()), true);
+	} catch (IOException io) {
+	    this.showErrorMessage(io, false);
+	}
     }
 
     /**
@@ -368,23 +385,36 @@ public class MainWindow extends JFrame {
 		translator.include(vision.captions());
 	    }
 	} catch (ImageException ie) {
-
+	    // Pass that exception to localized handler
+	    this.showErrorMessage(
+		    new ImageException(messages, ie.getInvalidFiles()), false);
 	}
     }
 
     /**
      * Carries out all translations (+ image description).
      * 
-     * @ in case of issues with - translation api - vision api - writing to/from
-     * file
+     * @throws IOException
+     * @throws PropertiesException
+     * @throws TranslationException
      */
     public void translate() {
 	describe();
 
-	translator.translateAll();
-	if (manualMode) { // Manual translation
-	    translator.saveAll();
-	    IDE.open(contentPane, translator.getManualPath());
+	try {
+	    translator.translateAll();
+	    if (manualMode) { // Manual translation
+		translator.saveAll();
+		IDE.open(contentPane, translator.getManualPath());
+	    }
+	} catch (PropertiesException pe) {
+	    this.showErrorMessage(new PropertiesException(messages,
+		    pe.getFilename(), pe.isContentRelated()), true);
+	} catch (IOException io) {
+	    this.showErrorMessage(io, false);
+	} catch (TranslationException te) {
+	    this.showErrorMessage(
+		    new TranslationException(messages, te.isManual()), false);
 	}
     }
 
@@ -396,12 +426,19 @@ public class MainWindow extends JFrame {
      */
     public void setLanguageAndMode(List<String> languages, boolean isManual) {
 	this.languages = languages;
-	if (!isManual) {
-	    // Automatic translation
-	    cardAutoMode.setTargetLanguages(languages);
-	} else {
-	    // Manual translation
-	    translator.setTargetLanguages(languages, null);
+	try {
+	    if (!isManual) {
+		// Automatic translation
+		cardAutoMode.setTargetLanguages(languages);
+	    } else {
+		// Manual translation
+		translator.setTargetLanguages(languages, null);
+	    }
+	} catch (ResourceException re) {
+	    // Unrecoverable
+	    this.showErrorMessage(
+		    new ResourceException(messages, re.getResourceName()),
+		    true);
 	}
     }
 
@@ -428,11 +465,16 @@ public class MainWindow extends JFrame {
     /**
      * Inputs file defined in a given source path, to be processed and checked
      * for mistakes.
-     * 
-     * @ in case the file is not correct
      */
     public void inputFile() {
-	translator.input();
+	try {
+	    translator.input();
+	} catch (PropertiesException pe) {
+	    this.showErrorMessage(new PropertiesException(messages,
+		    pe.getFilename(), pe.isContentRelated()), true);
+	} catch (IOException io) {
+	    this.showErrorMessage(io, false);
+	}
     }
 
     /**
@@ -451,25 +493,26 @@ public class MainWindow extends JFrame {
 
     /**
      * Resets everything to their initial, blank state; so that translation
-     * process can be carriedo ut again.
-     * 
-     * @ in case of issues resetting
+     * process can be carried out again.
      */
     public void reset() {
 	translator.reset();
-	cardMode.reset();
 	manualMode = false;
+	initWindow(Locale.getDefault());
+	show("main");
     }
 
     /**
      * Reviews all automatically-translated files (opens them in
      * system-dependent IDE).
-     * 
-     * @
      */
     public void review() {
-	for (String path : translator.review()) {
-	    IDE.open(contentPane, path);
+	try {
+	    for (String path : translator.review()) {
+		IDE.open(contentPane, path);
+	    }
+	} catch (IOException io) {
+	    this.showErrorMessage(new ResultsException(messages, true), false);
 	}
     }
 
@@ -477,8 +520,9 @@ public class MainWindow extends JFrame {
      * Sets translation mode (either manual or automatic).
      * 
      * @param path @
+     * @throws ResourceException
      */
-    public void setMode(String path) {
+    public void setMode(String path) throws ResourceException {
 	translator.to(path);
 	if (path == null) {
 	    translator.setAutoMode();

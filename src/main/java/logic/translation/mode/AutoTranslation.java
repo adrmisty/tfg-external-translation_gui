@@ -8,8 +8,9 @@ import main.java.logic.file.TargetFile;
 import main.java.logic.translation.api.ApiTranslation;
 import main.java.logic.translation.api.openai.OpenAIApiTranslation;
 import main.java.logic.translation.cache.TranslationCache;
-import main.java.logic.util.exception.TranslationException;
-import main.java.logic.util.properties.PropertiesUtil;
+import main.java.util.exception.ResourceException;
+import main.java.util.exception.TranslationException;
+import main.java.util.properties.PropertiesUtil;
 
 /**
  * Automatic translation mode (translates content to a specific language via
@@ -29,7 +30,7 @@ public class AutoTranslation implements TranslationMode {
     // Current
     private TargetFile target;
 
-    public AutoTranslation(SourceFile source) {
+    public AutoTranslation(SourceFile source) throws ResourceException {
 	this.api = new OpenAIApiTranslation(); // API access
 	this.cache = new TranslationCache(); // Translation database
 	this.source = source;
@@ -51,10 +52,11 @@ public class AutoTranslation implements TranslationMode {
      * @param target target file to translate
      * @return results of automatic translation
      * 
-     * @ if there is an error with API access
+     * @throws TranslationException as a result of issues with translation API
+     *                              access, timeouts, interruptions
      */
     @Override
-    public Properties translate(TargetFile target) {
+    public Properties translate(TargetFile target) throws TranslationException {
 	// New current target file
 	this.target = target;
 
@@ -87,11 +89,11 @@ public class AutoTranslation implements TranslationMode {
      * If any, saves API results onto translation cache (if not found in the
      * database!).
      * 
-     * @throws TranslationException
+     * @throws TranslationException as a result of issues with translation API
+     *                              access, timeouts, interruptions
      * 
-     * @ in case of issue with DB
      */
-    private void toCache() {
+    private void toCache() throws TranslationException {
 	if (api.getResults() != null) {
 	    cache.storeAll(api.getResults(), target.getContent(),
 		    target.getTargetCode());
@@ -102,9 +104,10 @@ public class AutoTranslation implements TranslationMode {
      * Retrieves those values already translated and present in the database,
      * and sets the group of properties to be translated and sent to the API.
      * 
-     * @ in case of issue with DB
+     * @throws TranslationException in case of error when accessing the database
+     *                              or retrieving past translations
      */
-    private void fromCache() {
+    private void fromCache() throws TranslationException {
 	cache.match(source.getContent(), target.getTargetCode());
     }
 
@@ -115,7 +118,10 @@ public class AutoTranslation implements TranslationMode {
      * 
      * @param language format "English, United States"
      * @return combined results (cache, API...) @ in case of error with API
-     * translation
+     *         translation
+     * 
+     * @throws TranslationException as a result of issues with translation API
+     *                              access, timeouts, interruptions
      */
     private Properties getAutoResults(String language)
 	    throws TranslationException {
