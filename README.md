@@ -7,10 +7,6 @@ _externalized translation service for programs_, using the large language model 
 Developed by **Adriana Rodríguez Flórez**, undergraduate student at the BSc in Computer Science
 and Software Engineering at the University of Oviedo (Asturias, Spain).
 
-
-### (1) 💡 To Do: código
-* GUI: Set alt texts in application.
-
 ### (2) 💡 To Do: test
 * Unit tests: tests de parámetros (correctos/incorrectos), manejos de excepciones...
 * Usability tests.
