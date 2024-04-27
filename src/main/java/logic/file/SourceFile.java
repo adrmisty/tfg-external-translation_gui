@@ -23,7 +23,7 @@ public class SourceFile {
 
     // Source file
     private String sourcePath;
-    private String sourceLanguage; // Source language ("Bulgarian, Bulgaria")
+    private String sourceLanguage; // Display language ("Bulgarian, Bulgaria")
     private Properties content; // Complete information in file
     private String bundleName; // Bundle name for the app's .properties files
 
@@ -104,9 +104,9 @@ public class SourceFile {
     }
 
     /**
-     * @return the source language of this file
+     * @return the source language of this file (its code!)
      */
-    public String getSourceLanguage() {
+    public String getLanguage() {
 	return sourceLanguage;
     }
 

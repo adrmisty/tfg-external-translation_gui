@@ -8,7 +8,6 @@ import com.microsoft.cognitiveservices.speech.SpeechSynthesizer;
 
 import main.java.logic.speech.ApiSpeech;
 import main.java.util.exception.ResourceException;
-import main.java.util.exception.SpeechException;
 import main.java.util.properties.PropertiesUtil;
 import main.java.util.properties.ResourceLoader;
 
@@ -33,30 +32,30 @@ public class AzureApiSpeech implements ApiSpeech {
     }
 
     @Override
-    public void speak(String language, Properties properties)
-	    throws SpeechException {
-	try {
-	    config(language);
-	    List<String> values = PropertiesUtil.getValues(properties);
-	    for (String v : values) {
-		synth.SpeakText(v);
-		Thread.sleep(1000);
-	    }
-	    stop();
-	} catch (InterruptedException e) {
-	    throw new SpeechException();
+    public void speak(String language, Properties properties) {
+	config(language);
+	List<String> values = PropertiesUtil.getValues(properties);
+	for (String v : values) {
+	    synth.SpeakText(v);
 	}
     }
 
     @Override
     public void stop() {
-	synth.StopSpeakingAsync();
-	synth.close();
+	try {
+	    synth.StopSpeakingAsync();
+	} catch (Exception e) {
+	    // nothing
+	} finally {
+	    synth.close();
+	}
     }
 
     // Synthesizer config settings for language
     private void config(String language) {
-	this.speech.setSpeechSynthesisLanguage(language);
+	// azure documentation marks languages with hyphen "-"
+	this.speech.setSpeechSynthesisLanguage(language.replace("_", "-"));
+
 	this.synth = new SpeechSynthesizer(speech);
     }
 

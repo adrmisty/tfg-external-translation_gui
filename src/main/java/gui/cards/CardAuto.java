@@ -60,16 +60,6 @@ public class CardAuto extends JPanel {
 	this.add(getDownPanel_Auto());
 	setBounds(100, 100, 587, 420);
 
-	// Text to speech thread
-	/*
-	 * this.speechTask = new Thread(new Runnable() {
-	 * 
-	 * @Override public void run() { try { // Task execution
-	 * btnStop.setEnabled(true); // root.textToSpeech(true); //
-	 * root.textToSpeech(false); } catch (Exception ex) {
-	 * root.showErrorMessage(ex.getMessage()); } } });
-	 */
-
 	// Translation task
 	this.translationTask = new Thread(new Runnable() {
 	    @Override

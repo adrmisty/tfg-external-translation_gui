@@ -20,13 +20,16 @@ import javax.swing.JPanel;
 import main.java.gui.util.ExceptionHandler;
 import main.java.gui.util.IDE;
 import main.java.gui.util.NumberedJMenuItem;
+import main.java.logic.file.SourceFile;
 import main.java.logic.image.Vision;
+import main.java.logic.speech.Speech;
 import main.java.logic.translation.Translator;
 import main.java.util.exception.ImageException;
 import main.java.util.exception.LanguageException;
 import main.java.util.exception.PropertiesException;
 import main.java.util.exception.ResourceException;
 import main.java.util.exception.ResultsException;
+import main.java.util.exception.SpeechException;
 import main.java.util.exception.TranslationException;
 import main.java.util.exception.UIException;
 import main.java.util.properties.ResourceLoader;
@@ -42,11 +45,12 @@ public class MainWindow extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    // API access for translation
+    /*
+     * ##############################
+     */
     private Translator translator;
-
-    // Image description
     private Vision vision;
+    private Speech speech;
 
     // Locale
     private ResourceBundle messages;
@@ -129,6 +133,7 @@ public class MainWindow extends JFrame {
 
 	// Image description
 	this.vision = new Vision();
+	this.speech = new Speech();
 
 	// Card container
 	contentPane.add(getCardMain());
@@ -425,7 +430,6 @@ public class MainWindow extends JFrame {
      *                  States" @
      */
     public void setLanguageAndMode(List<String> languages, boolean isManual) {
-	this.languages = languages;
 	try {
 	    if (!isManual) {
 		// Automatic translation
@@ -465,16 +469,20 @@ public class MainWindow extends JFrame {
     /**
      * Inputs file defined in a given source path, to be processed and checked
      * for mistakes.
+     * 
+     * @return boolean true if file is accepted by the translator
      */
-    public void inputFile() {
+    public boolean inputFile() {
 	try {
 	    translator.input();
+	    return true;
 	} catch (PropertiesException pe) {
 	    this.showErrorMessage(new PropertiesException(messages,
-		    pe.getFilename(), pe.isContentRelated()), true);
+		    pe.getFilename(), pe.isContentRelated()), false);
 	} catch (IOException io) {
 	    this.showErrorMessage(io, false);
 	}
+	return false;
     }
 
     /**
@@ -514,6 +522,32 @@ public class MainWindow extends JFrame {
 	} catch (IOException io) {
 	    this.showErrorMessage(new ResultsException(messages, true), false);
 	}
+    }
+
+    /**
+     * Reads the source file that has been input to the system.
+     * 
+     * @param read whether to read or to stop reading
+     * @return boolean true if executed normally, false if an exception arises
+     */
+    public boolean readInputFile(boolean read) {
+	if (!read) {
+	    speech.stop();
+	}
+	SourceFile f = translator.getSource();
+
+	// To read or to stop
+	// Automatically stops if an exception arises
+	if (read) {
+	    try {
+		speech.speak(f.getLanguage(), f.getContent());
+	    } catch (SpeechException e) {
+		// this.showErrorMessage(new SpeechException(messages), false);
+		return false;
+	    }
+	}
+	return true;
+
     }
 
     /**

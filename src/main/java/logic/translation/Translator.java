@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import main.java.logic.file.FileManager;
+import main.java.logic.file.SourceFile;
 import main.java.logic.translation.mode.AutoTranslation;
 import main.java.logic.translation.mode.ManualTranslation;
 import main.java.logic.translation.mode.TranslationMode;
@@ -229,6 +230,13 @@ public class Translator {
      */
     public String getSavedDirectory() {
 	return manager.getTargetDirectory();
+    }
+
+    /**
+     * @return source file that has been input to the translator
+     */
+    public SourceFile getSource() {
+	return manager.getSourceFile();
     }
 
     /**

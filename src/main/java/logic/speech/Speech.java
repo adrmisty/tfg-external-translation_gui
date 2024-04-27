@@ -19,7 +19,7 @@ public class Speech {
     private ApiSpeech apiSpeech;
 
     // Localize
-    public Speech() throws Exception {
+    public Speech() {
 	this.apiSpeech = new AzureApiSpeech();
     }
 
@@ -32,13 +32,21 @@ public class Speech {
      */
     public void speak(String code, Properties properties)
 	    throws SpeechException {
-	apiSpeech.speak(code, properties);
+	try {
+	    apiSpeech.speak(code, properties);
+	} catch (Exception e) {
+	    // due to thread interruption!
+	}
     }
 
     /**
      * Stops the execution of TTS.
      */
     public void stop() {
-	apiSpeech.stop();
+	try {
+	    apiSpeech.stop();
+	} catch (Exception e) {
+	    // nothing!
+	}
     }
 }

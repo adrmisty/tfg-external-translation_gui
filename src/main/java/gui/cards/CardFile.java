@@ -18,12 +18,14 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -34,6 +36,12 @@ public class CardFile extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private MainWindow root;
+
+    /*
+     * Speech
+     */
+    private Thread speechTask;
+    private boolean runSpeech;
 
     /*
      * Panels
@@ -62,6 +70,7 @@ public class CardFile extends JPanel {
     private JButton btnNext_File;
     private JButton btnHelp_File;
     private JLabel lblDndWarning;
+    private JToggleButton btnTts_File;
 
     public CardFile(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -70,6 +79,25 @@ public class CardFile extends JPanel {
 	this.add(getNorthPanel_File());
 	this.add(getCenterPanel_File());
 	this.add(getDownPanel_File());
+
+	// Text-to-speech for source file
+	this.speechTask = createThread();
+
+    }
+
+    public Thread createThread() {
+	return new Thread(new Runnable() {
+	    @Override
+	    public void run() {
+		while (runSpeech) {
+		    setReadingStatus(true);
+		    root.readInputFile(true);
+		    runSpeech = false;
+		}
+		root.readInputFile(false);
+		setReadingStatus(false);
+	    }
+	});
     }
 
     public void reset() {
@@ -77,6 +105,26 @@ public class CardFile extends JPanel {
 	txtFilePath.setText("");
 	lblDndWarning.setVisible(false);
 	btnNext_File.setEnabled(false);
+	btnTts_File.setEnabled(false);
+    }
+
+    private void setReadingStatus(boolean reading) {
+	if (reading) {
+	    changeLblWarning();
+	    changeTtsButton();
+	} else {
+	    lblDndWarning
+		    .setText(root.getMessages().getString("label.file.wrong"));
+	    lblDndWarning.setForeground(new Color(220, 20, 60));
+	    lblDndWarning.setVisible(false);
+	    btnTts_File.setText(root.getMessages().getString("button.tts"));
+	    btnTts_File.setSelected(false);
+	    btnTts_File.setForeground(Color.BLACK);
+	    getLblDndWarning();
+
+	    // Recreate the thread
+	    this.speechTask = createThread();
+	}
     }
 
     private JPanel getNorthPanel_File() throws ResourceException {
@@ -126,6 +174,7 @@ public class CardFile extends JPanel {
 	    centerPanel_File.add(getTxtFilePath());
 	    centerPanel_File.add(getBtnBrowse());
 	    centerPanel_File.add(getLblDndWarning());
+	    centerPanel_File.add(getBtnTts_File());
 	}
 	return centerPanel_File;
     }
@@ -211,7 +260,6 @@ public class CardFile extends JPanel {
 	    btnNext_File.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.inputFile();
 		    root.show("mode");
 		}
 	    });
@@ -266,10 +314,10 @@ public class CardFile extends JPanel {
 			    if (ResourceLoader.getFileExtension(f.getPath())
 				    .get().equals("properties")) {
 
-				root.from(f.getAbsolutePath());
-				txtFilePath.setText(f.getName());
-				btnNext_File.setEnabled(true);
-				savedDroppedFile = true;
+				if (checkInputFile(f.getAbsolutePath(),
+					f.getName())) {
+				    savedDroppedFile = true;
+				}
 
 			    } else {
 				reset();
@@ -305,13 +353,31 @@ public class CardFile extends JPanel {
     private JTextField getTxtFilePath() throws ResourceException {
 	if (txtFilePath == null) {
 	    txtFilePath = new JTextField();
-	    txtFilePath.setBounds(122, 175, 212, 30);
+	    txtFilePath.setBounds(116, 174, 281, 30);
 	    txtFilePath.setHorizontalAlignment(SwingConstants.CENTER);
 	    txtFilePath.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    txtFilePath.setEditable(false);
 	    txtFilePath.setColumns(10);
 	}
 	return txtFilePath;
+    }
+
+    private boolean checkInputFile(String path, String name) {
+	root.from(path);
+	// File accepted by the translator!
+	if (root.inputFile()) {
+
+	    txtFilePath.setText(name);
+	    btnTts_File.setEnabled(true);
+	    btnNext_File.setEnabled(true);
+	    lblDndWarning.setVisible(false);
+	    return true;
+	} else {
+	    btnTts_File.setEnabled(false);
+	    btnNext_File.setEnabled(false);
+	    lblDndWarning.setVisible(true);
+	    return false;
+	}
     }
 
     private JFileChooser getFileChooser() {
@@ -323,13 +389,9 @@ public class CardFile extends JPanel {
 
 	int returnVal = fileChooser.showOpenDialog(this);
 	if (returnVal == JFileChooser.APPROVE_OPTION) {
-	    String path = fileChooser.getSelectedFile().getPath();
+	    String path = fileChooser.getSelectedFile().getAbsolutePath();
 	    String name = fileChooser.getSelectedFile().getName();
-
-	    root.from(path);
-	    txtFilePath.setText(name);
-	    btnNext_File.setEnabled(true);
-	    lblDndWarning.setVisible(false);
+	    checkInputFile(path, name);
 	} else {
 	    btnNext_File.setEnabled(false);
 	}
@@ -341,7 +403,7 @@ public class CardFile extends JPanel {
 	if (btnBrowse == null) {
 	    btnBrowse = new JButton(
 		    root.getMessages().getString("button.browse"));
-	    btnBrowse.setBounds(348, 179, 107, 23);
+	    btnBrowse.setBounds(407, 178, 126, 23);
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -354,15 +416,56 @@ public class CardFile extends JPanel {
 	return btnBrowse;
     }
 
+    private void changeLblWarning() {
+	lblDndWarning.setText(root.getMessages().getString("label.reading"));
+	lblDndWarning.setForeground(Color.decode("#0089d6"));
+	lblDndWarning.setVisible(true);
+	lblDndWarning.setHorizontalAlignment(SwingConstants.RIGHT);
+    }
+
+    private void changeTtsButton() {
+	btnTts_File.setText(root.getMessages().getString("label.stop.reading"));
+	btnTts_File.setForeground(Color.decode("#0089d6"));
+    }
+
     private JLabel getLblDndWarning() throws ResourceException {
 	if (lblDndWarning == null) {
 	    lblDndWarning = new JLabel(
 		    root.getMessages().getString("label.file.wrong"));
 	    lblDndWarning.setForeground(new Color(220, 20, 60));
-	    lblDndWarning.setBounds(122, 215, 333, 14);
+	    lblDndWarning.setBounds(116, 215, 281, 14);
 	    lblDndWarning.setVisible(false);
 	    lblDndWarning.setFont(ResourceLoader.getFont().deriveFont(14f));
 	}
 	return lblDndWarning;
+    }
+
+    private JToggleButton getBtnTts_File() {
+	if (btnTts_File == null) {
+	    btnTts_File = new JToggleButton(
+		    root.getMessages().getString("button.tts"));
+	    btnTts_File.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    AbstractButton abstractButton = (AbstractButton) e
+			    .getSource();
+		    boolean selected = abstractButton.getModel().isSelected();
+		    if (selected) {
+			runSpeech = true;
+			speechTask.start();
+		    } else {
+			runSpeech = false;
+			speechTask.interrupt();
+			root.readInputFile(false);
+			setReadingStatus(false);
+		    }
+		}
+	    });
+	    btnTts_File.setEnabled(false);
+	    btnTts_File.setMnemonic('t');
+	    btnTts_File.setFont(ResourceLoader.getFont().deriveFont(14f));
+	    btnTts_File.setBounds(407, 206, 126, 23);
+	}
+	return btnTts_File;
     }
 }

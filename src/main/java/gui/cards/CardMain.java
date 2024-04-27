@@ -3,6 +3,7 @@ package main.java.gui.cards;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -14,7 +15,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
 import main.java.util.exception.ResourceException;
@@ -36,9 +36,8 @@ public class CardMain extends JPanel {
     /*
      * Buttons
      */
-    private JSplitPane splitPane;
-    private JButton leftButton;
-    private JButton rightButton;
+    private JButton translateBtn;
+    private JButton infoBtn;
 
     /*
      * Labels
@@ -48,6 +47,7 @@ public class CardMain extends JPanel {
     private JLabel lblLogo;
     private JLabel lblFileLingual;
     private JLabel lblLogo2;
+    private JPanel pnBtns;
 
     public CardMain(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -75,63 +75,57 @@ public class CardMain extends JPanel {
 	    downPanel.setBounds(0, 308, 586, 105);
 	    downPanel.setBackground(SystemColor.window);
 	    downPanel.setLayout(null);
-	    downPanel.add(getSplitPane());
+	    downPanel.add(getPnBtns());
 	}
 	return downPanel;
     }
 
-    private JButton getLeftButton() throws ResourceException {
-	if (leftButton == null) {
-	    leftButton = new JButton(
+    private JButton getTranslateBtn() throws ResourceException {
+	if (translateBtn == null) {
+	    getPnBtns().setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+	    translateBtn = new JButton(
 		    root.getMessages().getString("button.start"));
-	    leftButton
+	    translateBtn.setLocation(173, 61);
+	    translateBtn.setSize(144, 33);
+	    translateBtn
 		    .setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	    leftButton.addActionListener(new ActionListener() {
+	    pnBtns.add(getTranslateBtn());
+	    translateBtn.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    root.show("file");
 		}
 	    });
-	    leftButton.setMnemonic('s');
-	    leftButton.setFont(ResourceLoader.getFont().deriveFont(20f));
+	    translateBtn.setMnemonic('s');
+	    translateBtn.setFont(ResourceLoader.getFont().deriveFont(20f));
 	}
-	return leftButton;
+	return translateBtn;
     }
 
     @SuppressWarnings("unchecked")
-    private JButton getRightButton() throws ResourceException {
-	if (rightButton == null) {
+    private JButton getInfoBtn() throws ResourceException {
+	if (infoBtn == null) {
 	    // Underlined text
-	    rightButton = new JButton(
-		    root.getMessages().getString("button.learn"));
-	    rightButton.addActionListener(new ActionListener() {
+	    infoBtn = new JButton(root.getMessages().getString("button.learn"));
+	    infoBtn.setBounds(347, 43, 144, 33);
+	    infoBtn.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    // Open information window
 		    root.show("info");
 		}
 	    });
-	    rightButton.setFont(ResourceLoader.getFont().deriveFont(20f));
-	    rightButton.setMnemonic('m');
-	    rightButton.setDisplayedMnemonicIndex(6);
-	    rightButton
-		    .setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	    Font font = rightButton.getFont();
+	    infoBtn.setFont(ResourceLoader.getFont().deriveFont(20f));
+	    infoBtn.setMnemonic('m');
+	    infoBtn.setDisplayedMnemonicIndex(6);
+	    infoBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	    Font font = infoBtn.getFont();
 	    Map<TextAttribute, Integer> attributes = (Map<TextAttribute, Integer>) font
 		    .getAttributes();
 	    attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-	    rightButton.setFont(font.deriveFont(attributes));
+	    infoBtn.setFont(font.deriveFont(attributes));
 	}
-	return rightButton;
-    }
-
-    private JSplitPane getSplitPane() throws ResourceException {
-	if (splitPane == null) {
-	    splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-		    getLeftButton(), getRightButton());
-	    splitPane.setBounds(162, 11, 280, 35);
-	}
-	return splitPane;
+	return infoBtn;
     }
 
     private JPanel getCenterPanel() throws ResourceException {
@@ -211,5 +205,16 @@ public class CardMain extends JPanel {
 	    lblLogo2.setBounds(278, 29, 144, 61);
 	}
 	return lblLogo2;
+    }
+
+    private JPanel getPnBtns() {
+	if (pnBtns == null) {
+	    pnBtns = new JPanel();
+	    pnBtns.setBackground(SystemColor.window);
+	    pnBtns.setBounds(10, 0, 566, 42);
+	    pnBtns.add(getTranslateBtn());
+	    pnBtns.add(getInfoBtn());
+	}
+	return pnBtns;
     }
 }
