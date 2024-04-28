@@ -34,7 +34,7 @@ public class AzureApiVision implements ApiVision {
     private ComputerVision cv;
 
     // Files
-    private File[] files;
+    private List<File> validFiles;
     private List<File> invalidFiles = new ArrayList<>();
 
     public AzureApiVision() throws ResourceException {
@@ -51,37 +51,49 @@ public class AzureApiVision implements ApiVision {
 
     @Override
     public void setImages(File[] file) {
+	this.validFiles = new ArrayList<>();
+
 	if (file != null) {
-	    this.files = file;
+	    for (int i = 0; i < file.length; i++) {
+		try {
+		    if (validateImage(file[i])) {
+			validFiles.add(file[i]);
+		    }
+		} catch (ImageException e) {
+		    continue;
+		}
+	    }
 	}
     }
 
     @Override
-    public Properties caption() throws ImageException {
-	if (this.files == null) {
+    public List<File> getUnprocessedImages() {
+	return invalidFiles;
+    }
+
+    @Override
+    public Properties caption() {
+	if (this.validFiles.isEmpty()) {
 	    return null;
 	}
 
-	this.invalidFiles = new ArrayList<>();
 	Properties pr = new Properties();
 	String caption;
 	File file;
 	ImageDescription d;
 
-	for (int i = 0; i < files.length; i++) {
-	    file = files[i];
+	int i = 0;
+	for (File f : validFiles) {
 	    try {
-		validateImage(file);
-		d = cv.describeImageInStream(getBytes(file), null);
+		d = cv.describeImageInStream(getBytes(f), null);
 		caption = d.captions().get(0).text();
 		pr.put("image." + i, caption);
-	    } catch (Exception e) {
-		invalidFiles.add(file);
-	    }
-	}
+		i++;
 
-	if (!this.invalidFiles.isEmpty()) {
-	    throw new ImageException(invalidFiles);
+		// Image or IO exception, any
+	    } catch (Exception e) {
+		continue;
+	    }
 	}
 
 	return pr;
@@ -91,12 +103,12 @@ public class AzureApiVision implements ApiVision {
      * Confirms whether a given image is valid for automatic description.
      * 
      * @param file file object representing an image
-     * @return int array containing [width,height] in pixels
+     * @return whether valid or not
      * @throws ImageException in case of providing a file whose size does not
      *                        comply with minimum required pixels, or it cannot
      *                        be correctly read from disk
      */
-    private int[] validateImage(File file) throws ImageException {
+    private boolean validateImage(File file) throws ImageException {
 	try {
 	    BufferedImage image = ImageIO.read(file);
 	    int width = image.getWidth();
@@ -104,9 +116,10 @@ public class AzureApiVision implements ApiVision {
 
 	    if (width < 50 || height < 50) {
 		this.invalidFiles.add(file);
+		return false;
 	    }
 
-	    return new int[] { width, height };
+	    return true;
 	} catch (IOException e) {
 	    throw new ImageException();
 	}

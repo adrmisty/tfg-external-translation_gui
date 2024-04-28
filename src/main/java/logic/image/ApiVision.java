@@ -2,6 +2,7 @@ package main.java.logic.image;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 import main.java.util.exception.ImageException;
@@ -21,7 +22,7 @@ public interface ApiVision {
      * @throws ImageException in case that: - provided image is incorrect (i.e.
      *                        invalid size) - cannot be read/found from disk
      */
-    public Properties caption() throws ImageException;
+    public Properties caption();
 
     /**
      * Sets the images to caption.
@@ -29,4 +30,12 @@ public interface ApiVision {
      * @param files array of selected images
      */
     public void setImages(File[] files);
+
+    /**
+     * Retrieves all invalid files that could not be processed by the API (due
+     * to insufficient size or format).
+     * 
+     * @return list of invalid image files
+     */
+    public List<File> getUnprocessedImages();
 }

@@ -319,8 +319,6 @@ public class CardFile extends JPanel {
 				    savedDroppedFile = true;
 				}
 
-			    } else {
-				reset();
 			    }
 			}
 		    }

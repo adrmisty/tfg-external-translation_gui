@@ -42,8 +42,8 @@ public class ImageException extends Exception {
 	    for (File f : files) {
 		names.add(f.getName());
 	    }
-	    return String.format("%s", messages.getString("error.image2"),
-		    String.join(", ", names));
+	    return String.format("%s\n[%s]", messages.getString("error.image2"),
+		    String.join(" - ", names));
 	}
     }
 

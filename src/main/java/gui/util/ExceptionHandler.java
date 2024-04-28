@@ -26,7 +26,7 @@ public class ExceptionHandler {
     public static void handle(JFrame root, Exception e, boolean exit) {
 
 	JOptionPane.showMessageDialog(root, e.getLocalizedMessage(),
-		"FileLingual", JOptionPane.ERROR_MESSAGE);
+		"FileLingual: error", JOptionPane.ERROR_MESSAGE);
 	if (exit) {
 	    System.exit(0);
 	}

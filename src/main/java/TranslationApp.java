@@ -1,11 +1,13 @@
 package main.java;
 
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import main.java.gui.cards.MainWindow;
 import main.java.util.properties.ResourceLoader;
@@ -20,15 +22,10 @@ public class TranslationApp {
 	    @Override
 	    public void run() {
 		try {
-		    Locale.setDefault(new Locale("en_US"));
-		    UIManager.setLookAndFeel(
-			    "com.formdev.flatlaf.themes.FlatMacLightLaf");
+		    config();
 		    MainWindow frame = new MainWindow();
 		    frame.setVisible(true);
 
-		    // Uncaught exceptions
-		    // The rest are explicitly caught and handled in
-		    // MainWindow.java
 		} catch (Exception e1) {
 		    // Log error
 		    Logger.getLogger(ResourceLoader.class.getName())
@@ -38,6 +35,39 @@ public class TranslationApp {
 		}
 	    }
 	});
+    }
+
+    /**
+     * Look and feel configurations for the app. Localization configuration.
+     * 
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws UnsupportedLookAndFeelException
+     */
+    private static void config()
+	    throws ClassNotFoundException, InstantiationException,
+	    IllegalAccessException, UnsupportedLookAndFeelException {
+	Locale.setDefault(new Locale("en_US"));
+	UIManager.setLookAndFeel("com.formdev.flatlaf.themes.FlatMacLightLaf");
+	setFont();
+    }
+
+    private static void setFont() {
+	Font defaultFont = ResourceLoader.getFont().deriveFont(13f);
+	UIManager.put("MenuBar.font", defaultFont);
+	UIManager.put("MenuItem.font", defaultFont);
+	UIManager.put("RadioButtonMenuItem.font", defaultFont);
+	UIManager.put("CheckBoxMenuItem.font", defaultFont);
+	UIManager.put("OptionPane.messageFont", defaultFont);
+	UIManager.put("OptionPane.buttonFont", defaultFont);
+	UIManager.put("ToolTip.font", defaultFont);
+	UIManager.put("Button.font", defaultFont);
+	UIManager.put("Label.font", defaultFont);
+	UIManager.put("TitledBorder.font", defaultFont);
+	UIManager.put("InternalFrame.titleFont", defaultFont); // Set font for
+							       // the window
+							       // title
     }
 
 }

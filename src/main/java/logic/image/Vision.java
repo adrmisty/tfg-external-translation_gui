@@ -2,6 +2,7 @@ package main.java.logic.image;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 import main.java.logic.image.api.AzureApiVision;
@@ -35,7 +36,7 @@ public class Vision {
      * @throws IOException
      * @throws ImageException
      */
-    public Properties captions() throws ImageException {
+    public Properties captions() {
 	if (this.results == null) {
 	    this.results = apiVision.caption();
 	}
@@ -49,6 +50,13 @@ public class Vision {
      */
     public void setImages(File[] file) {
 	apiVision.setImages(file);
+    }
+
+    /**
+     * @return all image files that could not be processed
+     */
+    public List<File> getUnprocessedImages() {
+	return apiVision.getUnprocessedImages();
     }
 
 }

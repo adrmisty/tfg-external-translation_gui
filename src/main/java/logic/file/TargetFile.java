@@ -10,6 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import main.java.util.exception.PropertiesException;
+import main.java.util.exception.ResultsException;
+import main.java.util.exception.TranslationException;
 import main.java.util.properties.ResourceLoader;
 
 /**
@@ -80,16 +82,23 @@ public class TargetFile {
      * Save updates and changes made to temporary file, into definite file.
      * 
      * @param directory where file will eventually be saved
-     * @throws IOException         in case of issue with file writing
-     * @throws PropertiesException in case of issue updating contents of target
-     *                             file
+     * @throws IOException          in case of issue with file writing
+     * @throws PropertiesException  in case of issue updating contents of target
+     *                              file
+     * @throws TranslationException
      */
     public void saveReview(String directory)
 	    throws PropertiesException, IOException {
 	setFilePath(directory);
 	Path destination = Paths.get(getFilePath());
-	Files.move(temporaryFile, destination);
-	this.content = ResourceLoader.loadProperties(getFilePath());
+	try {
+	    // In case there exists another file with the same name
+	    Files.move(temporaryFile, destination);
+	    this.content = ResourceLoader.loadProperties(getFilePath());
+	} catch (IOException e) {
+	    throw new ResultsException(true, true, String.format("[%s -> %s]",
+		    destination.getFileName(), filePath));
+	}
     }
 
     /*
@@ -162,10 +171,7 @@ public class TargetFile {
      *         bundle and should have an alpha-2 code (if non-default)
      */
     public String getFileName() {
-	if (fileName == null) {
-	    this.fileName = setFileName();
-	}
-	return fileName;
+	return setFileName();
     }
 
     /**

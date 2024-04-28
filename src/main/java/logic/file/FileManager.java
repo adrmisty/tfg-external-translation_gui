@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 
 import main.java.util.exception.PropertiesException;
 import main.java.util.exception.ResourceException;
+import main.java.util.exception.ResultsException;
 import main.java.util.properties.PropertiesUtil;
 
 /**
@@ -99,13 +100,23 @@ public class FileManager {
      * @throws PropertiesException
      */
     public void saveAll() throws IOException, PropertiesException {
+	ResultsException re = null;
 
 	for (TargetFile f : targetFiles) {
 	    if (!f.isFileTemporary()) {
 		save(f);
 	    } else {
-		saveReview(f);
+		try {
+		    // Go on with execution and handle it later
+		    saveReview(f);
+		} catch (ResultsException e) {
+		    re = e;
+		}
 	    }
+	}
+
+	if (re != null) {
+	    throw re;
 	}
     }
 

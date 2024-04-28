@@ -373,11 +373,19 @@ public class MainWindow extends JFrame {
 
     /**
      * Saves selected images paths for automatic description functionality.
+     * Shows an error message if the any of the provided files are not valid for
+     * description.
      * 
      * @param selectedImages file array containing info of all images
      */
     public void setImages(File[] selectedImages) {
 	vision.setImages(selectedImages);
+	if (!vision.getUnprocessedImages().isEmpty()) {
+	    this.showErrorMessage(
+		    new ImageException(messages, vision.getUnprocessedImages()),
+		    false);
+	}
+
     }
 
     /*
@@ -391,6 +399,9 @@ public class MainWindow extends JFrame {
 
 	try {
 	    translator.saveAll();
+	} catch (ResultsException re) {
+	    this.showErrorMessage(new ResultsException(messages, re.isReview(),
+		    re.isFilePath(), re.getFileMove()), false);
 	} catch (PropertiesException pe) {
 	    this.showErrorMessage(new PropertiesException(messages,
 		    pe.getFilename(), pe.isContentRelated()), true);
@@ -403,16 +414,9 @@ public class MainWindow extends JFrame {
      * Carries out automatic image captioning.
      */
     public void describe() {
-
-	try {
-	    Properties captions = vision.captions();
-	    if (captions != null) {
-		translator.include(vision.captions());
-	    }
-	} catch (ImageException ie) {
-	    // Pass that exception to localized handler
-	    this.showErrorMessage(
-		    new ImageException(messages, ie.getInvalidFiles()), false);
+	Properties captions = vision.captions();
+	if (captions != null) {
+	    translator.include(captions);
 	}
     }
 

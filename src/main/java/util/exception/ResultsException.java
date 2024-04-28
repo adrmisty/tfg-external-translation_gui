@@ -14,7 +14,9 @@ public class ResultsException extends IOException {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean isReview;
+    private boolean isReview = false;
+    private boolean isFilePath = false;
+    private String move = "";
     private ResourceBundle messages;
 
     public ResultsException() {
@@ -26,17 +28,41 @@ public class ResultsException extends IOException {
 	this.isReview = isReview;
     }
 
+    public ResultsException(boolean isReview, boolean isFilePath, String move) {
+	this(isReview);
+	this.isFilePath = isFilePath;
+	this.move = move;
+    }
+
     public ResultsException(ResourceBundle messages, boolean isReview) {
 	this(isReview);
 	this.messages = messages;
     }
 
-    public boolean isManual() {
+    public ResultsException(ResourceBundle messages, boolean isReview,
+	    boolean isFilePath, String move) {
+	this(messages, isReview);
+	this.isFilePath = isFilePath;
+	this.move = move;
+    }
+
+    public boolean isReview() {
 	return isReview;
+    }
+
+    public boolean isFilePath() {
+	return isFilePath;
+    }
+
+    public String getFileMove() {
+	return move;
     }
 
     @Override
     public String getLocalizedMessage() {
+	if (isFilePath) {
+	    return messages.getString("error.filepath") + move;
+	}
 	if (isReview) {
 	    return messages.getString("error.review");
 	} else {
