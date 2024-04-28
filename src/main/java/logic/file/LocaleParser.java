@@ -60,7 +60,11 @@ public class LocaleParser {
      * @return alpha2 code formatted string, specifying language and country
      */
     public String getCode(Locale locale) {
-	return locale.getLanguage() + "-" + locale.getCountry();
+	String language = locale.getLanguage();
+	if (language.contains("_")) {
+	    return language;
+	}
+	return (locale.getLanguage() + "-" + locale.getCountry()).toLowerCase();
     }
 
     /**

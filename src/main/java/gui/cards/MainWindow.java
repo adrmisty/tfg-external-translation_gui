@@ -21,6 +21,7 @@ import main.java.gui.util.ExceptionHandler;
 import main.java.gui.util.IDE;
 import main.java.gui.util.NumberedJMenuItem;
 import main.java.logic.file.SourceFile;
+import main.java.logic.file.TargetFile;
 import main.java.logic.image.Vision;
 import main.java.logic.speech.Speech;
 import main.java.logic.translation.Translator;
@@ -65,6 +66,7 @@ public class MainWindow extends JFrame {
     private CardMode cardMode; // For choosing a translation mode
     private CardAutoMode cardAutoMode; // For automatic translation settings
     private CardAuto cardAuto; // For automatic translation
+    private CardTextToSpeech cardTTS; // For cognitive speech
     private CardManual cardManual; // For manual translation
     private CardEnd cardEnd; // For ending the app
 
@@ -133,7 +135,7 @@ public class MainWindow extends JFrame {
 
 	// Image description
 	this.vision = new Vision();
-	this.speech = new Speech();
+	this.speech = new Speech(messages);
 
 	// Card container
 	contentPane.add(getCardMain());
@@ -143,6 +145,7 @@ public class MainWindow extends JFrame {
 	contentPane.add(getCardMode());
 	contentPane.add(getCardAutoMode());
 	contentPane.add(getCardAuto());
+	contentPane.add(getCardTTS());
 	contentPane.add(getCardManual());
 	contentPane.add(getCardEnd());
 	getMnLanguage();
@@ -189,10 +192,19 @@ public class MainWindow extends JFrame {
 	    cardManual.setLanguage(this.languages.get(0));
 	    currentCard = cardManual;
 	    break;
+	case "tts":
+	    cardTTS.reset();
+	    cardTTS.setTargetFiles(translator.getResults());
+	    currentCard = cardTTS;
+	    break;
 	case "auto":
 	    currentCard = cardAuto;
 	    // Start running automatic translation task
 	    cardAuto.run();
+	    break;
+	case "auto-2":
+	    // Already run
+	    currentCard = cardAuto;
 	    break;
 	case "end":
 	    // Set name to be shown on screen
@@ -284,6 +296,14 @@ public class MainWindow extends JFrame {
 	    cardManual.setVisible(false);
 	}
 	return cardManual;
+    }
+
+    private JPanel getCardTTS() throws ResourceException {
+	if (cardTTS == null) {
+	    cardTTS = new CardTextToSpeech(this);
+	    cardTTS.setVisible(false);
+	}
+	return cardTTS;
     }
 
     private JPanel getCardEnd() throws ResourceException {
@@ -547,7 +567,43 @@ public class MainWindow extends JFrame {
 	    }
 	}
 	return true;
+    }
 
+    /**
+     * Reads the specified target file.
+     * 
+     * @param read whether to read or to stop reading
+     * @return boolean true if executed normally, false if an exception arises
+     */
+    public boolean readTargetFile(TargetFile f, boolean read) {
+	if (!read) {
+	    speech.stop();
+	}
+
+	// To read or to stop
+	// Automatically stops if an exception arises
+	if (read) {
+	    try {
+		speech.speak(f.getTargetCode(), f.getContent());
+	    } catch (SpeechException e) {
+		// this.showErrorMessage(new SpeechException(messages), false);
+		return false;
+	    }
+	}
+	return true;
+    }
+
+    /**
+     * @param language, format "code-country" - if null, it refers to the source
+     *                  file
+     * @return boolean true if the API is currently available for speech in this
+     *         language
+     */
+    public boolean isSpeechAvailableFor(String language) {
+	if (language == null) {
+	    return speech.isAvailableFor(translator.getSource().getLanguage());
+	}
+	return speech.isAvailableFor(language);
     }
 
     /**

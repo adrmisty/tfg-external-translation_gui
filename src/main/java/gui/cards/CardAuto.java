@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
@@ -50,6 +51,8 @@ public class CardAuto extends JPanel {
     // private Thread speechTask;
     private Thread translationTask;
     private JLabel lblTitle_Auto;
+    private JToggleButton btnTts_Auto;
+    private JPanel panel;
 
     public CardAuto(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -88,6 +91,7 @@ public class CardAuto extends JPanel {
 	busyPanel.stop(false);
 	setCursor(Cursor.getDefaultCursor());
 	btnSave_Auto.setEnabled(true);
+	btnTts_Auto.setEnabled(true);
 	btnReview_Auto.setEnabled(true);
 	lblTitle_Auto.setText(
 		root.getMessages().getString("label.auto.title.success"));
@@ -128,10 +132,9 @@ public class CardAuto extends JPanel {
 	    centerPanel_Automatic.setBounds(0, 109, 586, 255);
 	    centerPanel_Automatic.setLayout(null);
 	    centerPanel_Automatic.setBackground(SystemColor.window);
-	    centerPanel_Automatic.add(getBtnSave_Auto());
 	    centerPanel_Automatic.add(getBusyPanel());
 	    centerPanel_Automatic.add(getLblTime());
-	    centerPanel_Automatic.add(getBtnReview_Auto());
+	    centerPanel_Automatic.add(getPanel());
 	}
 	return centerPanel_Automatic;
     }
@@ -146,8 +149,8 @@ public class CardAuto extends JPanel {
 
     private JButton getBtnSave_Auto() {
 	if (btnSave_Auto == null) {
-	    btnSave_Auto = new JButton(
-		    root.getMessages().getString("button.save"));
+	    btnSave_Auto = new JButton();
+	    btnSave_Auto.setBounds(508, 6, 68, 42);
 	    btnSave_Auto.setMnemonic('s');
 	    btnSave_Auto.setIcon(new ImageIcon(
 		    CardAuto.class.getResource("/img/save-icon.png")));
@@ -162,9 +165,8 @@ public class CardAuto extends JPanel {
 		}
 
 	    });
-	    btnSave_Auto.setFont(btnSave_Auto.getFont().deriveFont(20f));
+	    btnSave_Auto.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    btnSave_Auto.setFocusable(false);
-	    btnSave_Auto.setBounds(306, 172, 187, 42);
 	}
 	return btnSave_Auto;
 
@@ -198,6 +200,7 @@ public class CardAuto extends JPanel {
 	    backPanel_Auto.setBackground(SystemColor.window);
 	    backPanel_Auto.add(getLblBack_Auto());
 	    backPanel_Auto.add(getBtnBack_Auto());
+	    backPanel_Auto.add(getBtnSave_Auto());
 	}
 	return backPanel_Auto;
     }
@@ -244,7 +247,7 @@ public class CardAuto extends JPanel {
 	    lblTime.setForeground(Color.decode("#0089d6"));
 	    lblTime.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblTime.setBounds(10, 108, 566, 32);
-	    lblTime.setFont(ResourceLoader.getFont().deriveFont(25f));
+	    lblTime.setFont(ResourceLoader.getFont().deriveFont(22f));
 	}
 	return lblTime;
     }
@@ -280,5 +283,36 @@ public class CardAuto extends JPanel {
 	    lblTitle_Auto.setBounds(0, 0, 586, 111);
 	}
 	return lblTitle_Auto;
+    }
+
+    private JToggleButton getBtnTts_Auto() {
+	if (btnTts_Auto == null) {
+	    btnTts_Auto = new JToggleButton(
+		    root.getMessages().getString("button.tts"));
+	    btnTts_Auto.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    root.show("tts");
+		}
+	    });
+	    btnTts_Auto.setEnabled(false);
+	    btnTts_Auto.setIcon(new ImageIcon(
+		    CardAuto.class.getResource("/img/texttospeech.png")));
+	    btnTts_Auto.setMnemonic('t');
+	    btnTts_Auto.setFont(ResourceLoader.getFont().deriveFont(20f));
+	    btnTts_Auto.setBounds(306, 173, 187, 42);
+	}
+	return btnTts_Auto;
+    }
+
+    private JPanel getPanel() {
+	if (panel == null) {
+	    panel = new JPanel();
+	    panel.setBackground(SystemColor.window);
+	    panel.setBounds(10, 158, 566, 86);
+	    panel.add(getBtnReview_Auto());
+	    panel.add(getBtnTts_Auto());
+	}
+	return panel;
     }
 }

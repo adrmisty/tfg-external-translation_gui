@@ -140,6 +140,7 @@ public class CardAutoMode extends JPanel {
 	    if (i == 0) {
 		radioButton.setText(
 			root.getMessages().getString("button.settings.no"));
+		radioButton.setSelected(true);
 		radioButton.addActionListener(new ActionListener() {
 
 		    @Override

@@ -368,7 +368,10 @@ public class CardFile extends JPanel {
 	if (root.inputFile()) {
 
 	    txtFilePath.setText(name);
-	    btnTts_File.setEnabled(true);
+
+	    if (root.isSpeechAvailableFor(null)) {
+		btnTts_File.setEnabled(true);
+	    }
 	    btnNext_File.setEnabled(true);
 	    lblDndWarning.setVisible(false);
 	    return true;
@@ -444,6 +447,8 @@ public class CardFile extends JPanel {
 	if (btnTts_File == null) {
 	    btnTts_File = new JToggleButton(
 		    root.getMessages().getString("button.tts"));
+	    btnTts_File.setIcon(new ImageIcon(
+		    CardFile.class.getResource("/img/texttospeech.png")));
 	    btnTts_File.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -464,7 +469,7 @@ public class CardFile extends JPanel {
 	    btnTts_File.setEnabled(false);
 	    btnTts_File.setMnemonic('t');
 	    btnTts_File.setFont(ResourceLoader.getFont().deriveFont(14f));
-	    btnTts_File.setBounds(407, 206, 126, 23);
+	    btnTts_File.setBounds(407, 206, 126, 38);
 	}
 	return btnTts_File;
     }

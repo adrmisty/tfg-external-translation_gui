@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 
 import main.java.logic.file.FileManager;
 import main.java.logic.file.SourceFile;
+import main.java.logic.file.TargetFile;
 import main.java.logic.translation.mode.AutoTranslation;
 import main.java.logic.translation.mode.ManualTranslation;
 import main.java.logic.translation.mode.TranslationMode;
@@ -223,6 +224,13 @@ public class Translator {
      */
     public boolean isDone() {
 	return manager.isDone();
+    }
+
+    /**
+     * @return list of all resulting target files
+     */
+    public List<TargetFile> getResults() {
+	return manager.getResults();
     }
 
     /**

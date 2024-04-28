@@ -1,6 +1,7 @@
 package main.java.logic.speech;
 
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import main.java.logic.speech.api.AzureApiSpeech;
 import main.java.util.exception.SpeechException;
@@ -19,8 +20,8 @@ public class Speech {
     private ApiSpeech apiSpeech;
 
     // Localize
-    public Speech() {
-	this.apiSpeech = new AzureApiSpeech();
+    public Speech(ResourceBundle messages) {
+	this.apiSpeech = new AzureApiSpeech(messages);
     }
 
     /**
@@ -48,5 +49,13 @@ public class Speech {
 	} catch (Exception e) {
 	    // nothing!
 	}
+    }
+
+    /**
+     * @param language, format "country-code"
+     * @return boolean true if service is available for the given language
+     */
+    public boolean isAvailableFor(String language) {
+	return this.apiSpeech.isAvailableFor(language);
     }
 }

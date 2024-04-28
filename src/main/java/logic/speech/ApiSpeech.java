@@ -29,4 +29,12 @@ public interface ApiSpeech {
      */
     public void stop();
 
+    /**
+     * Checks whether a given language is supported by the chosen speech API.
+     * 
+     * @param language, format "country-code"
+     * @return boolean true if service is available for the given language
+     */
+    public boolean isAvailableFor(String language);
+
 }

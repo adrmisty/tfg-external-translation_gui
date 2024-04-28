@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +42,7 @@ public class ResourceLoader {
     private final static String API_PROPERTIES_FILE = "/properties/api.properties";
     private final static String CONFIG_FILE = "/properties/config.properties";
     private final static String DATABASE_NAME = "/database/cache.db";
+    private final static String SPEECHCODES_FILE = "/locale/speech-language_codes.txt";
 
     /**
      * Parses a .properties file content onto a Properties object.
@@ -280,6 +282,23 @@ public class ResourceLoader {
 	String languages = messages.getString("file.languages");
 	String[] supportedLanguages = languages.split("-");
 	return Arrays.asList(supportedLanguages);
+    }
+
+    /**
+     * @return list of all language codes supported by the speech API
+     */
+    public static List<String> getSupportedLanguages_Speech(
+	    ResourceBundle messages) {
+	List<String> codes = new ArrayList<>();
+
+	try {
+	    URL res = ResourceLoader.class.getResource(SPEECHCODES_FILE);
+	    File f = new File(res.toURI());
+	    codes = Files.readAllLines(f.toPath());
+	} catch (Exception e) {
+	    throw new ResourceException(messages, SPEECHCODES_FILE);
+	}
+	return codes;
     }
 
 }

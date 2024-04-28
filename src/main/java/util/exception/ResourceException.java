@@ -17,6 +17,7 @@ public class ResourceException extends RuntimeException {
 
     public ResourceException(String resourceName) {
 	super();
+	this.resourceName = resourceName;
     }
 
     public ResourceException(ResourceBundle messages, String resourceName) {

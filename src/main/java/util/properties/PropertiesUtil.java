@@ -34,8 +34,12 @@ public class PropertiesUtil {
 
 	while (keys.hasMoreElements()) {
 	    String key = (String) keys.nextElement();
-	    replaced.put(key, res[i]);
-	    i++;
+	    try {
+		replaced.put(key, res[i]);
+		i++;
+	    } catch (Exception e) {
+		continue;
+	    }
 	}
 	return replaced;
     }

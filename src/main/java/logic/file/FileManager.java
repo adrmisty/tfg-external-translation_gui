@@ -245,6 +245,13 @@ public class FileManager {
 	return true;
     }
 
+    /**
+     * @return list of resulting target files
+     */
+    public List<TargetFile> getResults() {
+	return targetFiles;
+    }
+
     /*
      * ######################## WRITING METHODS #############################
      */

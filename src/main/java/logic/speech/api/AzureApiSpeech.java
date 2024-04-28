@@ -1,7 +1,9 @@
 package main.java.logic.speech.api;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import com.microsoft.cognitiveservices.speech.SpeechConfig;
 import com.microsoft.cognitiveservices.speech.SpeechSynthesizer;
@@ -24,10 +26,14 @@ public class AzureApiSpeech implements ApiSpeech {
     private SpeechConfig speech;
     // Synthesizer
     private SpeechSynthesizer synth;
+    // Available languages
+    private List<String> availableLanguages = new ArrayList<String>();
 
-    public AzureApiSpeech() throws ResourceException {
+    public AzureApiSpeech(ResourceBundle messages) throws ResourceException {
 	this.speech = SpeechConfig.fromSubscription(
 		ResourceLoader.getAzureSpeechApiKey(), "westeurope");
+	this.availableLanguages = ResourceLoader
+		.getSupportedLanguages_Speech(messages);
 
     }
 
@@ -51,11 +57,19 @@ public class AzureApiSpeech implements ApiSpeech {
 	}
     }
 
+    /**
+     * @param language, alpha2 code in format "language-country"
+     * @return boolean true whether the language is supported by the Azure API
+     */
+    @Override
+    public boolean isAvailableFor(String language) {
+	return availableLanguages.contains(language.replace("_", "-"));
+    }
+
     // Synthesizer config settings for language
     private void config(String language) {
 	// azure documentation marks languages with hyphen "-"
 	this.speech.setSpeechSynthesisLanguage(language.replace("_", "-"));
-
 	this.synth = new SpeechSynthesizer(speech);
     }
 
