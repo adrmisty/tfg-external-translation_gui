@@ -69,5 +69,4 @@ public class TranslationApp {
 							       // the window
 							       // title
     }
-
 }

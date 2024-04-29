@@ -36,7 +36,6 @@ public class TargetFile {
     private Properties content = new Properties();
 
     // Paths
-    private String fileName;
     private String filePath; // Absolute file path to translated file
 
     // Review temporary file

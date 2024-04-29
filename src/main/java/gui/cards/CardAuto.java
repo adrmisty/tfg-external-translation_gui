@@ -6,15 +6,12 @@ import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
@@ -40,19 +37,17 @@ public class CardAuto extends JPanel {
      * Labels & text
      */
     private JButton btnSave_Auto;
-    private JLabel lblBack_Auto;
-    private JButton btnBack_Auto;
+    private JLabel lblTitle_Auto;
+    private JButton btnTts_Auto;
+    private JPanel panel;
 
     private JFileChooser fileChooser;
     private JLabel lblTime;
     private JButton btnReview_Auto;
+    private String sourcePath;
 
     // Threads
-    // private Thread speechTask;
     private Thread translationTask;
-    private JLabel lblTitle_Auto;
-    private JToggleButton btnTts_Auto;
-    private JPanel panel;
 
     public CardAuto(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -62,9 +57,19 @@ public class CardAuto extends JPanel {
 	this.add(getCenterPanel_Auto());
 	this.add(getDownPanel_Auto());
 	setBounds(100, 100, 587, 420);
+    }
 
-	// Translation task
-	this.translationTask = new Thread(new Runnable() {
+    /**
+     * Create and run the automatic translation task (new thread everytime).
+     */
+    public void run() {
+	busyPanel.start();
+	this.translationTask = createThread();
+	this.translationTask.start();
+    }
+
+    public Thread createThread() {
+	return new Thread(new Runnable() {
 	    @Override
 	    public void run() {
 		// Task execution (captioning + translation)
@@ -82,9 +87,8 @@ public class CardAuto extends JPanel {
 	});
     }
 
-    public void run() {
-	busyPanel.start();
-	translationTask.start();
+    public void setSourcePath(String path) {
+	this.sourcePath = path;
     }
 
     public void stopLoading() {
@@ -100,9 +104,10 @@ public class CardAuto extends JPanel {
     }
 
     public void reset() {
-	root.reset();
+	// root.reset();
 	busyPanel.stop(true);
 	btnSave_Auto.setEnabled(false);
+	btnTts_Auto.setEnabled(false);
 	btnReview_Auto.setEnabled(false);
 	lblTitle_Auto.setText(
 		root.getMessages().getString("label.auto.title.loading"));
@@ -115,7 +120,7 @@ public class CardAuto extends JPanel {
 	    return true;
 	}
 
-	fileChooser = new JFileChooser("D:");
+	fileChooser = new JFileChooser(this.sourcePath);
 	fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	int returnVal = fileChooser.showSaveDialog(this);
 
@@ -198,46 +203,9 @@ public class CardAuto extends JPanel {
 	    backPanel_Auto = new JPanel();
 	    backPanel_Auto.setLayout(null);
 	    backPanel_Auto.setBackground(SystemColor.window);
-	    backPanel_Auto.add(getLblBack_Auto());
-	    backPanel_Auto.add(getBtnBack_Auto());
 	    backPanel_Auto.add(getBtnSave_Auto());
 	}
 	return backPanel_Auto;
-    }
-
-    private JLabel getLblBack_Auto() throws ResourceException {
-	if (lblBack_Auto == null) {
-	    lblBack_Auto = new JLabel("<");
-	    lblBack_Auto.addMouseListener(new MouseAdapter() {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-		    btnBack_Auto.doClick();
-		}
-	    });
-	    lblBack_Auto.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblBack_Auto.setBounds(10, 11, 31, 37);
-	}
-	return lblBack_Auto;
-    }
-
-    private JButton getBtnBack_Auto() {
-	if (btnBack_Auto == null) {
-	    btnBack_Auto = new JButton("");
-	    btnBack_Auto.addActionListener(new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		    reset();
-		    root.show("mode");
-		}
-	    });
-	    btnBack_Auto.setIcon(new ImageIcon(
-		    MainWindow.class.getResource("/img/home-icon.png")));
-	    btnBack_Auto.setMnemonic('b');
-	    btnBack_Auto.setBorder(null);
-	    btnBack_Auto.setBackground(SystemColor.window);
-	    btnBack_Auto.setBounds(20, 11, 31, 37);
-	}
-	return btnBack_Auto;
     }
 
     private JLabel getLblTime() throws ResourceException {
@@ -285,9 +253,9 @@ public class CardAuto extends JPanel {
 	return lblTitle_Auto;
     }
 
-    private JToggleButton getBtnTts_Auto() {
+    private JButton getBtnTts_Auto() {
 	if (btnTts_Auto == null) {
-	    btnTts_Auto = new JToggleButton(
+	    btnTts_Auto = new JButton(
 		    root.getMessages().getString("button.tts"));
 	    btnTts_Auto.addActionListener(new ActionListener() {
 		@Override

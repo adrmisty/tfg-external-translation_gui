@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import main.java.util.exception.ResourceException;
@@ -71,6 +72,7 @@ public class CardFile extends JPanel {
     private JButton btnHelp_File;
     private JLabel lblDndWarning;
     private JToggleButton btnTts_File;
+    private JLabel lblSelectedFiles;
 
     public CardFile(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -175,6 +177,7 @@ public class CardFile extends JPanel {
 	    centerPanel_File.add(getBtnBrowse());
 	    centerPanel_File.add(getLblDndWarning());
 	    centerPanel_File.add(getBtnTts_File());
+	    centerPanel_File.add(getLblSelectedFiles());
 	}
 	return centerPanel_File;
     }
@@ -351,7 +354,7 @@ public class CardFile extends JPanel {
     private JTextField getTxtFilePath() throws ResourceException {
 	if (txtFilePath == null) {
 	    txtFilePath = new JTextField();
-	    txtFilePath.setBounds(116, 174, 281, 30);
+	    txtFilePath.setBounds(151, 199, 249, 30);
 	    txtFilePath.setHorizontalAlignment(SwingConstants.CENTER);
 	    txtFilePath.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    txtFilePath.setEditable(false);
@@ -395,6 +398,8 @@ public class CardFile extends JPanel {
 	    checkInputFile(path, name);
 	} else {
 	    btnNext_File.setEnabled(false);
+	    txtFilePath.setText("");
+	    btnTts_File.setEnabled(false);
 	}
 
 	return fileChooser;
@@ -404,7 +409,7 @@ public class CardFile extends JPanel {
 	if (btnBrowse == null) {
 	    btnBrowse = new JButton(
 		    root.getMessages().getString("button.browse"));
-	    btnBrowse.setBounds(407, 178, 126, 23);
+	    btnBrowse.setBounds(411, 184, 126, 23);
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -434,7 +439,7 @@ public class CardFile extends JPanel {
 	    lblDndWarning = new JLabel(
 		    root.getMessages().getString("label.file.wrong"));
 	    lblDndWarning.setForeground(new Color(220, 20, 60));
-	    lblDndWarning.setBounds(116, 215, 281, 14);
+	    lblDndWarning.setBounds(151, 242, 250, 14);
 	    lblDndWarning.setVisible(false);
 	    lblDndWarning.setFont(ResourceLoader.getFont().deriveFont(14f));
 	}
@@ -467,8 +472,22 @@ public class CardFile extends JPanel {
 	    btnTts_File.setEnabled(false);
 	    btnTts_File.setMnemonic('t');
 	    btnTts_File.setFont(ResourceLoader.getFont().deriveFont(14f));
-	    btnTts_File.setBounds(407, 206, 126, 38);
+	    btnTts_File.setBounds(411, 218, 126, 38);
 	}
 	return btnTts_File;
+    }
+
+    private JLabel getLblSelectedFiles() {
+	if (lblSelectedFiles == null) {
+	    lblSelectedFiles = new JLabel(
+		    root.getMessages().getString("label.file.selected"));
+	    lblSelectedFiles.setLabelFor(getTxtFilePath());
+	    lblSelectedFiles.setHorizontalAlignment(SwingConstants.LEFT);
+	    lblSelectedFiles
+		    .setForeground(UIManager.getColor("Button.foreground"));
+	    lblSelectedFiles.setFont(ResourceLoader.getFont().deriveFont(13f));
+	    lblSelectedFiles.setBounds(152, 175, 249, 30);
+	}
+	return lblSelectedFiles;
     }
 }

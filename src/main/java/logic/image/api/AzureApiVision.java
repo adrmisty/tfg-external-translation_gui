@@ -34,7 +34,7 @@ public class AzureApiVision implements ApiVision {
     private ComputerVision cv;
 
     // Files
-    private List<File> validFiles;
+    private List<File> validFiles = new ArrayList<>();
     private List<File> invalidFiles = new ArrayList<>();
 
     public AzureApiVision() throws ResourceException {
@@ -79,7 +79,6 @@ public class AzureApiVision implements ApiVision {
 
 	Properties pr = new Properties();
 	String caption;
-	File file;
 	ImageDescription d;
 
 	int i = 0;
@@ -119,6 +118,7 @@ public class AzureApiVision implements ApiVision {
 		return false;
 	    }
 
+	    this.validFiles.add(file);
 	    return true;
 	} catch (IOException e) {
 	    throw new ImageException();

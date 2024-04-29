@@ -1,14 +1,13 @@
 Albanian, Albania
 Arabic, Egypt
 Arabic, Morocco
-Arabic, United Arab Emirates
+Arabic, UAE
 Armenian, Armenia
 Azerbaijani, Azerbaijan
 Basque, Spain
 Belarusian, Belarus
 Bosnian, Bosnia & Herzegovina
 Bulgarian, Bulgaria
-Cantonese, China
 Catalan, Spain
 Chinese, China
 Chinese, Taiwan

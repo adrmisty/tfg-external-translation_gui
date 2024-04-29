@@ -11,11 +11,13 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import main.java.gui.util.ExceptionHandler;
 import main.java.gui.util.IDE;
@@ -127,8 +129,11 @@ public class MainWindow extends JFrame {
 	cardAutoMode = null;
 	cardManual = null;
 	cardEnd = null;
+	cardTTS = null;
+	cardImage = null;
 	mnLanguage = null;
 	menuBar = null;
+	currentCard = null;
 
 	// Localization
 	localize(locale);
@@ -150,10 +155,16 @@ public class MainWindow extends JFrame {
 	contentPane.add(getCardEnd());
 	getMnLanguage();
 
-	cardMode.reset();
-	currentCard = cardMain;
+	currentCard = getCurrentCard();
 	validate();
 	repaint();
+    }
+
+    private JPanel getCurrentCard() {
+	if (currentCard == null) {
+	    return cardMain;
+	}
+	return currentCard;
     }
 
     /**
@@ -164,7 +175,7 @@ public class MainWindow extends JFrame {
      */
     public void show(String newCard) {
 	currentCard.setVisible(false);
-	mnLanguage.setVisible(false);
+	getMnLanguage().setVisible(false);
 
 	switch (newCard) {
 	case "main":
@@ -216,7 +227,7 @@ public class MainWindow extends JFrame {
 	    ExceptionHandler.handle(this, new UIException(messages), true);
 	}
 
-	currentCard.setVisible(true);
+	getCurrentCard().setVisible(true);
     }
 
     /**
@@ -321,12 +332,17 @@ public class MainWindow extends JFrame {
     private JMenu getMnLanguage() {
 	if (mnLanguage == null) {
 	    menuBar = new JMenuBar();
+	    menuBar.setForeground(UIManager.getColor("Button.shadow"));
 
 	    String msg = this.messages.getString("menu.language");
 	    mnLanguage = new JMenu(msg);
+
+	    // Place language menu on the right
+	    menuBar.add(Box.createHorizontalGlue());
 	    menuBar.add(mnLanguage);
 	    mnLanguage.setMnemonic(msg.charAt(0));
 	    mnLanguage.setDisplayedMnemonicIndex(0);
+	    mnLanguage.setForeground(UIManager.getColor("Button.shadow"));
 	    setJMenuBar(menuBar);
 	    addMenuItems();
 	}
@@ -499,6 +515,9 @@ public class MainWindow extends JFrame {
     public boolean inputFile() {
 	try {
 	    translator.input();
+	    // If everything goes well
+	    cardAutoMode.setDefaultSource(translator.getSource().isDefault());
+	    cardAuto.setSourcePath(translator.getSource().getSourcePath());
 	    return true;
 	} catch (PropertiesException pe) {
 	    this.showErrorMessage(new PropertiesException(messages,

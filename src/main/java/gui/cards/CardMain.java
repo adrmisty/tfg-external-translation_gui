@@ -117,7 +117,7 @@ public class CardMain extends JPanel {
 	    });
 	    infoBtn.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    infoBtn.setMnemonic('m');
-	    infoBtn.setDisplayedMnemonicIndex(6);
+	    infoBtn.setDisplayedMnemonicIndex(0);
 	    infoBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	    Font font = infoBtn.getFont();
 	    Map<TextAttribute, Integer> attributes = (Map<TextAttribute, Integer>) font

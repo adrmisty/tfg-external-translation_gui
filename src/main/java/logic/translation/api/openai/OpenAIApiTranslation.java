@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.theokanning.openai.OpenAiHttpException;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
@@ -55,8 +56,21 @@ public class OpenAIApiTranslation implements ApiTranslation {
     public Properties translate(Properties properties, String targetLang)
 	    throws TranslationException {
 	List<ChatMessage> messages = getRequests(properties, targetLang);
-	this.results = PropertiesUtil.replaceValues(properties,
-		getResults(messages));
+	try {
+	    this.results = PropertiesUtil.replaceValues(properties,
+		    getResults(messages));
+	} catch (OpenAiHttpException e) {
+	    // Might be due to rate limit reached
+	    // Try again
+	    // If not, empty results
+	    try {
+		Thread.sleep(3000);
+		this.results = PropertiesUtil.replaceValues(properties,
+			getResults(messages));
+	    } catch (Exception e2) {
+		// Nothing!
+	    }
+	}
 	return this.results;
     }
 
@@ -98,6 +112,7 @@ public class OpenAIApiTranslation implements ApiTranslation {
      * 
      * @param messages list of chat messages (requests) to input to the API
      * @return results unified results, as a string, of all these requests
+     * @throws InterruptedException
      * 
      */
     private String getResults(List<ChatMessage> messages) {
@@ -111,9 +126,10 @@ public class OpenAIApiTranslation implements ApiTranslation {
 		    .builder().model(apiReq.getModel())
 		    .temperature(apiReq.getTemperature())
 		    .maxTokens(apiReq.getMaxTokens()).messages(sub).build();
+
+	    // In case rate limit is reached, try again!
 	    ChatCompletionResult completionRes = service
 		    .createChatCompletion(completionRequest);
-
 	    results.append(completionRes.getChoices().get(0).getMessage()
 		    .getContent());
 
@@ -121,7 +137,6 @@ public class OpenAIApiTranslation implements ApiTranslation {
 		results.append("\n");
 	    }
 	    i++;
-
 	}
 
 	// Return translation

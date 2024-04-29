@@ -367,7 +367,6 @@ public class CardMode extends JPanel {
 		    } else {
 			selectedLanguages
 				.remove(((JCheckBox) e.getItem()).getText());
-			System.out.println(selectedLanguages.size());
 		    }
 		}
 

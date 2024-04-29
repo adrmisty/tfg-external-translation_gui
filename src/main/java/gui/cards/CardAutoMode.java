@@ -52,6 +52,7 @@ public class CardAutoMode extends JPanel {
      */
     private List<String> languages = new ArrayList<>();
     private String defaultLanguage = null;
+    private boolean isSourceDefault = true;
 
     public CardAutoMode(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -67,6 +68,10 @@ public class CardAutoMode extends JPanel {
     /**
      * ########## GUI FLOW ########## - Resetting values - Resetting parameters
      */
+
+    public void setDefaultSource(boolean def) {
+	this.isSourceDefault = def;
+    }
 
     public void reset() throws ResourceException {
 	for (AbstractButton b : buttons) {
@@ -137,10 +142,23 @@ public class CardAutoMode extends JPanel {
 
 	for (int i = 0; i < languages.size() + 1; i++) {
 	    JRadioButton radioButton = new JRadioButton();
+
+	    if (this.isSourceDefault) {
+		// Do not allow to set any other defaults
+		// if the source file is default already
+		radioButton.setEnabled(false);
+	    }
+
 	    if (i == 0) {
-		radioButton.setText(
-			root.getMessages().getString("button.settings.no"));
+		if (this.isSourceDefault) {
+		    radioButton.setText(
+			    root.getMessages().getString("label.nodefault"));
+		} else {
+		    radioButton.setText(
+			    root.getMessages().getString("button.settings.no"));
+		}
 		radioButton.setSelected(true);
+		radioButton.setEnabled(true);
 		radioButton.addActionListener(new ActionListener() {
 
 		    @Override
@@ -155,9 +173,8 @@ public class CardAutoMode extends JPanel {
 	    }
 	    radioButton.setHorizontalAlignment(SwingConstants.LEFT);
 	    radioButton.setBackground(SystemColor.window);
-	    radioButton.setBounds(200, y, 250, 30);
+	    radioButton.setBounds(150, y, 400, 30);
 	    radioButton.setFont(ResourceLoader.getFont().deriveFont(14f));
-
 	    radioButton.addActionListener(new ActionListener() {
 
 		@Override

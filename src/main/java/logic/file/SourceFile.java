@@ -21,6 +21,9 @@ public class SourceFile {
     // Language parser
     private static LocaleParser parser;
 
+    // Is default file
+    private boolean isDefault = false;
+
     // Source file
     private String sourcePath;
     private String sourceLanguage; // Display language ("Bulgarian, Bulgaria")
@@ -58,8 +61,11 @@ public class SourceFile {
 	this.bundleName = sourceName[0];
 	String codes = sourceName[1];
 
+	// No codes!
+	// This source file is default
 	if (codes == null) {
 	    codes = parser.getCode(Locale.getDefault());
+	    this.isDefault = true;
 	}
 
 	this.sourceLanguage = parser.getLanguage(codes);
@@ -101,6 +107,10 @@ public class SourceFile {
      */
     public String getBundleName() {
 	return bundleName;
+    }
+
+    public boolean isDefault() {
+	return isDefault;
     }
 
     /**
