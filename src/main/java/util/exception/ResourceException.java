@@ -27,6 +27,9 @@ public class ResourceException extends RuntimeException {
 
     @Override
     public String getLocalizedMessage() {
+	if (messages == null) {
+	    return "Resource exception -> " + getResourceName();
+	}
 	return messages.getString("error.resource") + getResourceName();
     }
 

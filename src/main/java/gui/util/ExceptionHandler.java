@@ -1,5 +1,8 @@
 package main.java.gui.util;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -24,6 +27,10 @@ public class ExceptionHandler {
      * @param exit boolean true whether application should be exited or not
      */
     public static void handle(JFrame root, Exception e, boolean exit) {
+
+	// Log all exceptions
+	Logger.getLogger(ExceptionHandler.class.getName()).log(Level.SEVERE,
+		null, e);
 
 	JOptionPane.showMessageDialog(root, e.getLocalizedMessage(),
 		"FileLingual: error", JOptionPane.ERROR_MESSAGE);

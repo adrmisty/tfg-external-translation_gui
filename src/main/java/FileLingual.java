@@ -12,7 +12,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import main.java.gui.cards.MainWindow;
 import main.java.util.properties.ResourceLoader;
 
-public class TranslationApp {
+public class FileLingual {
 
     /**
      * Launch the application.
