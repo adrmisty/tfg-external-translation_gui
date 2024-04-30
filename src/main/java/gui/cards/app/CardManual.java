@@ -1,4 +1,4 @@
-package main.java.gui.cards;
+package main.java.gui.cards.app;
 
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -11,11 +11,14 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import main.java.gui.cards.MainWindow;
+import main.java.gui.cards.help.HelpManual;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;
 
@@ -47,8 +50,10 @@ public class CardManual extends JPanel {
     private JButton btnBrowse;
     private JTextField txtLanguage;
 
+    private String sourcePath;
     private String language;
     private JLabel lblManualTitle;
+    private JButton btnHelp_Manual;
 
     public CardManual(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -57,6 +62,10 @@ public class CardManual extends JPanel {
 	this.add(getNorthPanel_Manual());
 	this.add(getCenterPanel_Auto());
 	this.add(getDownPanel_Manual());
+    }
+
+    public void setSourcePath(String path) {
+	this.sourcePath = path;
     }
 
     public void setLanguage(String language) {
@@ -75,7 +84,8 @@ public class CardManual extends JPanel {
 	    return true;
 	}
 
-	fileChooser = new JFileChooser("D:");
+	// By default
+	fileChooser = new JFileChooser(this.sourcePath);
 	fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	int returnVal = fileChooser.showSaveDialog(this);
 
@@ -157,6 +167,7 @@ public class CardManual extends JPanel {
 	    backPanel_Manual.add(getLblBack_Manual());
 	    backPanel_Manual.add(getBtnBack_Manual());
 	    backPanel_Manual.add(getBtnNext_Manual());
+	    backPanel_Manual.add(getBtnHelp_Manual());
 	}
 	return backPanel_Manual;
     }
@@ -234,7 +245,7 @@ public class CardManual extends JPanel {
 	    });
 	    btnNext_Manual.setMnemonic('n');
 	    btnNext_Manual.setFont(ResourceLoader.getFont().deriveFont(14f));
-	    btnNext_Manual.setBounds(461, 11, 115, 35);
+	    btnNext_Manual.setBounds(421, 11, 115, 35);
 	}
 	return btnNext_Manual;
     }
@@ -292,5 +303,30 @@ public class CardManual extends JPanel {
 
 	}
 	return lblManualTitle;
+    }
+
+    private JButton getBtnHelp_Manual() {
+	if (btnHelp_Manual == null) {
+	    btnHelp_Manual = new JButton("");
+	    btnHelp_Manual.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    JFrame hm = new HelpManual(root);
+		    hm.setVisible(true);
+		}
+	    });
+	    btnHelp_Manual.setToolTipText((String) null);
+	    btnHelp_Manual.setToolTipText(
+		    root.getMessages().getString("tooltip.manual"));
+	    btnHelp_Manual.setIcon(new ImageIcon(
+		    MainWindow.class.getResource("/img/help.png")));
+	    btnHelp_Manual.setMnemonic('h');
+	    btnHelp_Manual.setFont(ResourceLoader.getFont().deriveFont(14f));
+	    btnHelp_Manual.setFocusable(false);
+	    btnHelp_Manual.setBorder(null);
+	    btnHelp_Manual.setBackground(SystemColor.window);
+	    btnHelp_Manual.setBounds(537, 7, 49, 41);
+	}
+	return btnHelp_Manual;
     }
 }

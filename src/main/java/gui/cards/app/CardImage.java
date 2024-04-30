@@ -1,4 +1,4 @@
-package main.java.gui.cards;
+package main.java.gui.cards.app;
 
 import java.awt.Color;
 import java.awt.SystemColor;
@@ -12,6 +12,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -22,6 +23,8 @@ import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import main.java.gui.cards.MainWindow;
+import main.java.gui.cards.help.HelpImage;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;
 
@@ -164,7 +167,7 @@ public class CardImage extends JPanel {
 	    btnBack_Image.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.show("mode");
+		    root.show("automode");
 		}
 	    });
 	    btnBack_Image.setIcon(new ImageIcon(
@@ -201,6 +204,13 @@ public class CardImage extends JPanel {
     private JButton getBtnHelp_Image() {
 	if (btnHelp_Image == null) {
 	    btnHelp_Image = new JButton("");
+	    btnHelp_Image.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    JFrame hi = new HelpImage(root);
+		    hi.setVisible(true);
+		}
+	    });
 	    btnHelp_Image.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/help.png")));
 	    btnHelp_Image.setToolTipText(

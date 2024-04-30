@@ -1,4 +1,4 @@
-package main.java.gui.cards;
+package main.java.gui.cards.app;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -10,11 +10,14 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import main.java.gui.cards.MainWindow;
+import main.java.gui.cards.help.HelpResults;
 import main.java.gui.util.BusyPanel;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;
@@ -48,6 +51,7 @@ public class CardAuto extends JPanel {
 
     // Threads
     private Thread translationTask;
+    private JButton btnHelp_Auto;
 
     public CardAuto(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -155,7 +159,7 @@ public class CardAuto extends JPanel {
     private JButton getBtnSave_Auto() {
 	if (btnSave_Auto == null) {
 	    btnSave_Auto = new JButton();
-	    btnSave_Auto.setBounds(508, 6, 68, 42);
+	    btnSave_Auto.setBounds(421, 8, 115, 42);
 	    btnSave_Auto.setMnemonic('s');
 	    btnSave_Auto.setIcon(new ImageIcon(
 		    CardAuto.class.getResource("/img/save-icon.png")));
@@ -204,6 +208,7 @@ public class CardAuto extends JPanel {
 	    backPanel_Auto.setLayout(null);
 	    backPanel_Auto.setBackground(SystemColor.window);
 	    backPanel_Auto.add(getBtnSave_Auto());
+	    backPanel_Auto.add(getBtnHelp_Auto());
 	}
 	return backPanel_Auto;
     }
@@ -282,5 +287,29 @@ public class CardAuto extends JPanel {
 	    panel.add(getBtnTts_Auto());
 	}
 	return panel;
+    }
+
+    private JButton getBtnHelp_Auto() {
+	if (btnHelp_Auto == null) {
+	    btnHelp_Auto = new JButton("");
+	    btnHelp_Auto.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    JFrame hr = new HelpResults(root);
+		    hr.setVisible(true);
+		}
+	    });
+	    btnHelp_Auto.setIcon(
+		    new ImageIcon(CardAuto.class.getResource("/img/help.png")));
+	    btnHelp_Auto.setToolTipText(
+		    root.getMessages().getString("tooltip.auto"));
+	    btnHelp_Auto.setMnemonic('h');
+	    btnHelp_Auto.setFont(btnHelp_Auto.getFont().deriveFont(14f));
+	    btnHelp_Auto.setFocusable(false);
+	    btnHelp_Auto.setBorder(null);
+	    btnHelp_Auto.setBackground(SystemColor.window);
+	    btnHelp_Auto.setBounds(537, 8, 49, 41);
+	}
+	return btnHelp_Auto;
     }
 }

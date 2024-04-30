@@ -1,4 +1,4 @@
-package main.java.gui.cards;
+package main.java.gui.cards.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,12 +15,15 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 
+import main.java.gui.cards.MainWindow;
+import main.java.gui.cards.help.HelpTTS;
 import main.java.logic.file.TargetFile;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;
@@ -313,6 +316,8 @@ public class CardTextToSpeech extends JPanel {
 	    btnHelp_TTS.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    JFrame ht = new HelpTTS(root);
+		    ht.setVisible(true);
 		}
 	    });
 	    btnHelp_TTS.setIcon(new ImageIcon(

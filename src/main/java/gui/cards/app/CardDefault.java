@@ -1,4 +1,4 @@
-package main.java.gui.cards;
+package main.java.gui.cards.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -14,15 +14,18 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
+import main.java.gui.cards.MainWindow;
+import main.java.gui.cards.help.HelpDefault;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;
 
-public class CardAutoMode extends JPanel {
+public class CardDefault extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private MainWindow root;
@@ -54,7 +57,7 @@ public class CardAutoMode extends JPanel {
     private String defaultLanguage = null;
     private boolean isSourceDefault = true;
 
-    public CardAutoMode(MainWindow root) throws ResourceException {
+    public CardDefault(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setBackground(SystemColor.window);
@@ -295,11 +298,18 @@ public class CardAutoMode extends JPanel {
     private JButton getBtnHelp_Mode() throws ResourceException {
 	if (btnHelp_Mode == null) {
 	    btnHelp_Mode = new JButton("");
+	    btnHelp_Mode.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    JFrame hd = new HelpDefault(root);
+		    hd.setVisible(true);
+		}
+	    });
 	    btnHelp_Mode.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/help.png")));
 	    btnHelp_Mode.setBounds(537, 7, 49, 41);
 	    btnHelp_Mode.setToolTipText(
-		    root.getMessages().getString("tooltip.mode"));
+		    root.getMessages().getString("tooltip.default"));
 	    btnHelp_Mode.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnHelp_Mode.setBorder(null);
 	    btnHelp_Mode.setBackground(SystemColor.window);

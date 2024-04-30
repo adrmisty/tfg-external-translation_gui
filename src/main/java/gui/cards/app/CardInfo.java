@@ -1,4 +1,4 @@
-package main.java.gui.cards;
+package main.java.gui.cards.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -25,6 +25,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import main.java.gui.cards.MainWindow;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;
 

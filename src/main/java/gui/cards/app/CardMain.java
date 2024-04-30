@@ -1,4 +1,4 @@
-package main.java.gui.cards;
+package main.java.gui.cards.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import main.java.gui.cards.MainWindow;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;
 

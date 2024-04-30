@@ -19,6 +19,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import main.java.gui.cards.app.CardAuto;
+import main.java.gui.cards.app.CardDefault;
+import main.java.gui.cards.app.CardEnd;
+import main.java.gui.cards.app.CardFile;
+import main.java.gui.cards.app.CardImage;
+import main.java.gui.cards.app.CardInfo;
+import main.java.gui.cards.app.CardMain;
+import main.java.gui.cards.app.CardManual;
+import main.java.gui.cards.app.CardMode;
+import main.java.gui.cards.app.CardTextToSpeech;
 import main.java.gui.util.ExceptionHandler;
 import main.java.gui.util.IDE;
 import main.java.gui.util.NumberedJMenuItem;
@@ -66,7 +76,7 @@ public class MainWindow extends JFrame {
     private CardFile cardFile; // For uploading a file
     private CardImage cardImage; // For uploading images to caption
     private CardMode cardMode; // For choosing a translation mode
-    private CardAutoMode cardAutoMode; // For automatic translation settings
+    private CardDefault cardAutoMode; // For automatic translation settings
     private CardAuto cardAuto; // For automatic translation
     private CardTextToSpeech cardTTS; // For cognitive speech
     private CardManual cardManual; // For manual translation
@@ -74,7 +84,6 @@ public class MainWindow extends JFrame {
 
     // Files & translation
     private boolean manualMode = false;
-    private List<String> languages = new ArrayList<>();
 
     /*
      * Language setting
@@ -200,7 +209,7 @@ public class MainWindow extends JFrame {
 	    break;
 	case "manual":
 	    cardManual.reset();
-	    cardManual.setLanguage(this.languages.get(0));
+	    cardManual.setLanguage(translator.getTargetLanguages().get(0));
 	    currentCard = cardManual;
 	    break;
 	case "tts":
@@ -295,7 +304,7 @@ public class MainWindow extends JFrame {
 
     private JPanel getCardAutoMode() throws ResourceException {
 	if (cardAutoMode == null) {
-	    cardAutoMode = new CardAutoMode(this);
+	    cardAutoMode = new CardDefault(this);
 	    cardAutoMode.setVisible(false);
 	}
 	return cardAutoMode;
@@ -513,11 +522,13 @@ public class MainWindow extends JFrame {
      * @return boolean true if file is accepted by the translator
      */
     public boolean inputFile() {
+	String path = translator.getSource().getSourcePath();
 	try {
 	    translator.input();
 	    // If everything goes well
 	    cardAutoMode.setDefaultSource(translator.getSource().isDefault());
-	    cardAuto.setSourcePath(translator.getSource().getSourcePath());
+	    cardAuto.setSourcePath(path);
+	    cardManual.setSourcePath(path);
 	    return true;
 	} catch (PropertiesException pe) {
 	    this.showErrorMessage(new PropertiesException(messages,

@@ -1,4 +1,4 @@
-package main.java.gui.cards;
+package main.java.gui.cards.app;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingConstants;
 
+import main.java.gui.cards.MainWindow;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;
 

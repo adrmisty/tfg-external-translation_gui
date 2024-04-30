@@ -1,4 +1,4 @@
-package main.java.gui.cards;
+package main.java.gui.cards.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -20,6 +20,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -31,6 +32,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import main.java.gui.cards.MainWindow;
+import main.java.gui.cards.help.HelpMode;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;
 
@@ -488,6 +491,13 @@ public class CardMode extends JPanel {
     private JButton getBtnHelp_Mode() throws ResourceException {
 	if (btnHelp_Mode == null) {
 	    btnHelp_Mode = new JButton("");
+	    btnHelp_Mode.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    JFrame hm = new HelpMode(root);
+		    hm.setVisible(true);
+		}
+	    });
 	    btnHelp_Mode.setMnemonic('h');
 	    btnHelp_Mode.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/help.png")));

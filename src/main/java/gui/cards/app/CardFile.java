@@ -1,4 +1,4 @@
-package main.java.gui.cards;
+package main.java.gui.cards.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -22,6 +22,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -30,6 +31,8 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import main.java.gui.cards.MainWindow;
+import main.java.gui.cards.help.HelpFile;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;
 
@@ -277,6 +280,13 @@ public class CardFile extends JPanel {
     private JButton getBtnHelp_File() {
 	if (btnHelp_File == null) {
 	    btnHelp_File = new JButton("");
+	    btnHelp_File.addActionListener(new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		    JFrame hf = new HelpFile(root);
+		    hf.setVisible(true);
+		}
+	    });
 	    btnHelp_File.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/help.png")));
 	    btnHelp_File.setToolTipText(
