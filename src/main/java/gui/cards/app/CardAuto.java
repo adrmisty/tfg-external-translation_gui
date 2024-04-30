@@ -43,7 +43,7 @@ public class CardAuto extends JPanel {
     private JLabel lblTitle_Auto;
     private JButton btnTts_Auto;
     private JPanel panel;
-
+    private JButton btnHelp_Auto;
     private JFileChooser fileChooser;
     private JLabel lblTime;
     private JButton btnReview_Auto;
@@ -51,7 +51,6 @@ public class CardAuto extends JPanel {
 
     // Threads
     private Thread translationTask;
-    private JButton btnHelp_Auto;
 
     public CardAuto(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -105,6 +104,9 @@ public class CardAuto extends JPanel {
 		root.getMessages().getString("label.auto.title.success"));
 	lblTime.setText(
 		root.getMessages().getString("label.auto.subtitle.success"));
+
+	// Show an error message if results are incomplete
+	root.areResultsComplete();
     }
 
     public void reset() {

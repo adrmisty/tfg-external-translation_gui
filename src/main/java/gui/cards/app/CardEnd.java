@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import main.java.gui.cards.MainWindow;
@@ -37,7 +38,7 @@ public class CardEnd extends JPanel {
     private JButton rightButton_End;
     private JLabel lblThanks;
     private JLabel lblSlogan_End;
-    private JLabel lblFileSave;
+    private JTextArea lblFileSave;
     private JPanel logoPanel;
     private JLabel lblForLogo;
     private JLabel lblLogo;
@@ -158,10 +159,9 @@ public class CardEnd extends JPanel {
 	return lblSlogan_End;
     }
 
-    private JLabel getLblFileSave() throws ResourceException {
+    private JTextArea getLblFileSave() throws ResourceException {
 	if (lblFileSave == null) {
-	    lblFileSave = new JLabel();
-	    lblFileSave.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblFileSave = new JTextArea();
 	    lblFileSave.setFont(ResourceLoader.getFont().deriveFont(17f));
 	    lblFileSave.setForeground(Color.BLUE.darker());
 	    lblFileSave.setBounds(10, 0, 576, 25);

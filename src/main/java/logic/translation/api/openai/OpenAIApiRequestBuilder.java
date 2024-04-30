@@ -32,7 +32,7 @@ public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
     public List<ChatMessage> buildRequests(Properties properties,
 	    String targetLang) {
 
-	String command = String.format("Translate ALL in %s:\n", targetLang);
+	String command = String.format("Translate to %s:\n", targetLang);
 	String[] prompts = buildPrompts(command, properties);
 	return buildMessages(prompts);
     }

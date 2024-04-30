@@ -68,7 +68,7 @@ public class HelpResults extends JFrame {
 	    txtDefault.setEditable(false);
 	    txtDefault.setForeground(SystemColor.textInactiveText);
 	    txtDefault.setBackground(SystemColor.window);
-	    txtDefault.setBounds(37, 271, 214, 131);
+	    txtDefault.setBounds(37, 234, 214, 168);
 	}
 	return txtDefault;
     }
@@ -78,7 +78,7 @@ public class HelpResults extends JFrame {
 	    lblImage = new JLabel("");
 	    lblImage.setIcon(new ImageIcon(HelpResults.class
 		    .getResource("/helpimg/help-results.png")));
-	    lblImage.setBounds(146, 72, 322, 205);
+	    lblImage.setBounds(146, 72, 322, 151);
 	}
 	return lblImage;
     }
@@ -103,7 +103,7 @@ public class HelpResults extends JFrame {
 	    txtDefault2.setFont(ResourceLoader.getFont().deriveFont(15f));
 	    txtDefault2.setEditable(false);
 	    txtDefault2.setBackground(SystemColor.window);
-	    txtDefault2.setBounds(362, 271, 214, 131);
+	    txtDefault2.setBounds(362, 234, 214, 168);
 	}
 	return txtDefault2;
     }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -12,6 +13,7 @@ import java.util.regex.Pattern;
 import main.java.util.exception.PropertiesException;
 import main.java.util.exception.ResultsException;
 import main.java.util.exception.TranslationException;
+import main.java.util.properties.PropertiesUtil;
 import main.java.util.properties.ResourceLoader;
 
 /**
@@ -234,4 +236,18 @@ public class TargetFile {
 	return result.replace("-", "_");
     }
 
+    /**
+     * Completes the results of a given target file, when after the execution of
+     * automatic translation, all of its results could not be properly
+     * retrieved.
+     */
+    public void complete() {
+	List<String> sourceP = PropertiesUtil.getKeys(sourceFile.getContent());
+	List<String> incomplete = PropertiesUtil.getKeys(this.content);
+	for (String s : sourceP) {
+	    if (!incomplete.contains(s)) {
+		this.content.put(s, "");
+	    }
+	}
+    }
 }

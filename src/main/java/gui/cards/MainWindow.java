@@ -5,6 +5,7 @@ import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -446,7 +447,7 @@ public class MainWindow extends JFrame {
     }
 
     /**
-     * Carries out all translations (+ image description).
+     * Carries out all automatic translations (+ image description).
      * 
      * @throws IOException
      * @throws PropertiesException
@@ -469,6 +470,14 @@ public class MainWindow extends JFrame {
 	} catch (TranslationException te) {
 	    this.showErrorMessage(
 		    new TranslationException(messages, te.isManual()), false);
+	    // Any other type of exception during translator process
+	    // Go back to mode
+	} catch (Exception e) {
+	    this.showErrorMessage(e, false);
+	    cardAuto.reset();
+	    cardManual.reset();
+	    // Go back
+	    show("mode");
 	}
     }
 
@@ -641,19 +650,39 @@ public class MainWindow extends JFrame {
     }
 
     /**
+     * @return boolean true if all sentences found in source file have been
+     *         completely translated, false otherwise
+     */
+    public boolean areResultsComplete() {
+	if (!translator.areResultsComplete()) {
+	    this.showErrorMessage(
+		    new Exception(messages.getString("error.incomplete")),
+		    false);
+	    return false;
+	}
+	return true;
+    }
+
+    /**
      * Sets translation mode (either manual or automatic).
      * 
      * @param path @
      * @throws ResourceException
      */
-    public void setMode(String path) throws ResourceException {
+    public void setMode(String path) {
 	translator.to(path);
-	if (path == null) {
-	    translator.setAutoMode();
-	    manualMode = false;
-	} else {
-	    translator.setManualMode();
-	    manualMode = true;
+	try {
+	    if (path == null) {
+		translator.setAutoMode();
+		manualMode = false;
+	    } else {
+		translator.setManualMode();
+		manualMode = true;
+	    }
+	} catch (ResourceException e) {
+	    this.showErrorMessage(e, true);
+	} catch (SQLException se) {
+	    this.showErrorMessage(se, false);
 	}
     }
 

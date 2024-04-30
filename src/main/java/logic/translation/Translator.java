@@ -1,6 +1,7 @@
 package main.java.logic.translation;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -63,7 +64,7 @@ public class Translator {
      * @throws ResourceException in case API access is not possible due to
      *                           missing or incorrect resources
      */
-    public void setAutoMode() throws ResourceException {
+    public void setAutoMode() throws ResourceException, SQLException {
 	if (auto == null) {
 	    auto = new AutoTranslation(manager.getSourceFile());
 	}
@@ -245,6 +246,26 @@ public class Translator {
      */
     public SourceFile getSource() {
 	return manager.getSourceFile();
+    }
+
+    /**
+     * In case that a given property has not been translated into the chosen
+     * target language, the key with the empty value is included in the target
+     * file.
+     * 
+     * @return boolean true if all properties found in source file have been
+     *         translated to the respective target language in all target files
+     */
+    public boolean areResultsComplete() {
+	int size = getSource().getContent().size();
+	boolean complete = true;
+	for (TargetFile f : getResults()) {
+	    if (size != f.getContent().size()) {
+		f.complete();
+		complete = false;
+	    }
+	}
+	return complete;
     }
 
     /**
