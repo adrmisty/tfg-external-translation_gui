@@ -18,7 +18,7 @@ import main.java.util.properties.ResourceLoader;
  * contents is carried out.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version April 2024
+ * @version May 2024
  */
 public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
 
@@ -32,7 +32,8 @@ public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
     public List<ChatMessage> buildRequests(Properties properties,
 	    String targetLang) {
 
-	String command = String.format("Translate to %s:\n", targetLang);
+	String command = String.format("Give all sentences to %s:\n",
+		targetLang);
 	String[] prompts = buildPrompts(command, properties);
 	return buildMessages(prompts);
     }

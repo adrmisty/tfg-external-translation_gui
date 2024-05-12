@@ -15,7 +15,7 @@ import main.java.util.exception.ResourceException;
  * images.
  * 
  * @author Adriana R.F. (uo282798)
- * @version April 2024
+ * @version May 2024
  */
 public class Vision {
 
@@ -27,6 +27,10 @@ public class Vision {
 
     public Vision() throws ResourceException {
 	this.apiVision = new AzureApiVision();
+    }
+
+    public Vision(ApiVision apiVision) {
+	this.apiVision = apiVision;
     }
 
     /**
@@ -46,11 +50,12 @@ public class Vision {
     /**
      * Saves files to caption.
      * 
+     * @return valid images that have been set
      * @param file array containing image files
      * @throws ImageException if provided file images are invalid
      */
-    public void setImages(File[] file) throws ImageException {
-	apiVision.setImages(file);
+    public List<File> setImages(File[] file) throws ImageException {
+	return apiVision.setImages(file);
     }
 
     /**
@@ -58,6 +63,18 @@ public class Vision {
      */
     public List<File> getUnprocessedImages() {
 	return apiVision.getUnprocessedImages();
+    }
+
+    /**
+     * Combines the file-setting and auto-description functionalities for API
+     * testing.
+     * 
+     * @param file
+     * @return caption results
+     * @throws ImageException
+     */
+    public Properties captions(File[] file) throws ImageException {
+	return apiVision.caption(file);
     }
 
 }

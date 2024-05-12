@@ -1,2 +1,4 @@
 /target/
 config.properties
+/test-classes/
+/resources/

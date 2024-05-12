@@ -26,7 +26,7 @@ import main.java.util.properties.ResourceLoader;
  * services.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version April 2024
+ * @version May 2024
  */
 public class AzureApiVision implements ApiVision {
 
@@ -50,7 +50,7 @@ public class AzureApiVision implements ApiVision {
     }
 
     @Override
-    public void setImages(File[] files) throws ImageException {
+    public List<File> setImages(File[] files) throws ImageException {
 	this.validFiles = new ArrayList<>();
 	this.invalidFiles = new ArrayList<>();
 
@@ -69,6 +69,8 @@ public class AzureApiVision implements ApiVision {
 		throw new ImageException(this.invalidFiles);
 	    }
 	}
+
+	return this.validFiles;
     }
 
     @Override

@@ -25,9 +25,12 @@ import main.java.util.properties.ResourceLoader;
  * translation of a set of texts found in a .properties file.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version March 2024
+ * @version May 2024
  */
 public class OpenAIApiTranslation implements ApiTranslation {
+
+    // ApiTranslation interface
+    private ApiTranslation apiInterface;
 
     // Translation resultzs
     private Properties results;
@@ -57,8 +60,33 @@ public class OpenAIApiTranslation implements ApiTranslation {
 	apiReq = new OpenAIApiRequestBuilder();
     }
 
+    // Mock testing
+    public OpenAIApiTranslation(ApiTranslation api) {
+	this();
+	this.apiInterface = api;
+    }
+
     @Override
     public Properties translate(Properties properties, String targetLang)
+	    throws TranslationException {
+
+	if (apiInterface != null) {
+	    return apiInterface.translate(properties, targetLang);
+	}
+
+	return getApiResults(properties, targetLang);
+    }
+
+    @Override
+    public Properties getResults() {
+	return this.results;
+    }
+
+    /*
+     * ######################## AUXILIARY METHODS ##############################
+     */
+
+    private Properties getApiResults(Properties properties, String targetLang)
 	    throws TranslationException {
 	List<ChatMessage> messages = getRequests(properties, targetLang);
 	try {
@@ -83,15 +111,6 @@ public class OpenAIApiTranslation implements ApiTranslation {
 	return this.results;
 
     }
-
-    @Override
-    public Properties getResults() {
-	return this.results;
-    }
-
-    /*
-     * ######################## AUXILIARY METHODS ##############################
-     */
 
     /**
      * Builds a set of requests to input in the ChatCompletions API.
