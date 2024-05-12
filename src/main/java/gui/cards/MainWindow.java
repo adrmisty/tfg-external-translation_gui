@@ -405,13 +405,12 @@ public class MainWindow extends JFrame {
      * @param selectedImages file array containing info of all images
      */
     public void setImages(File[] selectedImages) {
-	vision.setImages(selectedImages);
-	if (!vision.getUnprocessedImages().isEmpty()) {
+	try {
+	    vision.setImages(selectedImages);
+	} catch (ImageException e) {
 	    this.showErrorMessage(
-		    new ImageException(messages, vision.getUnprocessedImages()),
-		    false);
+		    new ImageException(messages, e.getInvalidFiles()), false);
 	}
-
     }
 
     /*

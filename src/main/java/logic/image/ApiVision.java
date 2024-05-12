@@ -29,7 +29,7 @@ public interface ApiVision {
      * 
      * @param files array of selected images
      */
-    public void setImages(File[] files);
+    public void setImages(File[] files) throws ImageException;
 
     /**
      * Retrieves all invalid files that could not be processed by the API (due

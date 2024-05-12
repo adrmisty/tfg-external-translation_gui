@@ -47,8 +47,9 @@ public class Vision {
      * Saves files to caption.
      * 
      * @param file array containing image files
+     * @throws ImageException if provided file images are invalid
      */
-    public void setImages(File[] file) {
+    public void setImages(File[] file) throws ImageException {
 	apiVision.setImages(file);
     }
 

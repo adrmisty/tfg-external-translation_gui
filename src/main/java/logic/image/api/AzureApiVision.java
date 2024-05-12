@@ -50,18 +50,23 @@ public class AzureApiVision implements ApiVision {
     }
 
     @Override
-    public void setImages(File[] file) {
+    public void setImages(File[] files) throws ImageException {
 	this.validFiles = new ArrayList<>();
+	this.invalidFiles = new ArrayList<>();
 
-	if (file != null) {
-	    for (int i = 0; i < file.length; i++) {
+	if (files != null) {
+	    for (int i = 0; i < files.length; i++) {
 		try {
-		    if (validateImage(file[i])) {
-			validFiles.add(file[i]);
-		    }
+		    validateImage(files[i]);
 		} catch (ImageException e) {
 		    continue;
 		}
+	    }
+
+	    // Throw an exception in case at least 1 of the provided files is
+	    // invalid
+	    if (!this.invalidFiles.isEmpty()) {
+		throw new ImageException(this.invalidFiles);
 	    }
 	}
     }
@@ -121,6 +126,7 @@ public class AzureApiVision implements ApiVision {
 	    this.validFiles.add(file);
 	    return true;
 	} catch (IOException e) {
+	    // In case of issues with input/output of images
 	    throw new ImageException();
 	}
     }

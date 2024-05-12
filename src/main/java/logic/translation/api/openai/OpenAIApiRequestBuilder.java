@@ -3,10 +3,10 @@ package main.java.logic.translation.api.openai;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import com.theokanning.openai.completion.chat.ChatMessage;
 
-import ai.djl.modality.nlp.bert.BertTokenizer;
 import main.java.logic.translation.api.ApiRequestBuilder;
 import main.java.util.exception.PropertiesException;
 import main.java.util.properties.PropertiesUtil;
@@ -50,9 +50,7 @@ public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
      * @return a list of string prompts
      */
     private String[] buildPrompts(String command, Properties properties) {
-	BertTokenizer tokenizer = new BertTokenizer();
-	int requestNumber = calculateRequestNumber(tokenizer, command,
-		properties);
+	int requestNumber = calculateRequestNumber(command, properties);
 	String[] prompts = buildSubPrompts(command, properties, requestNumber);
 	return prompts;
     }
@@ -109,14 +107,14 @@ public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
      * Getters for API setting values (number of max tokens, engine name...)
      */
 
-    private int calculateRequestNumber(BertTokenizer tokenizer,
-	    String promptHeader, Properties properties) {
+    private int calculateRequestNumber(String promptHeader,
+	    Properties properties) {
 
-	int totalTokens = tokenizer.tokenize(promptHeader).size();
+	int totalTokens = new StringTokenizer(promptHeader).countTokens();
 
 	// Calculate the total number of tokens for the given properties
 	for (Object property : properties.values()) {
-	    totalTokens += tokenizer.tokenize((String) property).size();
+	    totalTokens += new StringTokenizer((String) property).countTokens();
 	}
 
 	// Calculate the number of requests needed

@@ -11,6 +11,7 @@ import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 
+import main.java.gui.util.ExceptionHandler;
 import main.java.logic.translation.api.ApiRequestBuilder;
 import main.java.logic.translation.api.ApiTranslation;
 import main.java.util.exception.PropertiesException;
@@ -28,12 +29,16 @@ import main.java.util.properties.ResourceLoader;
  */
 public class OpenAIApiTranslation implements ApiTranslation {
 
-    // Translation results
+    // Translation resultzs
     private Properties results;
 
     private static ApiRequestBuilder apiReq;
     private static OpenAiService service;
     private final static int TIMEOUT = 90;
+
+    // Error codes
+    private final static String QUOTA_REACHED = "insufficient_quota";
+    private final static String RATE_LIMIT = "rate_limit_error";
 
     /**
      * Creates an ApiTranslation object aimed to manage requests to the
@@ -59,19 +64,24 @@ public class OpenAIApiTranslation implements ApiTranslation {
 	try {
 	    this.results = PropertiesUtil.replaceValues(properties,
 		    getResults(messages));
+	    return this.results;
 	} catch (OpenAiHttpException e) {
-	    // Might be due to rate limit reached
-	    // Try again
-	    // If not, empty results
-	    try {
-		Thread.sleep(3000);
-		this.results = PropertiesUtil.replaceValues(properties,
-			getResults(messages));
-	    } catch (Exception e2) {
-		// Nothing!
+	    // Try again in 30s if rate limit has been reached
+	    if (isError(e, RATE_LIMIT)) {
+
+		try {
+		    Thread.sleep(3000);
+		    translate(properties, targetLang);
+		} catch (Exception e2) {
+		    // Nothing
+		}
+	    } else if (isError(e, QUOTA_REACHED)) {
+		// Show error message and terminate application
+		ExceptionHandler.handle(null, e, true);
 	    }
 	}
 	return this.results;
+
     }
 
     @Override
@@ -141,6 +151,13 @@ public class OpenAIApiTranslation implements ApiTranslation {
 
 	// Return translation
 	return results.toString();
+    }
+
+    // Error codes checking
+
+    private boolean isError(OpenAiHttpException e, String code) {
+	return e.code.equals(code);
+
     }
 
 }
