@@ -79,6 +79,12 @@ public class AzureApiVision implements ApiVision {
     }
 
     @Override
+    public Properties caption(File[] file) throws ImageException {
+	setImages(file);
+	return caption();
+    }
+
+    @Override
     public Properties caption() {
 	if (this.validFiles.isEmpty()) {
 	    return null;
