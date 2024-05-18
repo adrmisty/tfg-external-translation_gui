@@ -3,9 +3,12 @@ package main.java.gui.cards.app;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.GridLayout;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -60,6 +63,24 @@ public class CardAuto extends JPanel {
 	this.add(getCenterPanel_Auto());
 	this.add(getDownPanel_Auto());
 	setBounds(100, 100, 587, 420);
+    }
+
+    public void initCard() {
+	KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		.addKeyEventDispatcher(new KeyEventDispatcher() {
+		    @Override
+		    public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_F1
+				&& e.getID() == KeyEvent.KEY_RELEASED) {
+			    // Click help button
+			    getBtnHelp_Auto().doClick();
+			    return true; // consume the event
+			}
+			return false; // allow the event to be processed
+				      // normally
+		    }
+		});
+
     }
 
     /**
@@ -160,8 +181,9 @@ public class CardAuto extends JPanel {
 
     private JButton getBtnSave_Auto() {
 	if (btnSave_Auto == null) {
-	    btnSave_Auto = new JButton();
-	    btnSave_Auto.setBounds(421, 8, 115, 42);
+	    btnSave_Auto = new JButton(
+		    root.getMessages().getString("button.save"));
+	    btnSave_Auto.setBounds(398, 8, 138, 42);
 	    btnSave_Auto.setMnemonic('s');
 	    btnSave_Auto.setIcon(new ImageIcon(
 		    CardAuto.class.getResource("/img/save-icon.png")));

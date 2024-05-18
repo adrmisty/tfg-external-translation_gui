@@ -2,7 +2,6 @@ package main.java;
 
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,7 +47,7 @@ public class FileLingual {
     private static void config()
 	    throws ClassNotFoundException, InstantiationException,
 	    IllegalAccessException, UnsupportedLookAndFeelException {
-	Locale.setDefault(new Locale("en_US"));
+	// Locale.setDefault(new Locale("en")); for testing
 	UIManager.setLookAndFeel("com.formdev.flatlaf.themes.FlatMacLightLaf");
 	setFont();
     }

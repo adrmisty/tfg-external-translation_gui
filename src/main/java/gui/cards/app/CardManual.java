@@ -2,9 +2,12 @@ package main.java.gui.cards.app;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -77,6 +80,20 @@ public class CardManual extends JPanel {
 	btnNext_Manual.setEnabled(false);
 	txtPath.setText("");
 	txtLanguage.setText("");
+	KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		.addKeyEventDispatcher(new KeyEventDispatcher() {
+		    @Override
+		    public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_F1
+				&& e.getID() == KeyEvent.KEY_RELEASED) {
+			    // Click help button
+			    getBtnHelp_Manual().doClick();
+			    return true; // consume the event
+			}
+			return false; // allow the event to be processed
+				      // normally
+		    }
+		});
     }
 
     private boolean getSaveFileChooser() {

@@ -3,9 +3,12 @@ package main.java.gui.cards.app;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -74,7 +77,6 @@ public class CardTextToSpeech extends JPanel {
 	this.add(getCenterPanel_TTS());
 	// Text-to-speech for source file
 	this.speechTask = createThread();
-
     }
 
     /**
@@ -116,7 +118,20 @@ public class CardTextToSpeech extends JPanel {
 	    buttonGroup.remove(b);
 	    centerPanel_TTS.remove(b);
 	}
-
+	KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		.addKeyEventDispatcher(new KeyEventDispatcher() {
+		    @Override
+		    public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_F1
+				&& e.getID() == KeyEvent.KEY_RELEASED) {
+			    // Click help button
+			    getBtnHelp_TTS().doClick();
+			    return true; // consume the event
+			}
+			return false; // allow the event to be processed
+				      // normally
+		    }
+		});
 	buttons = new ArrayList<>();
     }
 

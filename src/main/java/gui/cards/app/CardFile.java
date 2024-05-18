@@ -2,6 +2,8 @@ package main.java.gui.cards.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.SystemColor;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -13,6 +15,7 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -87,7 +90,24 @@ public class CardFile extends JPanel {
 
 	// Text-to-speech for source file
 	this.speechTask = createThread();
+    }
 
+    public void initCard() {
+	// TODO
+	KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		.addKeyEventDispatcher(new KeyEventDispatcher() {
+		    @Override
+		    public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_F1
+				&& e.getID() == KeyEvent.KEY_RELEASED) {
+			    // Click help button
+			    getBtnHelp_File().doClick();
+			    return true; // consume the event
+			}
+			return false; // allow the event to be processed
+				      // normally
+		    }
+		});
     }
 
     public Thread createThread() {
@@ -291,7 +311,6 @@ public class CardFile extends JPanel {
 		    MainWindow.class.getResource("/img/help.png")));
 	    btnHelp_File.setToolTipText(
 		    root.getMessages().getString("tooltip.file"));
-	    btnHelp_File.setMnemonic('h');
 	    btnHelp_File.setFont(btnHelp_File.getFont().deriveFont(14f));
 	    btnHelp_File.setBorder(null);
 	    btnHelp_File.setBackground(SystemColor.window);

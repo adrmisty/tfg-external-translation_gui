@@ -2,9 +2,12 @@ package main.java.gui.cards.app;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -66,6 +69,23 @@ public class CardDefault extends JPanel {
 	this.add(getNorthPanel_AutoMode());
 	setButtonGroup();
 	this.add(getCenterPanel_Mode());
+    }
+
+    public void initCard() {
+	KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		.addKeyEventDispatcher(new KeyEventDispatcher() {
+		    @Override
+		    public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_F1
+				&& e.getID() == KeyEvent.KEY_RELEASED) {
+			    // Click help button
+			    getBtnHelp_Default().doClick();
+			    return true; // consume the event
+			}
+			return false; // allow the event to be processed
+				      // normally
+		    }
+		});
     }
 
     /**
@@ -233,7 +253,7 @@ public class CardDefault extends JPanel {
 	    backPanel_AutoMode.add(getLblBack_Mode());
 	    backPanel_AutoMode.add(getBtnBack_Mode());
 	    backPanel_AutoMode.add(getBtnNext_Mode());
-	    backPanel_AutoMode.add(getBtnHelp_Mode());
+	    backPanel_AutoMode.add(getBtnHelp_Default());
 	}
 	return backPanel_AutoMode;
     }
@@ -295,7 +315,7 @@ public class CardDefault extends JPanel {
 	return btnNext_Mode;
     }
 
-    private JButton getBtnHelp_Mode() throws ResourceException {
+    private JButton getBtnHelp_Default() throws ResourceException {
 	if (btnHelp_Mode == null) {
 	    btnHelp_Mode = new JButton("");
 	    btnHelp_Mode.addActionListener(new ActionListener() {

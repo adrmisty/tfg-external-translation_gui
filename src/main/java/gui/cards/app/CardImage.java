@@ -1,9 +1,12 @@
 package main.java.gui.cards.app;
 
 import java.awt.Color;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -61,6 +64,7 @@ public class CardImage extends JPanel {
     private JRadioButton btnYesImage;
     private ButtonGroup buttonGroup;
     private JLabel lblSelectedImages;
+    private JLabel lblImageExpl;
 
     public CardImage(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -73,6 +77,23 @@ public class CardImage extends JPanel {
 	buttonGroup = new ButtonGroup();
 	buttonGroup.add(btnNoImage);
 	buttonGroup.add(btnYesImage);
+    }
+
+    public void initCard() {
+	KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		.addKeyEventDispatcher(new KeyEventDispatcher() {
+		    @Override
+		    public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_F1
+				&& e.getID() == KeyEvent.KEY_RELEASED) {
+			    // Click help button
+			    getBtnHelp_Image().doClick();
+			    return true; // consume the event
+			}
+			return false; // allow the event to be processed
+				      // normally
+		    }
+		});
     }
 
     public void reset() {
@@ -116,6 +137,7 @@ public class CardImage extends JPanel {
 	    centerPanel_Image.add(getLblImageOption_1());
 	    centerPanel_Image.add(getBtnNoImage_1_1());
 	    centerPanel_Image.add(getLblSelectedImages());
+	    centerPanel_Image.add(getLblImageExpl());
 	}
 	return centerPanel_Image;
     }
@@ -228,7 +250,7 @@ public class CardImage extends JPanel {
     private JTextField getTxtFilePath() throws ResourceException {
 	if (txtFilePath == null) {
 	    txtFilePath = new JTextField();
-	    txtFilePath.setBounds(139, 104, 272, 30);
+	    txtFilePath.setBounds(139, 138, 272, 30);
 	    txtFilePath.setHorizontalAlignment(SwingConstants.CENTER);
 	    txtFilePath.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    txtFilePath.setEditable(false);
@@ -277,7 +299,7 @@ public class CardImage extends JPanel {
 	    btnBrowse = new JButton(
 		    root.getMessages().getString("button.browse"));
 	    btnBrowse.setEnabled(false);
-	    btnBrowse.setBounds(421, 108, 115, 23);
+	    btnBrowse.setBounds(422, 142, 115, 23);
 	    btnBrowse.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -334,7 +356,7 @@ public class CardImage extends JPanel {
 	    lblImageOption.setHorizontalAlignment(SwingConstants.LEFT);
 	    lblImageOption.setForeground(Color.decode("#0089d6"));
 	    lblImageOption.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblImageOption.setBounds(162, 33, 414, 42);
+	    lblImageOption.setBounds(162, 59, 414, 42);
 	}
 	return lblImageOption;
     }
@@ -354,7 +376,7 @@ public class CardImage extends JPanel {
 	    btnNoImage.setBackground(SystemColor.window);
 	    btnNoImage.setMnemonic('n');
 	    btnNoImage.setFont(ResourceLoader.getFont().deriveFont(20f));
-	    btnNoImage.setBounds(139, 163, 21, 42);
+	    btnNoImage.setBounds(139, 186, 21, 42);
 	}
 	return btnNoImage;
     }
@@ -367,7 +389,7 @@ public class CardImage extends JPanel {
 	    lblImageOption_1.setHorizontalAlignment(SwingConstants.LEFT);
 	    lblImageOption_1.setForeground(Color.decode("#0089d6"));
 	    lblImageOption_1.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblImageOption_1.setBounds(162, 163, 414, 42);
+	    lblImageOption_1.setBounds(162, 186, 414, 42);
 	}
 	return lblImageOption_1;
     }
@@ -386,7 +408,7 @@ public class CardImage extends JPanel {
 	    btnYesImage.setMnemonic('n');
 	    btnYesImage.setFont(btnYesImage.getFont().deriveFont(20f));
 	    btnYesImage.setBackground(SystemColor.window);
-	    btnYesImage.setBounds(139, 33, 21, 42);
+	    btnYesImage.setBounds(139, 59, 21, 42);
 	}
 	return btnYesImage;
     }
@@ -400,8 +422,20 @@ public class CardImage extends JPanel {
 	    lblSelectedImages
 		    .setForeground(UIManager.getColor("Button.foreground"));
 	    lblSelectedImages.setFont(ResourceLoader.getFont().deriveFont(13f));
-	    lblSelectedImages.setBounds(139, 80, 359, 29);
+	    lblSelectedImages.setBounds(139, 108, 359, 29);
 	}
 	return lblSelectedImages;
+    }
+
+    private JLabel getLblImageExpl() {
+	if (lblImageExpl == null) {
+	    lblImageExpl = new JLabel(
+		    root.getMessages().getString("label.images.explanation"));
+	    lblImageExpl.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblImageExpl.setForeground(Color.BLACK);
+	    lblImageExpl.setFont(ResourceLoader.getFont().deriveFont(15f));
+	    lblImageExpl.setBounds(10, 3, 566, 41);
+	}
+	return lblImageExpl;
     }
 }

@@ -77,7 +77,7 @@ public class MainWindow extends JFrame {
     private CardFile cardFile; // For uploading a file
     private CardImage cardImage; // For uploading images to caption
     private CardMode cardMode; // For choosing a translation mode
-    private CardDefault cardAutoMode; // For automatic translation settings
+    private CardDefault cardDefault; // For automatic translation settings
     private CardAuto cardAuto; // For automatic translation
     private CardTextToSpeech cardTTS; // For cognitive speech
     private CardManual cardManual; // For manual translation
@@ -136,7 +136,7 @@ public class MainWindow extends JFrame {
 	cardFile = null;
 	cardMode = null;
 	cardAuto = null;
-	cardAutoMode = null;
+	cardDefault = null;
 	cardManual = null;
 	cardEnd = null;
 	cardTTS = null;
@@ -146,7 +146,9 @@ public class MainWindow extends JFrame {
 	currentCard = null;
 
 	// Localization
-	localize(locale);
+	if (locale != null) {
+	    localize(locale);
+	}
 
 	// Image description
 	this.vision = new Vision();
@@ -195,18 +197,22 @@ public class MainWindow extends JFrame {
 	    break;
 	case "file":
 	    currentCard = cardFile;
+	    cardFile.initCard();
 	    break;
 	case "info":
 	    currentCard = cardInfo;
 	    break;
 	case "image":
 	    currentCard = cardImage;
+	    cardImage.initCard();
 	    break;
 	case "mode":
 	    currentCard = cardMode;
+	    cardMode.initCard();
 	    break;
 	case "automode":
-	    currentCard = cardAutoMode;
+	    currentCard = cardDefault;
+	    cardDefault.initCard();
 	    break;
 	case "manual":
 	    cardManual.reset();
@@ -220,12 +226,14 @@ public class MainWindow extends JFrame {
 	    break;
 	case "auto":
 	    currentCard = cardAuto;
+	    cardAuto.initCard();
 	    // Start running automatic translation task
 	    cardAuto.run();
 	    break;
 	case "auto-2":
 	    // Already run
 	    currentCard = cardAuto;
+	    cardAuto.initCard();
 	    break;
 	case "end":
 	    // Set name to be shown on screen
@@ -304,11 +312,11 @@ public class MainWindow extends JFrame {
     }
 
     private JPanel getCardAutoMode() throws ResourceException {
-	if (cardAutoMode == null) {
-	    cardAutoMode = new CardDefault(this);
-	    cardAutoMode.setVisible(false);
+	if (cardDefault == null) {
+	    cardDefault = new CardDefault(this);
+	    cardDefault.setVisible(false);
 	}
-	return cardAutoMode;
+	return cardDefault;
     }
 
     private JPanel getCardManual() throws ResourceException {
@@ -490,7 +498,7 @@ public class MainWindow extends JFrame {
 	try {
 	    if (!isManual) {
 		// Automatic translation
-		cardAutoMode.setTargetLanguages(languages);
+		cardDefault.setTargetLanguages(languages);
 	    } else {
 		// Manual translation
 		translator.setTargetLanguages(languages, null);
@@ -534,7 +542,7 @@ public class MainWindow extends JFrame {
 	try {
 	    translator.input();
 	    // If everything goes well
-	    cardAutoMode.setDefaultSource(translator.getSource().isDefault());
+	    cardDefault.setDefaultSource(translator.getSource().isDefault());
 	    cardAuto.setSourcePath(path);
 	    cardManual.setSourcePath(path);
 	    return true;
@@ -568,7 +576,7 @@ public class MainWindow extends JFrame {
     public void reset() {
 	translator.reset();
 	manualMode = false;
-	initWindow(Locale.getDefault());
+	initWindow(null);
 	show("main");
     }
 

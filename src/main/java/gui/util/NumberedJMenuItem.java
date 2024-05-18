@@ -20,7 +20,7 @@ public class NumberedJMenuItem extends JMenuItem {
 
     public NumberedJMenuItem(MainWindow root, ResourceBundle messages,
 	    String text, String language) {
-	super(text.substring(0, text.lastIndexOf("_")) + ")");
+	super(text);
 
 	this.language_code = language;
 	this.setMnemonic(this.language_code.charAt(0));
@@ -33,6 +33,9 @@ public class NumberedJMenuItem extends JMenuItem {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		try {
+		    // Save the previous locale for possible mistakes in init
+		    // process
+		    previous_language = Locale.getDefault();
 		    root.initWindow(new Locale(language_code));
 		} catch (ResourceException re) {
 		    // Handle exception:
@@ -46,6 +49,7 @@ public class NumberedJMenuItem extends JMenuItem {
 		    // Show error message + go on with application, no drama
 		    root.showErrorMessage(
 			    new LanguageException(messages, language), false);
+		    // Go back to previous language
 		    root.initWindow(previous_language);
 		}
 
