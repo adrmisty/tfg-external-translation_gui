@@ -60,6 +60,11 @@ public class CardDefault extends JPanel {
     private String defaultLanguage = null;
     private boolean isSourceDefault = true;
 
+    /*
+     * Mnemonics
+     */
+    private KeyEventDispatcher keyEventDispatcher;
+
     public CardDefault(MainWindow root) throws ResourceException {
 	this.root = root;
 
@@ -71,9 +76,13 @@ public class CardDefault extends JPanel {
 	this.add(getCenterPanel_Mode());
     }
 
-    public void initCard() {
-	KeyboardFocusManager.getCurrentKeyboardFocusManager()
-		.addKeyEventDispatcher(new KeyEventDispatcher() {
+    public void setKeyEventDispatcher(boolean set) {
+	if (!set) {
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .removeKeyEventDispatcher(this.keyEventDispatcher);
+	} else {
+	    if (this.keyEventDispatcher == null) {
+		this.keyEventDispatcher = new KeyEventDispatcher() {
 		    @Override
 		    public boolean dispatchKeyEvent(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_F1
@@ -85,7 +94,11 @@ public class CardDefault extends JPanel {
 			return false; // allow the event to be processed
 				      // normally
 		    }
-		});
+		};
+	    }
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .addKeyEventDispatcher(this.keyEventDispatcher);
+	}
     }
 
     /**
@@ -101,7 +114,7 @@ public class CardDefault extends JPanel {
 	    buttonGroup.remove(b);
 	    centerPanel_Mode.remove(b);
 	}
-
+	setKeyEventDispatcher(false);
 	buttons = new ArrayList<>();
     }
 
@@ -181,6 +194,7 @@ public class CardDefault extends JPanel {
 			    root.getMessages().getString("button.settings.no"));
 		}
 		radioButton.setSelected(true);
+		radioButton.setFocusTraversalKeysEnabled(true);
 		radioButton.setEnabled(true);
 		radioButton.addActionListener(new ActionListener() {
 
@@ -302,13 +316,14 @@ public class CardDefault extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    root.setLanguages(languages, defaultLanguage);
+		    setKeyEventDispatcher(false);
 		    root.show("image");
 
 		}
 
 	    });
 	    btnNext_Mode.setBounds(421, 11, 115, 35);
-	    btnNext_Mode.setMnemonic('n');
+	    btnNext_Mode.setMnemonic(btnNext_Mode.getText().charAt(0));
 	    btnNext_Mode.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_Mode.setEnabled(true);
 	}

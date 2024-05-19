@@ -72,7 +72,11 @@ public class LocaleParser {
      * @return display language
      */
     public String getLanguage(Locale locale) {
-	return locale.getDisplayLanguage();
+	Locale def = Locale.getDefault();
+	Locale.setDefault(new Locale("en_US"));
+	String language = locale.getDisplayLanguage();
+	Locale.setDefault(def);
+	return language;
     }
 
     /**
@@ -133,17 +137,23 @@ public class LocaleParser {
      * Builds a mapping between all currently-supported languages, with the
      * format "language-country" being the key.
      * 
+     * The keys should be in English, that is: · "albanian-albania" and not: ·
+     * "albanes-albania"
+     * 
      * @return map between language-country and its Locale object
      */
     private Map<String, Locale> getMap() {
 	Map<String, Locale> map = new HashMap<String, Locale>();
 	String key;
 
+	Locale def = Locale.getDefault();
+	Locale.setDefault(new Locale("en_US"));
 	for (Locale locale : Locale.getAvailableLocales()) {
 	    key = locale.getDisplayLanguage().toLowerCase() + "-"
 		    + locale.getDisplayCountry().toLowerCase();
 	    map.put(key, locale);
 	}
+	Locale.setDefault(def);
 
 	return map;
     }

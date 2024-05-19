@@ -55,6 +55,11 @@ public class CardAuto extends JPanel {
     // Threads
     private Thread translationTask;
 
+    /*
+     * Mnemonics
+     */
+    private KeyEventDispatcher keyEventDispatcher;
+
     public CardAuto(MainWindow root) throws ResourceException {
 	this.root = root;
 
@@ -65,9 +70,13 @@ public class CardAuto extends JPanel {
 	setBounds(100, 100, 587, 420);
     }
 
-    public void initCard() {
-	KeyboardFocusManager.getCurrentKeyboardFocusManager()
-		.addKeyEventDispatcher(new KeyEventDispatcher() {
+    public void setKeyEventDispatcher(boolean set) {
+	if (!set) {
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .removeKeyEventDispatcher(this.keyEventDispatcher);
+	} else {
+	    if (this.keyEventDispatcher == null) {
+		this.keyEventDispatcher = new KeyEventDispatcher() {
 		    @Override
 		    public boolean dispatchKeyEvent(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_F1
@@ -79,8 +88,11 @@ public class CardAuto extends JPanel {
 			return false; // allow the event to be processed
 				      // normally
 		    }
-		});
-
+		};
+	    }
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .addKeyEventDispatcher(this.keyEventDispatcher);
+	}
     }
 
     /**
@@ -140,6 +152,7 @@ public class CardAuto extends JPanel {
 		root.getMessages().getString("label.auto.title.loading"));
 	lblTime.setText(
 		root.getMessages().getString("label.auto.subtitle.loading"));
+	setKeyEventDispatcher(false);
     }
 
     private boolean getSaveFileChooser() {
@@ -183,8 +196,8 @@ public class CardAuto extends JPanel {
 	if (btnSave_Auto == null) {
 	    btnSave_Auto = new JButton(
 		    root.getMessages().getString("button.save"));
-	    btnSave_Auto.setBounds(398, 8, 138, 42);
-	    btnSave_Auto.setMnemonic('s');
+	    btnSave_Auto.setBounds(371, 8, 165, 42);
+	    btnSave_Auto.setMnemonic(btnSave_Auto.getText().charAt(0));
 	    btnSave_Auto.setIcon(new ImageIcon(
 		    CardAuto.class.getResource("/img/save-icon.png")));
 	    btnSave_Auto.setEnabled(false);
@@ -193,11 +206,13 @@ public class CardAuto extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 		    if (getSaveFileChooser()) {
 			root.saveAll();
+			setKeyEventDispatcher(false);
 			root.show("end");
 		    }
 		}
 
 	    });
+	    btnSave_Auto.setMnemonic(btnSave_Auto.getText().charAt(0));
 	    btnSave_Auto.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    btnSave_Auto.setFocusable(false);
 	}
@@ -262,6 +277,7 @@ public class CardAuto extends JPanel {
 	    });
 	    btnReview_Auto.setIcon(new ImageIcon(
 		    CardAuto.class.getResource("/img/review-icon.png")));
+	    btnReview_Auto.setMnemonic(btnReview_Auto.getText().charAt(0));
 	    btnReview_Auto.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    btnReview_Auto.setFocusable(false);
 	    btnReview_Auto.setEnabled(false);
@@ -289,13 +305,14 @@ public class CardAuto extends JPanel {
 	    btnTts_Auto.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    setKeyEventDispatcher(false);
 		    root.show("tts");
 		}
 	    });
 	    btnTts_Auto.setEnabled(false);
 	    btnTts_Auto.setIcon(new ImageIcon(
 		    CardAuto.class.getResource("/img/texttospeech.png")));
-	    btnTts_Auto.setMnemonic('t');
+	    btnTts_Auto.setMnemonic(btnTts_Auto.getText().charAt(0));
 	    btnTts_Auto.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    btnTts_Auto.setBounds(306, 173, 187, 42);
 	}
@@ -327,7 +344,6 @@ public class CardAuto extends JPanel {
 		    new ImageIcon(CardAuto.class.getResource("/img/help.png")));
 	    btnHelp_Auto.setToolTipText(
 		    root.getMessages().getString("tooltip.auto"));
-	    btnHelp_Auto.setMnemonic('h');
 	    btnHelp_Auto.setFont(btnHelp_Auto.getFont().deriveFont(14f));
 	    btnHelp_Auto.setFocusable(false);
 	    btnHelp_Auto.setBorder(null);

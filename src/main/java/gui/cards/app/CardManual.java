@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,6 +19,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -51,37 +54,34 @@ public class CardManual extends JPanel {
     private JButton btnNext_Manual;
     private JTextField txtPath;
     private JButton btnBrowse;
-    private JTextField txtLanguage;
+    private JTextArea txtLanguage;
 
     private String sourcePath;
-    private String language;
     private JLabel lblManualTitle;
     private JButton btnHelp_Manual;
+    private JLabel txtExplanation;
+
+    /*
+     * Mnemonics
+     */
+    private KeyEventDispatcher keyEventDispatcher;
 
     public CardManual(MainWindow root) throws ResourceException {
 	this.root = root;
 
 	this.setLayout(null);
 	this.add(getNorthPanel_Manual());
-	this.add(getCenterPanel_Auto());
+	this.add(getCenterPanel_Manual());
 	this.add(getDownPanel_Manual());
     }
 
-    public void setSourcePath(String path) {
-	this.sourcePath = path;
-    }
-
-    public void setLanguage(String language) {
-	txtLanguage.setText(language);
-    }
-
-    public void reset() {
-	btnTranslate_Manual.setEnabled(false);
-	btnNext_Manual.setEnabled(false);
-	txtPath.setText("");
-	txtLanguage.setText("");
-	KeyboardFocusManager.getCurrentKeyboardFocusManager()
-		.addKeyEventDispatcher(new KeyEventDispatcher() {
+    public void setKeyEventDispatcher(boolean set) {
+	if (!set) {
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .removeKeyEventDispatcher(this.keyEventDispatcher);
+	} else {
+	    if (this.keyEventDispatcher == null) {
+		this.keyEventDispatcher = new KeyEventDispatcher() {
 		    @Override
 		    public boolean dispatchKeyEvent(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_F1
@@ -93,7 +93,40 @@ public class CardManual extends JPanel {
 			return false; // allow the event to be processed
 				      // normally
 		    }
-		});
+		};
+	    }
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .addKeyEventDispatcher(this.keyEventDispatcher);
+	}
+    }
+
+    public void setSourcePath(String path) {
+	this.sourcePath = path;
+    }
+
+    public void setLanguages(List<String> language) {
+	List<String> langs = new ArrayList<>();
+	int i = 0;
+	for (String l : language) {
+	    if (i < 5) {
+		langs.add(l.split(", ")[0]);
+	    }
+	    i++;
+	}
+	if (i - 5 > 0) {
+	    getTxtLanguage().setText(
+		    String.join(", ", langs) + "... (+" + (i - 5) + ")");
+	} else {
+	    getTxtLanguage().setText(String.join(", ", langs));
+	}
+    }
+
+    public void reset() {
+	btnTranslate_Manual.setEnabled(false);
+	btnNext_Manual.setEnabled(false);
+	txtPath.setText("");
+	getTxtLanguage().setText("");
+	setKeyEventDispatcher(false);
     }
 
     private boolean getSaveFileChooser() {
@@ -114,7 +147,7 @@ public class CardManual extends JPanel {
 	return false;
     }
 
-    private JPanel getCenterPanel_Auto() throws ResourceException {
+    private JPanel getCenterPanel_Manual() throws ResourceException {
 	if (centerPanel_Manual == null) {
 	    centerPanel_Manual = new JPanel();
 	    centerPanel_Manual.setBounds(0, 107, 586, 256);
@@ -126,6 +159,7 @@ public class CardManual extends JPanel {
 	    centerPanel_Manual.add(getTxtPath());
 	    centerPanel_Manual.add(getBtnBrowse());
 	    centerPanel_Manual.add(getTxtLanguage());
+	    centerPanel_Manual.add(getTxtExplanation());
 	}
 	return centerPanel_Manual;
     }
@@ -134,7 +168,8 @@ public class CardManual extends JPanel {
 	if (btnTranslate_Manual == null) {
 	    btnTranslate_Manual = new JButton(
 		    root.getMessages().getString("button.translate"));
-	    btnTranslate_Manual.setMnemonic('S');
+	    btnTranslate_Manual
+		    .setMnemonic(btnTranslate_Manual.getText().charAt(0));
 	    btnTranslate_Manual.setIcon(new ImageIcon(
 		    CardManual.class.getResource("/img/save-icon.png")));
 	    btnTranslate_Manual.setEnabled(false);
@@ -150,7 +185,7 @@ public class CardManual extends JPanel {
 	    btnTranslate_Manual
 		    .setFont(ResourceLoader.getFont().deriveFont(15f));
 	    btnTranslate_Manual.setFocusable(false);
-	    btnTranslate_Manual.setBounds(229, 165, 153, 42);
+	    btnTranslate_Manual.setBounds(222, 191, 153, 42);
 	}
 	return btnTranslate_Manual;
     }
@@ -231,7 +266,7 @@ public class CardManual extends JPanel {
 		    root.getMessages().getString("label.manual.language"));
 	    lblLanguage.setForeground(Color.decode("#0089d6"));
 	    lblLanguage.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblLanguage.setBounds(10, 63, 214, 32);
+	    lblLanguage.setBounds(10, 84, 214, 32);
 	    lblLanguage.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
 	return lblLanguage;
@@ -244,7 +279,7 @@ public class CardManual extends JPanel {
 	    lblFileLocation.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblFileLocation.setForeground(Color.decode("#0089d6"));
 	    lblFileLocation.setFont(ResourceLoader.getFont().deriveFont(15f));
-	    lblFileLocation.setBounds(10, 98, 214, 32);
+	    lblFileLocation.setBounds(10, 122, 214, 32);
 	}
 	return lblFileLocation;
     }
@@ -257,10 +292,11 @@ public class CardManual extends JPanel {
 	    btnNext_Manual.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    setKeyEventDispatcher(false);
 		    root.show("end");
 		}
 	    });
-	    btnNext_Manual.setMnemonic('n');
+	    btnNext_Manual.setMnemonic(btnNext_Manual.getText().charAt(0));
 	    btnNext_Manual.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_Manual.setBounds(421, 11, 115, 35);
 	}
@@ -274,7 +310,7 @@ public class CardManual extends JPanel {
 	    txtPath.setFont(ResourceLoader.getFont().deriveFont(12f));
 	    txtPath.setEditable(false);
 	    txtPath.setColumns(10);
-	    txtPath.setBounds(222, 100, 178, 30);
+	    txtPath.setBounds(222, 125, 178, 30);
 	}
 	return txtPath;
     }
@@ -291,21 +327,24 @@ public class CardManual extends JPanel {
 		    }
 		}
 	    });
-	    btnBrowse.setMnemonic('b');
+	    btnBrowse.setMnemonic(btnBrowse.getText().charAt(0));
 	    btnBrowse.setFont(ResourceLoader.getFont().deriveFont(14f));
-	    btnBrowse.setBounds(410, 103, 115, 23);
+	    btnBrowse.setBounds(410, 127, 115, 23);
 	}
 	return btnBrowse;
     }
 
-    private JTextField getTxtLanguage() throws ResourceException {
+    private JTextArea getTxtLanguage() throws ResourceException {
 	if (txtLanguage == null) {
-	    txtLanguage = new JTextField(this.language);
-	    txtLanguage.setHorizontalAlignment(SwingConstants.CENTER);
+	    txtLanguage = new JTextArea();
+	    txtLanguage.setBounds(222, 89, 303, 29);
+	    txtLanguage.setBackground(SystemColor.window);
 	    txtLanguage.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    txtLanguage.setEditable(false);
-	    txtLanguage.setColumns(10);
-	    txtLanguage.setBounds(222, 63, 178, 30);
+	    // 1 row
+	    txtLanguage.setLineWrap(false);
+	    txtLanguage.setWrapStyleWord(false);
+	    txtLanguage.setPreferredSize(new java.awt.Dimension(500, 40));
 	}
 	return txtLanguage;
     }
@@ -337,7 +376,6 @@ public class CardManual extends JPanel {
 		    root.getMessages().getString("tooltip.manual"));
 	    btnHelp_Manual.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/help.png")));
-	    btnHelp_Manual.setMnemonic('h');
 	    btnHelp_Manual.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnHelp_Manual.setFocusable(false);
 	    btnHelp_Manual.setBorder(null);
@@ -345,5 +383,18 @@ public class CardManual extends JPanel {
 	    btnHelp_Manual.setBounds(537, 7, 49, 41);
 	}
 	return btnHelp_Manual;
+    }
+
+    private JLabel getTxtExplanation() {
+	if (txtExplanation == null) {
+	    txtExplanation = new JLabel(
+		    root.getMessages().getString("label.manual.explanation"));
+	    txtExplanation.setHorizontalAlignment(SwingConstants.CENTER);
+	    txtExplanation.setFont(ResourceLoader.getFont().deriveFont(15f));
+	    txtExplanation.setBackground(Color.WHITE);
+	    txtExplanation.setBounds(10, 11, 566, 62);
+	    txtExplanation.setForeground(Color.decode("#0089d6"));
+	}
+	return txtExplanation;
     }
 }

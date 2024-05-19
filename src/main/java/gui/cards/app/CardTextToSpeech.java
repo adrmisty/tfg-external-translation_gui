@@ -45,6 +45,7 @@ public class CardTextToSpeech extends JPanel {
     private JLabel lblTTS;
     private JLabel lblChoose;
     private JLabel lblReading;
+    private JLabel lblAvailable;
     private JPanel backPanel_AutoTTS;
     private JLabel lblBack_TTS;
     private JButton btnBack_TTS;
@@ -66,6 +67,11 @@ public class CardTextToSpeech extends JPanel {
     private boolean runSpeech;
     private JPanel panel;
 
+    /*
+     * Mnemonics
+     */
+    private KeyEventDispatcher keyEventDispatcher;
+
     public CardTextToSpeech(MainWindow root) throws ResourceException {
 	this.root = root;
 
@@ -77,6 +83,31 @@ public class CardTextToSpeech extends JPanel {
 	this.add(getCenterPanel_TTS());
 	// Text-to-speech for source file
 	this.speechTask = createThread();
+    }
+
+    public void setKeyEventDispatcher(boolean set) {
+	if (!set) {
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .removeKeyEventDispatcher(this.keyEventDispatcher);
+	} else {
+	    if (this.keyEventDispatcher == null) {
+		this.keyEventDispatcher = new KeyEventDispatcher() {
+		    @Override
+		    public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_F1
+				&& e.getID() == KeyEvent.KEY_RELEASED) {
+			    // Click help button
+			    getBtnHelp_TTS().doClick();
+			    return true; // consume the event
+			}
+			return false; // allow the event to be processed
+				      // normally
+		    }
+		};
+	    }
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .addKeyEventDispatcher(this.keyEventDispatcher);
+	}
     }
 
     /**
@@ -118,20 +149,7 @@ public class CardTextToSpeech extends JPanel {
 	    buttonGroup.remove(b);
 	    centerPanel_TTS.remove(b);
 	}
-	KeyboardFocusManager.getCurrentKeyboardFocusManager()
-		.addKeyEventDispatcher(new KeyEventDispatcher() {
-		    @Override
-		    public boolean dispatchKeyEvent(KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_F1
-				&& e.getID() == KeyEvent.KEY_RELEASED) {
-			    // Click help button
-			    getBtnHelp_TTS().doClick();
-			    return true; // consume the event
-			}
-			return false; // allow the event to be processed
-				      // normally
-		    }
-		});
+	setKeyEventDispatcher(false);
 	buttons = new ArrayList<>();
     }
 
@@ -171,6 +189,20 @@ public class CardTextToSpeech extends JPanel {
 	return lblReading;
     }
 
+    private JLabel getLblAvailable() throws ResourceException {
+	if (lblAvailable == null) {
+	    lblAvailable = new JLabel();
+	    lblAvailable.setText(
+		    root.getMessages().getString("label.tts.available"));
+	    lblAvailable.setBounds(10, 152, 566, 25);
+	    lblAvailable.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblAvailable.setForeground(Color.black);
+	    lblAvailable.setVisible(false);
+	    lblAvailable.setFont(ResourceLoader.getFont().deriveFont(14f));
+	}
+	return lblAvailable;
+    }
+
     private JPanel getNorthPanel_AutoTTS() throws ResourceException {
 	if (northPanel_AutoTTS == null) {
 	    northPanel_AutoTTS = new JPanel();
@@ -201,6 +233,7 @@ public class CardTextToSpeech extends JPanel {
 	    centerPanel_TTS.add(getLblChoose());
 	    centerPanel_TTS.add(getPanel());
 	    centerPanel_TTS.add(getLblReading());
+	    centerPanel_TTS.add(getLblAvailable());
 	    setButtonGroup();
 	}
 	return centerPanel_TTS;
@@ -213,6 +246,8 @@ public class CardTextToSpeech extends JPanel {
 	int SEP = 40;
 	boolean first = true;
 
+	int availableButtons = 0;
+
 	for (TargetFile file : targets) {
 	    JRadioButton radioButton = new JRadioButton(file.getFileName());
 
@@ -224,8 +259,11 @@ public class CardTextToSpeech extends JPanel {
 		}
 
 	    });
-
+	    radioButton.setFocusTraversalKeysEnabled(true);
 	    boolean enabled = root.isSpeechAvailableFor(file.getTargetCode());
+	    if (enabled) {
+		availableButtons++;
+	    }
 	    radioButton.setEnabled(enabled);
 	    if (enabled) {
 		getBtnTts().setEnabled(true);
@@ -247,6 +285,9 @@ public class CardTextToSpeech extends JPanel {
 	    buttons.add(radioButton);
 	}
 
+	if (availableButtons == 0) {
+	    lblAvailable.setVisible(true);
+	}
 	return buttons;
     }
 
@@ -370,7 +411,7 @@ public class CardTextToSpeech extends JPanel {
 		    }
 		}
 	    });
-	    btnTTS.setMnemonic('t');
+	    btnTTS.setMnemonic(btnTTS.getText().charAt(0));
 	    btnTTS.setFont(ResourceLoader.getFont().deriveFont(14f));
 	}
 	return btnTTS;

@@ -38,6 +38,7 @@ import main.java.logic.file.TargetFile;
 import main.java.logic.image.Vision;
 import main.java.logic.speech.Speech;
 import main.java.logic.translation.Translator;
+import main.java.util.exception.IdeException;
 import main.java.util.exception.ImageException;
 import main.java.util.exception.LanguageException;
 import main.java.util.exception.PropertiesException;
@@ -196,44 +197,46 @@ public class MainWindow extends JFrame {
 	    mnLanguage.setVisible(true);
 	    break;
 	case "file":
+	    cardFile.setKeyEventDispatcher(true);
 	    currentCard = cardFile;
-	    cardFile.initCard();
 	    break;
 	case "info":
 	    currentCard = cardInfo;
 	    break;
 	case "image":
+	    cardImage.setKeyEventDispatcher(true);
 	    currentCard = cardImage;
-	    cardImage.initCard();
 	    break;
 	case "mode":
+	    cardMode.setKeyEventDispatcher(true);
 	    currentCard = cardMode;
-	    cardMode.initCard();
 	    break;
 	case "automode":
+	    cardDefault.setKeyEventDispatcher(true);
 	    currentCard = cardDefault;
-	    cardDefault.initCard();
 	    break;
 	case "manual":
 	    cardManual.reset();
-	    cardManual.setLanguage(translator.getTargetLanguages().get(0));
+	    cardManual.setKeyEventDispatcher(true);
+	    cardManual.setLanguages(translator.getTargetLanguages());
 	    currentCard = cardManual;
 	    break;
 	case "tts":
 	    cardTTS.reset();
+	    cardTTS.setKeyEventDispatcher(true);
 	    cardTTS.setTargetFiles(translator.getResults());
 	    currentCard = cardTTS;
 	    break;
 	case "auto":
 	    currentCard = cardAuto;
-	    cardAuto.initCard();
+	    cardDefault.setKeyEventDispatcher(true);
 	    // Start running automatic translation task
 	    cardAuto.run();
 	    break;
 	case "auto-2":
 	    // Already run
+	    cardAuto.setKeyEventDispatcher(true);
 	    currentCard = cardAuto;
-	    cardAuto.initCard();
 	    break;
 	case "end":
 	    // Set name to be shown on screen
@@ -467,16 +470,17 @@ public class MainWindow extends JFrame {
 	    translator.translateAll();
 	    if (manualMode) { // Manual translation
 		translator.saveAll();
-		IDE.open(contentPane, translator.getManualPath());
+		IDE.open(contentPane, translator.getPaths());
 	    }
 	} catch (PropertiesException pe) {
 	    this.showErrorMessage(new PropertiesException(messages,
 		    pe.getFilename(), pe.isContentRelated()), true);
-	} catch (IOException io) {
-	    this.showErrorMessage(io, false);
+	} catch (IOException ide) {
+	    this.showErrorMessage(new IdeException(messages), false);
 	} catch (TranslationException te) {
 	    this.showErrorMessage(
 		    new TranslationException(messages, te.isManual()), false);
+
 	    // Any other type of exception during translator process
 	    // Go back to mode
 	} catch (Exception e) {
@@ -590,7 +594,7 @@ public class MainWindow extends JFrame {
 		IDE.open(contentPane, path);
 	    }
 	} catch (IOException io) {
-	    this.showErrorMessage(new ResultsException(messages, true), false);
+	    this.showErrorMessage(new IdeException(messages, true), false);
 	}
     }
 

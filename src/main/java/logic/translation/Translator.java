@@ -86,15 +86,8 @@ public class Translator {
     /**
      * @return absolute path of manually-translated file
      */
-    public String getManualPath() {
-	return manager.getManualPath();
-    }
-
-    /**
-     * @return absolute path of manually-translated file
-     */
-    public List<String> getAutoPaths() {
-	return manager.getAutoPaths();
+    public List<String> getPaths() {
+	return manager.getPaths();
     }
 
     /**

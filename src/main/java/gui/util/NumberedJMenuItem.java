@@ -24,7 +24,9 @@ public class NumberedJMenuItem extends JMenuItem {
 
 	this.language_code = language;
 	this.setMnemonic(this.language_code.charAt(0));
-	this.setDisplayedMnemonicIndex(0);
+	if (this.language_code.equals("en")) {
+	    this.setMnemonic(this.language_code.charAt(1));
+	}
 	setForeground(UIManager.getColor("CheckBox.darkShadow"));
 
 	this.previous_language = Locale.getDefault();

@@ -136,21 +136,11 @@ public class FileManager {
     }
 
     /**
-     * Returns the absolute path of the manually-translated file (only a
-     * possible one).
-     * 
-     * @return path of manually translated file
-     */
-    public String getManualPath() {
-	return targetFiles.get(0).getFilePath();
-    }
-
-    /**
-     * Returns the absolute paths of all auto-translated file.
+     * Returns the absolute paths of all target localization files.
      * 
      * @return list with paths of all translated files
      */
-    public List<String> getAutoPaths() {
+    public List<String> getPaths() {
 	List<String> paths = new ArrayList<>();
 	for (TargetFile f : targetFiles) {
 	    paths.add(f.getFilePath());
@@ -166,11 +156,12 @@ public class FileManager {
      * @return file path of the translation file in the specific directory @
      * @throws IOException
      */
-    public String manualWrite() throws IOException {
-	TargetFile f = targetFiles.get(0);
-	String path = f.save(targetDirectory);
-	writeResults(path, f, true);
-	return f.getFilePath();
+    public List<String> manualWrite() throws IOException {
+	for (TargetFile f : targetFiles) {
+	    String path = f.save(targetDirectory);
+	    writeResults(path, f, true);
+	}
+	return getPaths();
     }
 
     /**

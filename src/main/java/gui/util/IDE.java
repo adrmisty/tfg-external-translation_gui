@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import main.java.util.exception.IdeException;
 import main.java.util.exception.ResourceException;
 
 /**
@@ -40,16 +41,20 @@ public class IDE {
      * 
      * @param panel relative to which the IDE will be opened
      * @param path  of the file to edit
-     * @throws IOException       in case of issues opening text editing tool
+     * @throws IdeException      in case of issues opening text editing tool
      *                           desktop
      * @throws ResourceException in case that requested file path does not exist
      */
     public static void open(JPanel frame, String path)
-	    throws IOException, ResourceException {
+	    throws IdeException, ResourceException {
 	File file = new File(path);
 
 	if (file.exists()) {
-	    Desktop.getDesktop().edit(file);
+	    try {
+		Desktop.getDesktop().edit(file);
+	    } catch (IOException e) {
+		throw new IdeException();
+	    }
 	} else {
 	    throw new ResourceException(path);
 	}

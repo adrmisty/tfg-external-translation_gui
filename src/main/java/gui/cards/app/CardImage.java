@@ -66,6 +66,11 @@ public class CardImage extends JPanel {
     private JLabel lblSelectedImages;
     private JLabel lblImageExpl;
 
+    /*
+     * Mnemonics
+     */
+    private KeyEventDispatcher keyEventDispatcher;
+
     public CardImage(MainWindow root) throws ResourceException {
 	this.root = root;
 
@@ -79,9 +84,13 @@ public class CardImage extends JPanel {
 	buttonGroup.add(btnYesImage);
     }
 
-    public void initCard() {
-	KeyboardFocusManager.getCurrentKeyboardFocusManager()
-		.addKeyEventDispatcher(new KeyEventDispatcher() {
+    public void setKeyEventDispatcher(boolean set) {
+	if (!set) {
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .removeKeyEventDispatcher(this.keyEventDispatcher);
+	} else {
+	    if (this.keyEventDispatcher == null) {
+		this.keyEventDispatcher = new KeyEventDispatcher() {
 		    @Override
 		    public boolean dispatchKeyEvent(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_F1
@@ -93,12 +102,17 @@ public class CardImage extends JPanel {
 			return false; // allow the event to be processed
 				      // normally
 		    }
-		});
+		};
+	    }
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .addKeyEventDispatcher(this.keyEventDispatcher);
+	}
     }
 
     public void reset() {
 	txtFilePath.setText("");
 	chosenImages = null;
+	setKeyEventDispatcher(false);
     }
 
     private JPanel getNorthPanel_Image() throws ResourceException {
@@ -189,6 +203,7 @@ public class CardImage extends JPanel {
 	    btnBack_Image.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    setKeyEventDispatcher(false);
 		    root.show("automode");
 		}
 	    });
@@ -216,7 +231,7 @@ public class CardImage extends JPanel {
 		    root.show("auto");
 		}
 	    });
-	    btnNext_Image.setMnemonic('b');
+	    btnNext_Image.setMnemonic(btnNext_Image.getText().charAt(0));
 	    btnNext_Image.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_Image.setBounds(421, 11, 115, 35);
 	}
@@ -237,7 +252,6 @@ public class CardImage extends JPanel {
 		    MainWindow.class.getResource("/img/help.png")));
 	    btnHelp_Image.setToolTipText(
 		    root.getMessages().getString("tooltip.image"));
-	    btnHelp_Image.setMnemonic('b');
 	    btnHelp_Image.setFont(btnHelp_Image.getFont().deriveFont(14f));
 	    btnHelp_Image.setBorder(null);
 	    btnHelp_Image.setBackground(SystemColor.window);
@@ -306,7 +320,7 @@ public class CardImage extends JPanel {
 		    getImageChooser();
 		}
 	    });
-	    btnBrowse.setMnemonic('b');
+	    btnBrowse.setMnemonic(btnBrowse.getText().charAt(0));
 	    btnBrowse.setFont(ResourceLoader.getFont().deriveFont(14f));
 	}
 	return btnBrowse;
@@ -372,6 +386,7 @@ public class CardImage extends JPanel {
 		    btnBrowse.setEnabled(false);
 		}
 	    });
+	    btnNoImage.setFocusTraversalKeysEnabled(true);
 	    btnNoImage.setSelected(true);
 	    btnNoImage.setBackground(SystemColor.window);
 	    btnNoImage.setMnemonic('n');
@@ -405,6 +420,7 @@ public class CardImage extends JPanel {
 		    btnNext_Image.setEnabled(false);
 		}
 	    });
+	    btnYesImage.setFocusTraversalKeysEnabled(true);
 	    btnYesImage.setMnemonic('n');
 	    btnYesImage.setFont(btnYesImage.getFont().deriveFont(20f));
 	    btnYesImage.setBackground(SystemColor.window);

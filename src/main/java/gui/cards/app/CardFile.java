@@ -80,6 +80,11 @@ public class CardFile extends JPanel {
     private JToggleButton btnTts_File;
     private JLabel lblSelectedFiles;
 
+    /*
+     * Mnemonics
+     */
+    private KeyEventDispatcher keyEventDispatcher;
+
     public CardFile(MainWindow root) throws ResourceException {
 	this.root = root;
 
@@ -90,12 +95,16 @@ public class CardFile extends JPanel {
 
 	// Text-to-speech for source file
 	this.speechTask = createThread();
+
     }
 
-    public void initCard() {
-	// TODO
-	KeyboardFocusManager.getCurrentKeyboardFocusManager()
-		.addKeyEventDispatcher(new KeyEventDispatcher() {
+    public void setKeyEventDispatcher(boolean set) {
+	if (!set) {
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .removeKeyEventDispatcher(this.keyEventDispatcher);
+	} else {
+	    if (this.keyEventDispatcher == null) {
+		this.keyEventDispatcher = new KeyEventDispatcher() {
 		    @Override
 		    public boolean dispatchKeyEvent(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_F1
@@ -107,7 +116,11 @@ public class CardFile extends JPanel {
 			return false; // allow the event to be processed
 				      // normally
 		    }
-		});
+		};
+	    }
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .addKeyEventDispatcher(this.keyEventDispatcher);
+	}
     }
 
     public Thread createThread() {
@@ -131,6 +144,7 @@ public class CardFile extends JPanel {
 	lblDndWarning.setVisible(false);
 	btnNext_File.setEnabled(false);
 	btnTts_File.setEnabled(false);
+	setKeyEventDispatcher(false);
     }
 
     private void setReadingStatus(boolean reading) {
@@ -286,10 +300,11 @@ public class CardFile extends JPanel {
 	    btnNext_File.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+		    setKeyEventDispatcher(false);
 		    root.show("mode");
 		}
 	    });
-	    btnNext_File.setMnemonic('n');
+	    btnNext_File.setMnemonic(btnNext_File.getText().charAt(0));
 	    btnNext_File.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_File.setEnabled(false);
 	    btnNext_File.setBounds(421, 11, 115, 35);
@@ -445,7 +460,7 @@ public class CardFile extends JPanel {
 		    getFileChooser();
 		}
 	    });
-	    btnBrowse.setMnemonic('s');
+	    btnBrowse.setMnemonic(btnBrowse.getText().charAt(0));
 	    btnBrowse.setFont(ResourceLoader.getFont().deriveFont(14f));
 	}
 	return btnBrowse;
@@ -499,7 +514,7 @@ public class CardFile extends JPanel {
 		}
 	    });
 	    btnTts_File.setEnabled(false);
-	    btnTts_File.setMnemonic('t');
+	    btnTts_File.setMnemonic(btnTts_File.getText().charAt(0));
 	    btnTts_File.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnTts_File.setBounds(411, 218, 126, 38);
 	}

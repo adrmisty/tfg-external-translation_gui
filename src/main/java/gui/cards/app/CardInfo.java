@@ -251,7 +251,7 @@ public class CardInfo extends JPanel {
 	    });
 	    btnBack_Info.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/home-icon.png")));
-	    btnBack_Info.setMnemonic('h');
+	    btnBack_Info.setMnemonic('b');
 	    btnBack_Info.setBorder(null);
 	    btnBack_Info.setBackground(SystemColor.window);
 	    btnBack_Info.setBounds(21, 11, 31, 37);

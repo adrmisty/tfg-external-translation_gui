@@ -34,7 +34,7 @@ public class AutoTranslation implements TranslationMode {
 	    throws ResourceException, SQLException {
 	this.api = new OpenAIApiTranslation(); // API access
 	this.cache = new TranslationCache(); // Translation database
-	this.cache.reset();
+	// this.cache.reset();
 	this.source = source;
     }
 

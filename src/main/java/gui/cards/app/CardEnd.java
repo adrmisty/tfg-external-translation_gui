@@ -11,8 +11,12 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import main.java.gui.cards.MainWindow;
 import main.java.util.exception.ResourceException;
@@ -38,7 +42,7 @@ public class CardEnd extends JPanel {
     private JButton rightButton_End;
     private JLabel lblThanks;
     private JLabel lblSlogan_End;
-    private JTextArea lblFileSave;
+    private JTextPane lblFileSave;
     private JPanel logoPanel;
     private JLabel lblForLogo;
     private JLabel lblLogo;
@@ -83,6 +87,7 @@ public class CardEnd extends JPanel {
 	if (splitPane_End == null) {
 	    splitPane_End = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 		    (Component) null, (Component) null);
+	    splitPane_End.setContinuousLayout(true);
 	    splitPane_End.setBounds(113, 36, 371, 75);
 	    splitPane_End.setLeftComponent(getLeftButton_End());
 	    splitPane_End.setRightComponent(getRightButton_End());
@@ -159,19 +164,37 @@ public class CardEnd extends JPanel {
 	return lblSlogan_End;
     }
 
-    private JTextArea getLblFileSave() throws ResourceException {
+    private JTextPane getLblFileSave() throws ResourceException {
 	if (lblFileSave == null) {
-	    lblFileSave = new JTextArea();
+	    lblFileSave = new JTextPane();
+	    lblFileSave.setBackground(SystemColor.window);
+	    lblFileSave.setEditable(false);
+	    lblFileSave.setEditable(false);
 	    lblFileSave.setFont(ResourceLoader.getFont().deriveFont(17f));
 	    lblFileSave.setForeground(Color.BLUE.darker());
-	    lblFileSave.setBounds(10, 0, 576, 25);
+	    lblFileSave.setBounds(10, 0, 566, 25);
 	}
 	return lblFileSave;
     }
 
     public void setSavedFileName(String name) {
-	lblFileSave.setText(
-		root.getMessages().getString("label.translated") + " " + name);
+	// Center alignment
+	StyledDocument doc = lblFileSave.getStyledDocument();
+	SimpleAttributeSet center = new SimpleAttributeSet();
+	StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+	doc.setParagraphAttributes(0, doc.getLength(), center, false);
+
+	String text = root.getMessages().getString("label.translated") + " "
+		+ name;
+
+	try {
+	    // Insert the text, centered
+	    doc.insertString(0, text, center);
+	} catch (BadLocationException e) {
+	    // If any error arises, just put it normally
+	    lblFileSave.setText(text);
+	}
+	lblFileSave.setFont(ResourceLoader.getFont().deriveFont(15f));
     }
 
     private JPanel getLogoPanel() {

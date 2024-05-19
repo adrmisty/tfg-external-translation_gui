@@ -16,8 +16,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -72,8 +70,13 @@ public class CardMode extends JPanel {
     private JList<JCheckBox> languagesMenu;
     private List<String> languages = new ArrayList<>();
     private List<String> selectedLanguages = new ArrayList<>();
-    private static int maxLangs = 1;
+    private static int maxLangs = Integer.MAX_VALUE;
     private JScrollPane scrollPane;
+
+    /*
+     * Mnemonics
+     */
+    private KeyEventDispatcher keyEventDispatcher;
 
     public CardMode(MainWindow root) throws ResourceException {
 	this.root = root;
@@ -86,9 +89,13 @@ public class CardMode extends JPanel {
 	btnAutomatic_Mode.doClick();
     }
 
-    public void initCard() {
-	KeyboardFocusManager.getCurrentKeyboardFocusManager()
-		.addKeyEventDispatcher(new KeyEventDispatcher() {
+    public void setKeyEventDispatcher(boolean set) {
+	if (!set) {
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .removeKeyEventDispatcher(this.keyEventDispatcher);
+	} else {
+	    if (this.keyEventDispatcher == null) {
+		this.keyEventDispatcher = new KeyEventDispatcher() {
 		    @Override
 		    public boolean dispatchKeyEvent(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_F1
@@ -100,7 +107,11 @@ public class CardMode extends JPanel {
 			return false; // allow the event to be processed
 				      // normally
 		    }
-		});
+		};
+	    }
+	    KeyboardFocusManager.getCurrentKeyboardFocusManager()
+		    .addKeyEventDispatcher(this.keyEventDispatcher);
+	}
     }
 
     /**
@@ -110,14 +121,15 @@ public class CardMode extends JPanel {
     public void reset() throws ResourceException {
 	resetSelections(btnAutomatic_Mode, btnManual_Mode);
 	selectedLanguages = new ArrayList<>();
+	setKeyEventDispatcher(false);
 	repaint();
 	revalidate();
     }
 
     private void setLanguageAndMode() {
-	if (btnManual_Mode.isSelected() && selectedLanguages.size() > 1) {
-	    selectedLanguages.remove(0);
-	}
+	// if (btnManual_Mode.isSelected() && selectedLanguages.size() > 1) {
+	// selectedLanguages.remove(0);
+	// }
 	root.setLanguageAndMode(selectedLanguages, btnManual_Mode.isSelected());
     }
 
@@ -156,7 +168,7 @@ public class CardMode extends JPanel {
 	if (btnAutomatic_Mode.isSelected()) {
 	    maxLangs = 3;
 	} else {
-	    maxLangs = 1;
+	    maxLangs = Integer.MAX_VALUE;
 	}
 	changeMaxLangsText();
     }
@@ -164,17 +176,12 @@ public class CardMode extends JPanel {
     private void changeMaxLangsText() {
 	// Define a regular expression pattern to match the last number in the
 	// string
-	String str = lblLanguage.getText();
-	Pattern pattern = Pattern.compile("\\d+(?!.*\\d)");
-	Matcher matcher = pattern.matcher(str);
-
-	if (matcher.find()) {
-	    // Last number position
-	    int start = matcher.start();
-	    int end = matcher.end();
-	    lblLanguage.setText(str.substring(0, start)
-		    + String.valueOf(maxLangs) + str.substring(end));
-	    ;
+	if (maxLangs < Integer.MAX_VALUE) {
+	    lblLanguage.setText(
+		    root.getMessages().getString("label.mode.language"));
+	} else {
+	    lblLanguage.setText(
+		    root.getMessages().getString("label.mode.language.manual"));
 	}
     }
 
@@ -234,7 +241,7 @@ public class CardMode extends JPanel {
 	if (btnManual_Mode == null) {
 	    btnManual_Mode = new JButton(
 		    root.getMessages().getString("button.mode.manual"));
-	    btnManual_Mode.setMnemonic('m');
+	    btnManual_Mode.setMnemonic(btnManual_Mode.getText().charAt(0));
 	    btnManual_Mode.setFocusable(false);
 	    btnManual_Mode.addActionListener(new ActionListener() {
 		@Override
@@ -252,7 +259,8 @@ public class CardMode extends JPanel {
 	if (btnAutomatic_Mode == null) {
 	    btnAutomatic_Mode = new JButton(
 		    root.getMessages().getString("button.mode.auto"));
-	    btnAutomatic_Mode.setMnemonic('a');
+	    btnAutomatic_Mode
+		    .setMnemonic(btnAutomatic_Mode.getText().charAt(0));
 	    btnAutomatic_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -493,6 +501,7 @@ public class CardMode extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    setLanguageAndMode();
+		    setKeyEventDispatcher(false);
 		    if (btnAutomatic_Mode.isSelected()) {
 			root.show("automode");
 		    } else {
@@ -501,7 +510,7 @@ public class CardMode extends JPanel {
 		}
 	    });
 	    btnNext_Mode.setBounds(421, 11, 115, 35);
-	    btnNext_Mode.setMnemonic('n');
+	    btnNext_Mode.setMnemonic(btnNext_Mode.getText().charAt(0));
 	    btnNext_Mode.setFont(ResourceLoader.getFont().deriveFont(14f));
 	    btnNext_Mode.setEnabled(false);
 	}
@@ -518,7 +527,6 @@ public class CardMode extends JPanel {
 		    hm.setVisible(true);
 		}
 	    });
-	    btnHelp_Mode.setMnemonic('h');
 	    btnHelp_Mode.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/help.png")));
 	    btnHelp_Mode.setBounds(537, 7, 49, 41);

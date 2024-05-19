@@ -97,7 +97,7 @@ public class CardMain extends JPanel {
 		    root.show("file");
 		}
 	    });
-	    translateBtn.setMnemonic('s');
+	    translateBtn.setMnemonic(translateBtn.getText().charAt(0));
 	    translateBtn.setFont(ResourceLoader.getFont().deriveFont(20f));
 	}
 	return translateBtn;
@@ -117,7 +117,7 @@ public class CardMain extends JPanel {
 		}
 	    });
 	    infoBtn.setFont(ResourceLoader.getFont().deriveFont(20f));
-	    infoBtn.setMnemonic('m');
+	    infoBtn.setMnemonic(infoBtn.getText().charAt(0));
 	    infoBtn.setDisplayedMnemonicIndex(0);
 	    infoBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	    Font font = infoBtn.getFont();
