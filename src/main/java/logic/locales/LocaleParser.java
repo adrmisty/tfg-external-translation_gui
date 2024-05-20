@@ -1,4 +1,4 @@
-package main.java.logic.file;
+package main.java.logic.locales;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -48,11 +48,18 @@ public class LocaleParser {
 
 	String input = getTranslatedLanguage(language);
 	String[] parts = input.split(", ");
-	String lang = parts[0].trim().toLowerCase();
-	String country = parts[1].trim().toLowerCase();
 
-	// Create a Locale object with language and country
-	return map.get(lang + "-" + country);
+	// Global
+	if (parts.length == 1) {
+	    return map.get(input);
+
+	    // Region-specific
+	} else {
+	    String lang = parts[0].trim().toLowerCase();
+	    String country = parts[1].trim().toLowerCase();
+	    return map.get(lang + "-" + country);
+	}
+
     }
 
     /**
@@ -75,6 +82,18 @@ public class LocaleParser {
 	Locale def = Locale.getDefault();
 	Locale.setDefault(new Locale("en_US"));
 	String language = locale.getDisplayLanguage();
+	Locale.setDefault(def);
+	return language;
+    }
+
+    /**
+     * @param locale object with a specific language and country code
+     * @return display country, if any
+     */
+    public String getCountry(Locale locale) {
+	Locale def = Locale.getDefault();
+	Locale.setDefault(new Locale("en_US"));
+	String language = locale.getDisplayCountry();
 	Locale.setDefault(def);
 	return language;
     }
@@ -145,16 +164,29 @@ public class LocaleParser {
     private Map<String, Locale> getMap() {
 	Map<String, Locale> map = new HashMap<String, Locale>();
 	String key;
+	// key: "lang-country" or "lang"
+	String lang;
+	String country;
+	Locale value;
 
 	Locale def = Locale.getDefault();
 	Locale.setDefault(new Locale("en_US"));
 	for (Locale locale : Locale.getAvailableLocales()) {
-	    key = locale.getDisplayLanguage().toLowerCase() + "-"
-		    + locale.getDisplayCountry().toLowerCase();
-	    map.put(key, locale);
+	    lang = locale.getDisplayLanguage().toLowerCase();
+	    country = locale.getDisplayCountry().toLowerCase();
+
+	    // Global locale
+	    if (country.isBlank()) {
+		key = lang;
+		value = new Locale(locale.getLanguage());
+		// Region-specific locale
+	    } else {
+		key = lang + "-" + country;
+		value = locale;
+	    }
+	    map.put(key, value);
 	}
 	Locale.setDefault(def);
-
 	return map;
     }
 

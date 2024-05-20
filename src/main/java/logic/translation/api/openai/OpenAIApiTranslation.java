@@ -107,6 +107,14 @@ public class OpenAIApiTranslation implements ApiTranslation {
 		// Show error message and terminate application
 		ExceptionHandler.handle(null, e, true);
 	    }
+	} catch (Exception e) {
+	    // Retry
+	    try {
+		Thread.sleep(3000);
+		translate(properties, targetLang);
+	    } catch (Exception e2) {
+		// Nothing
+	    }
 	}
 	return this.results;
 

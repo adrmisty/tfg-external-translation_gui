@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import main.java.logic.locales.LocaleParser;
 import main.java.util.exception.PropertiesException;
 import main.java.util.exception.ResourceException;
 import main.java.util.properties.ResourceLoader;

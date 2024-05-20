@@ -34,11 +34,11 @@ public class PropertiesUtil {
 
 	while (keys.hasMoreElements()) {
 	    String key = (String) keys.nextElement();
-	    try {
+	    if (i < res.length) {
 		replaced.put(key, res[i]);
 		i++;
-	    } catch (Exception e) {
-		continue;
+	    } else {
+		break;
 	    }
 	}
 	return replaced;

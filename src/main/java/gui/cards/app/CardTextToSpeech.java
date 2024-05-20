@@ -194,7 +194,7 @@ public class CardTextToSpeech extends JPanel {
 	    lblAvailable = new JLabel();
 	    lblAvailable.setText(
 		    root.getMessages().getString("label.tts.available"));
-	    lblAvailable.setBounds(10, 152, 566, 25);
+	    lblAvailable.setBounds(10, 182, 566, 25);
 	    lblAvailable.setHorizontalAlignment(SwingConstants.CENTER);
 	    lblAvailable.setForeground(Color.black);
 	    lblAvailable.setVisible(false);

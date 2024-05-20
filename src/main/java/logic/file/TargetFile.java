@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import main.java.logic.locales.LocaleParser;
 import main.java.util.exception.PropertiesException;
 import main.java.util.exception.ResultsException;
 import main.java.util.exception.TranslationException;
@@ -111,7 +112,13 @@ public class TargetFile {
      * @return display language of target language
      */
     public String getTargetLanguage() {
-	return sourceFile.getParser().getLanguage(targetLanguage);
+	LocaleParser parser = sourceFile.getParser();
+	String language = parser.getLanguage(targetLanguage);
+	String country = parser.getCountry(targetLanguage);
+	if (!country.isBlank()) {
+	    return language + "(" + country + ")";
+	}
+	return language;
     }
 
     /**
