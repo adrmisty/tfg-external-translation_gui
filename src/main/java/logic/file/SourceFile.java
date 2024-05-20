@@ -118,7 +118,7 @@ public class SourceFile {
      * @return the source language of this file (its code!)
      */
     public String getLanguage() {
-	return sourceLanguage;
+	return this.sourceLanguage;
     }
 
     /**

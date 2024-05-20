@@ -67,14 +67,14 @@ public class OpenAIApiTranslation implements ApiTranslation {
     }
 
     @Override
-    public Properties translate(Properties properties, String targetLang)
-	    throws TranslationException {
+    public Properties translate(Properties properties, String sourceLang,
+	    String targetLang) throws TranslationException {
 
 	if (apiInterface != null) {
-	    return apiInterface.translate(properties, targetLang);
+	    return apiInterface.translate(properties, sourceLang, targetLang);
 	}
 
-	return getApiResults(properties, targetLang);
+	return getApiResults(properties, sourceLang, targetLang);
     }
 
     @Override
@@ -86,9 +86,10 @@ public class OpenAIApiTranslation implements ApiTranslation {
      * ######################## AUXILIARY METHODS ##############################
      */
 
-    private Properties getApiResults(Properties properties, String targetLang)
-	    throws TranslationException {
-	List<ChatMessage> messages = getRequests(properties, targetLang);
+    private Properties getApiResults(Properties properties, String sourceLang,
+	    String targetLang) throws TranslationException {
+	List<ChatMessage> messages = getRequests(properties, sourceLang,
+		targetLang);
 	try {
 	    this.results = PropertiesUtil.replaceValues(properties,
 		    getResults(messages));
@@ -99,7 +100,7 @@ public class OpenAIApiTranslation implements ApiTranslation {
 
 		try {
 		    Thread.sleep(3000);
-		    translate(properties, targetLang);
+		    translate(properties, sourceLang, targetLang);
 		} catch (Exception e2) {
 		    // Nothing
 		}
@@ -111,7 +112,7 @@ public class OpenAIApiTranslation implements ApiTranslation {
 	    // Retry
 	    try {
 		Thread.sleep(3000);
-		translate(properties, targetLang);
+		translate(properties, sourceLang, targetLang);
 	    } catch (Exception e2) {
 		// Nothing
 	    }
@@ -124,19 +125,20 @@ public class OpenAIApiTranslation implements ApiTranslation {
      * Builds a set of requests to input in the ChatCompletions API.
      * 
      * @param properties Properties object containing localization texts
+     * @param sourceLang source language the original content is in
      * @param targetLang target language that the user wishes to translate to
      * 
      * @return prompt: string containing all texts to translate @ in case of
      *         empty properties or API error
      */
     private List<ChatMessage> getRequests(Properties properties,
-	    String targetLang) throws TranslationException {
+	    String sourceLang, String targetLang) throws TranslationException {
 
 	List<ChatMessage> messages = new ArrayList<>();
 
 	// Build the respective messages
 	if (!properties.isEmpty()) {
-	    messages = apiReq.buildRequests(properties, targetLang);
+	    messages = apiReq.buildRequests(properties, sourceLang, targetLang);
 	} else {
 	    throw new TranslationException();
 	}
@@ -168,7 +170,7 @@ public class OpenAIApiTranslation implements ApiTranslation {
 	    ChatCompletionResult completionRes = service
 		    .createChatCompletion(completionRequest);
 	    results.append(completionRes.getChoices().get(0).getMessage()
-		    .getContent());
+		    .getContent().replace("-", ""));
 
 	    if (i < messages.size()) {
 		results.append("\n");

@@ -177,24 +177,27 @@ public class CardEnd extends JPanel {
 	return lblFileSave;
     }
 
-    public void setSavedFileName(String name) {
-	// Center alignment
-	StyledDocument doc = lblFileSave.getStyledDocument();
-	SimpleAttributeSet center = new SimpleAttributeSet();
-	StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
-	doc.setParagraphAttributes(0, doc.getLength(), center, false);
+    public void setSavedFileName(String name, boolean saved) {
 
-	String text = root.getMessages().getString("label.translated") + " "
-		+ name;
+	if (saved) {
+	    // Center alignment
+	    StyledDocument doc = lblFileSave.getStyledDocument();
+	    SimpleAttributeSet center = new SimpleAttributeSet();
+	    StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+	    doc.setParagraphAttributes(0, doc.getLength(), center, false);
 
-	try {
-	    // Insert the text, centered
-	    doc.insertString(0, text, center);
-	} catch (BadLocationException e) {
-	    // If any error arises, just put it normally
-	    lblFileSave.setText(text);
+	    String text = root.getMessages().getString("label.translated") + " "
+		    + name;
+	    try {
+		// Insert the text, centered
+		doc.insertString(0, text, center);
+	    } catch (BadLocationException e) {
+		// If any error arises, just put it normally
+		lblFileSave.setText(text);
+	    }
+	    lblFileSave.setFont(ResourceLoader.getFont().deriveFont(15f));
 	}
-	lblFileSave.setFont(ResourceLoader.getFont().deriveFont(15f));
+
     }
 
     private JPanel getLogoPanel() {

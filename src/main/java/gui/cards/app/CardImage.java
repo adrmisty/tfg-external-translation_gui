@@ -228,6 +228,7 @@ public class CardImage extends JPanel {
 			root.setImages(chosenImages);
 		    }
 		    reset();
+		    root.setMode(null);
 		    root.show("auto");
 		}
 	    });

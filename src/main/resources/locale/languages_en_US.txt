@@ -8,7 +8,6 @@ Arabic, Egypt
 Arabic, Morocco
 Arabic, Tunisia
 Arabic, Palestinian Territories
-Arabic, UAE
 Armenian
 Azerbaijani
 Basque

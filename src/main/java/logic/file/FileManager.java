@@ -1,6 +1,7 @@
 package main.java.logic.file;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -271,16 +272,27 @@ public class FileManager {
      */
     private void writeResults(String path, TargetFile f, boolean auto)
 	    throws IOException {
-	BufferedWriter writer = new BufferedWriter(new FileWriter(path));
-	String lang = f.getTargetLanguage();
-	Properties pr = f.getContent();
 
-	if (auto) {
-	    writer.write(PropertiesUtil.getValuesText(lang, pr).toString());
-	} else {
-	    writer.write(PropertiesUtil.getKeysText(lang, pr).toString());
+	// Create parent directory if non-existent beforehand
+	File file = new File(path);
+	File parentDir = file.getParentFile();
+	if (!parentDir.exists()) {
+	    parentDir.mkdirs();
 	}
-	writer.close();
+
+	// Create or overwrite the file
+	try (BufferedWriter writer = new BufferedWriter(new FileWriter(path))) {
+	    String lang = f.getTargetLanguage();
+	    Properties pr = f.getContent();
+
+	    if (auto) {
+		writer.write(PropertiesUtil.getValuesText(lang, pr).toString());
+	    } else {
+		writer.write(PropertiesUtil.getKeysText(lang, pr).toString());
+	    }
+
+	    writer.close();
+	}
     }
 
     /**

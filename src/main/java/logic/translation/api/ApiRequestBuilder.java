@@ -23,12 +23,13 @@ public interface ApiRequestBuilder {
      * request.
      * 
      * @param properties file containing localization properties for a program
+     * @param sourceLang source language the content to translate is in
      * @param targetLang language to which user is translating
      * @return list of chat messages (role: user -> content: prompt of the
      *         translation command)
      */
     public List<ChatMessage> buildRequests(Properties properties,
-	    String targetLang);
+	    String sourceLang, String targetLang);
 
     public String getModel();
 

@@ -30,10 +30,11 @@ public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
 
     @Override
     public List<ChatMessage> buildRequests(Properties properties,
-	    String targetLang) {
+	    String sourceLang, String targetLang) {
 
-	String command = String.format("Translate all sentences to %s:\n",
-		targetLang);
+	String command = String.format(
+		"You speak %s as a native. Translate all sentences to %s:\n",
+		sourceLang, targetLang);
 	String[] prompts = buildPrompts(command, properties);
 	return buildMessages(prompts);
     }
@@ -96,7 +97,7 @@ public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
 	    int size = batchSize + (i < remainder ? 1 : 0);
 
 	    subSentences = sentences.subList(index, index + size);
-	    prompt += String.join("\n", subSentences);
+	    prompt += String.join("\n-", subSentences);
 	    index += size;
 	    subPrompts[i] = prompt;
 	}

@@ -107,9 +107,13 @@ public class CardManual extends JPanel {
     public void setLanguages(List<String> language) {
 	List<String> langs = new ArrayList<>();
 	int i = 0;
+	String name;
 	for (String l : language) {
 	    if (i < 5) {
-		langs.add(l.split(", ")[0]);
+		name = l.split(", ")[0];
+		if (!langs.contains(name)) {
+		    langs.add(name);
+		}
 	    }
 	    i++;
 	}

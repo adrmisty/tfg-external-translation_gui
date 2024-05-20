@@ -86,6 +86,7 @@ public class MainWindow extends JFrame {
 
     // Files & translation
     private boolean manualMode = false;
+    private boolean saved = false;
 
     /*
      * Language setting
@@ -240,7 +241,7 @@ public class MainWindow extends JFrame {
 	    break;
 	case "end":
 	    // Set name to be shown on screen
-	    cardEnd.setSavedFileName(translator.getSavedDirectory());
+	    cardEnd.setSavedFileName(translator.getSavedDirectory(), saved);
 	    currentCard = cardEnd;
 	    break;
 	default:
@@ -435,6 +436,7 @@ public class MainWindow extends JFrame {
 
 	try {
 	    translator.saveAll();
+	    saved = true;
 	} catch (ResultsException re) {
 	    this.showErrorMessage(new ResultsException(messages, re.isReview(),
 		    re.isFilePath(), re.getFileMove()), false);
@@ -471,6 +473,7 @@ public class MainWindow extends JFrame {
 	    if (manualMode) { // Manual translation
 		translator.saveAll();
 		IDE.open(contentPane, translator.getPaths());
+		saved = true;
 	    }
 	} catch (PropertiesException pe) {
 	    this.showErrorMessage(new PropertiesException(messages,

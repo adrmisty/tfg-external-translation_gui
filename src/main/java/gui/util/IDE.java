@@ -1,6 +1,5 @@
 package main.java.gui.util;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -51,7 +50,9 @@ public class IDE {
 
 	if (file.exists()) {
 	    try {
-		Desktop.getDesktop().edit(file);
+		if (!code(file)) {
+		    text(file);
+		}
 	    } catch (IOException e) {
 		throw new IdeException();
 	    }
@@ -60,4 +61,50 @@ public class IDE {
 	}
     }
 
+    /**
+     * (Tries to) Opens a file with Visual Studio Code.
+     * 
+     * @param file the file to open
+     * @return true if the file is successfully opened with VS Code, false
+     *         otherwise
+     * @throws IOException if not supported by the user's system
+     */
+    private static boolean code(File file) throws IOException {
+	try {
+	    // Try to open the file with Visual Studio Code
+	    String[] command = { "code", file.getAbsolutePath() };
+	    // Execute the command
+	    ProcessBuilder processBuilder = new ProcessBuilder(command);
+	    processBuilder.start();
+	    return true;
+	} catch (Exception e) {
+	    // Restore interrupted state and return false
+	    Thread.currentThread().interrupt();
+	    return false;
+	}
+    }
+
+    /**
+     * Opens a file with a generic text editor, platform-dependent.
+     * 
+     * @param file the file to open
+     * @throws IOException if not supported by the user's system
+     */
+    private static void text(File file) throws IOException {
+	// Use platform-specific method to open the file with default text
+	// editor
+	String osName = System.getProperty("os.name").toLowerCase();
+	if (osName.contains("win")) {
+	    Runtime.getRuntime().exec("notepad.exe " + file.getAbsolutePath());
+	} else if (osName.contains("mac")) {
+	    Runtime.getRuntime().exec("open -e " + file.getAbsolutePath());
+	} else if (osName.contains("nix") || osName.contains("nux")
+		|| osName.contains("aix")) {
+	    Runtime.getRuntime().exec("xdg-open " + file.getAbsolutePath());
+	} else {
+	    // For other platforms, you might handle this case differently
+	    throw new UnsupportedOperationException(
+		    "Opening files with default text editor is not supported on this platform.");
+	}
+    }
 }

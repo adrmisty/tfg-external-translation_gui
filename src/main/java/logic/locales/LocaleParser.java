@@ -106,13 +106,27 @@ public class LocaleParser {
      */
     public String getLanguage(String input) {
 
-	// Create a Locale object with the provided locale code
-	Locale locale = new Locale(input);
+	input = input.replace("_", "-").toLowerCase();
+	String key = "";
+	Locale value;
+	String code;
 
-	// Get the display name of the language
-	String languageName = locale.getDisplayLanguage();
+	for (Map.Entry<String, Locale> entry : map.entrySet()) {
+	    key = entry.getKey();
 
-	return languageName;
+	    if (key.isBlank()) {
+		continue;
+	    }
+
+	    value = entry.getValue();
+	    code = getCode(value);
+	    if (code.equals(input)) {
+		break;
+	    }
+	}
+
+	return key.replace("-", " from ");
+
     }
 
     /*

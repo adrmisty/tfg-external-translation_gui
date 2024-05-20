@@ -41,7 +41,8 @@ public class AutoTranslation implements TranslationMode {
     /**
      * Executes the automatic API translation process, from a given input file:
      * 
-     * - 1. Establishes the target language.
+     * - 1. Establishes the target language. (In the case that it is the same as
+     * the source one, no translation process is done!)
      * 
      * - 2. Accesses LL to carry out automatic translation. (In case of
      * translations having already been carried out in the past, result is
@@ -61,14 +62,23 @@ public class AutoTranslation implements TranslationMode {
     public Properties translate(TargetFile target) throws TranslationException {
 	// New current target file
 	this.target = target;
+	Properties results;
 
-	// Checks whether some translations have already been made
-	fromCache();
-	// Translate strictly those that have never been translated before
-	Properties results = getAutoResults(target.getTargetLanguage());
-	target.setResults(results);
-	// Update cache
-	toCache();
+	// If they are the same language, return the same content
+	if (areSameLanguage(source, target)) {
+	    results = source.getContent();
+	    target.setResults(results);
+	} else {
+	    // Checks whether some translations have already been made
+	    fromCache();
+	    // Translate strictly those that have never been translated before
+	    results = getAutoResults(source.getLanguage(),
+		    target.getTargetLanguage());
+	    target.setResults(results);
+	    // Update cache
+	    toCache();
+	}
+
 	// Retrieve results
 	return results;
     }
@@ -118,14 +128,15 @@ public class AutoTranslation implements TranslationMode {
      * it either does/doesn't request translations to the API, for optimization
      * of performance.
      * 
-     * @param language format "English, United States"
+     * @param sourceLang format "Arabic (Palestine)" or "Arabic"
+     * @param language   format "English (United Kingdom)" or "English"
      * @return combined results (cache, API...) @ in case of error with API
      *         translation
      * 
      * @throws TranslationException as a result of issues with translation API
      *                              access, timeouts, interruptions
      */
-    private Properties getAutoResults(String language)
+    private Properties getAutoResults(String sourceLang, String language)
 	    throws TranslationException {
 
 	// No need to access the API
@@ -134,7 +145,7 @@ public class AutoTranslation implements TranslationMode {
 
 	} else {
 	    // Needs to access the API
-	    api.translate(cache.getUntranslated(), language);
+	    api.translate(cache.getUntranslated(), sourceLang, language);
 
 	    // Everything has been translated from API
 	    if (cache.getTranslated().isEmpty()) {
@@ -149,4 +160,23 @@ public class AutoTranslation implements TranslationMode {
 
     }
 
+    /**
+     * @param source source file
+     * @param target target file
+     * @return boolean true if they are in the same language and region
+     */
+    private boolean areSameLanguage(SourceFile source, TargetFile target) {
+	String src = source.getLanguage();
+	String tgt = target.getTargetLanguage().replace("(", " from ")
+		.replace(")", "").toLowerCase();
+
+	if (!src.equals(tgt)) // Not completely equal
+	{
+	    if (!tgt.contains(" ")) { // Target is global
+		return src.contains(tgt);
+	    }
+	    return false;
+	}
+	return true;
+    }
 }

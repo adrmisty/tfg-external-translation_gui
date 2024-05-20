@@ -32,8 +32,8 @@ public class Translator {
     private static FileManager manager;
 
     // Translation mode
-    private TranslationMode auto;
     private TranslationMode mode;
+    private TranslationMode auto;
     private TranslationMode manual;
 
     // Target languages
@@ -65,10 +65,7 @@ public class Translator {
      *                           missing or incorrect resources
      */
     public void setAutoMode() throws ResourceException, SQLException {
-	if (auto == null) {
-	    auto = new AutoTranslation(manager.getSourceFile());
-	}
-	this.mode = auto;
+	this.mode = new AutoTranslation(manager.getSourceFile());
     }
 
     /**
@@ -208,6 +205,8 @@ public class Translator {
 	if (mode != null) {
 	    mode.reset();
 	}
+	auto = null;
+	manual = null;
 	this.targetLanguages = new ArrayList<>();
 	manager.reset();
     }
