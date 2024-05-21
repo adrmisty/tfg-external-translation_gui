@@ -59,6 +59,7 @@ public class CardInfo extends JPanel {
     private JButton btnBack_Info;
 
     public CardInfo(MainWindow root) throws ResourceException {
+	setBackground(SystemColor.window);
 	this.root = root;
 
 	this.setLayout(null);

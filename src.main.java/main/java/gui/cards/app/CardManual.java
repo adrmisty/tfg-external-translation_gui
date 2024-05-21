@@ -67,6 +67,7 @@ public class CardManual extends JPanel {
     private KeyEventDispatcher keyEventDispatcher;
 
     public CardManual(MainWindow root) throws ResourceException {
+	setBackground(SystemColor.window);
 	this.root = root;
 
 	this.setLayout(null);
