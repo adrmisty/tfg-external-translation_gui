@@ -4,8 +4,16 @@
   <artifactId>tfg-external-translation_gui</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>tfg-external-translation_gui</name>
+  
   <build>
-    <sourceDirectory>src</sourceDirectory>
+	  <!-- Source and resource settings -->
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -15,8 +23,24 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+              <mainClass>gui.FileLingualApp</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
     </plugins>
-  </build>
+	</build>
+ 
   
   <repositories>
 	  <repository>
