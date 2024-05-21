@@ -129,10 +129,6 @@ public class ResourceLoader {
 		mapLanguages.put(lineNumber, line.trim()); // Using trim to
 		lineNumber++;
 	    }
-	    if (lineNumber != 119) {
-		throw new ResourceException(
-			"Expected 119 lines, but found " + lineNumber);
-	    }
 	    return mapLanguages;
 	} catch (IOException e) {
 	    throw new ResourceException(LANGUAGES_FILE);

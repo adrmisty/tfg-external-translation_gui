@@ -63,7 +63,7 @@ public class HelpMode extends JFrame {
 	    txtHelpMode.setEditable(false);
 	    txtHelpMode.setForeground(SystemColor.textInactiveText);
 	    txtHelpMode.setBackground(SystemColor.window);
-	    txtHelpMode.setBounds(28, 77, 535, 107);
+	    txtHelpMode.setBounds(28, 77, 535, 126);
 	}
 	return txtHelpMode;
     }
@@ -73,7 +73,7 @@ public class HelpMode extends JFrame {
 	    lblImage = new JLabel("");
 	    lblImage.setIcon(new ImageIcon(
 		    HelpMode.class.getResource("/helpimg/help-mode1.png")));
-	    lblImage.setBounds(119, 181, 457, 209);
+	    lblImage.setBounds(90, 203, 457, 199);
 	}
 	return lblImage;
     }

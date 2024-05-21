@@ -16,7 +16,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 import main.java.gui.cards.MainWindow;
 import main.java.util.ResourceLoader;
@@ -52,7 +51,7 @@ public class CardMain extends JPanel {
     private JPanel pnBtns;
 
     public CardMain(MainWindow root) throws ResourceException {
-	setBackground(UIManager.getColor("Button.highlight"));
+	setBackground(SystemColor.window);
 	this.root = root;
 
 	this.setLayout(null);

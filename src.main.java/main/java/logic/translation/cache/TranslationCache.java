@@ -42,6 +42,12 @@ public class TranslationCache {
     private String FIND = "SELECT text_translation as text FROM translation_cache WHERE text_hash=? and language_code=?";
     private String INSERT = "INSERT INTO translation_cache (text_hash, text_translation,"
 	    + " created_at, language_code) VALUES (?, ?, ?, ?)";
+    private String DELETE = "DELETE FROM translation_cache";
+
+    public TranslationCache() {
+	// this.cache.reset();
+	getConnection();
+    }
 
     /**
      * @return set of properties that are not translated and thus, not found in
@@ -67,7 +73,7 @@ public class TranslationCache {
 	    if (connection != null && !connection.isClosed()) {
 		connection.close();
 	    }
-	} catch (SQLException e) {
+	} catch (Exception e) {
 	    return;
 	}
     }
@@ -99,10 +105,8 @@ public class TranslationCache {
      * @throws SQL exception
      */
     public void reset() throws SQLException {
-	getConnection();
-	String delete = "DELETE FROM translation_cache";
-
-	try (PreparedStatement stmnt = connection.prepareStatement(delete)) {
+	try (PreparedStatement stmnt = getConnection()
+		.prepareStatement(DELETE)) {
 	    stmnt.executeUpdate();
 	}
 	closeConnection();
@@ -190,7 +194,8 @@ public class TranslationCache {
 	    return stored;
 	}
 
-	try (PreparedStatement stmnt = connection.prepareStatement(INSERT)) {
+	try (PreparedStatement stmnt = getConnection()
+		.prepareStatement(INSERT)) {
 
 	    // Save hash, translation, language code and time stamp
 	    try {
@@ -208,6 +213,8 @@ public class TranslationCache {
 	    stored = true;
 	} catch (SQLException e) {
 	    // already saved!
+	    stored = false;
+	} catch (Exception e) {
 	    stored = false;
 	}
 
@@ -233,7 +240,7 @@ public class TranslationCache {
 	getConnection();
 	String trans = null;
 
-	try (PreparedStatement stmnt = connection.prepareStatement(FIND)) {
+	try (PreparedStatement stmnt = getConnection().prepareStatement(FIND)) {
 	    // Check primary key (hash of text + language code)
 	    try {
 		stmnt.setString(1, hash(text));
@@ -247,8 +254,8 @@ public class TranslationCache {
 	    if (rs.next()) {
 		trans = rs.getString("text");
 	    }
-	} catch (SQLException e) {
-	    throw new TranslationException(false);
+	} catch (Exception e) {
+	    // Nothing found :(
 	}
 
 	return trans;

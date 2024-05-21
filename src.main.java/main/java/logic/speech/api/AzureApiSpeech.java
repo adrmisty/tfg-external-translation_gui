@@ -67,7 +67,7 @@ public class AzureApiSpeech implements ApiSpeech {
      */
     @Override
     public boolean isAvailableFor(String language) {
-	if (language.contains("_")) {
+	if (language.split("-").length == 2 || language.contains("_")) {
 	    return availableLanguages.contains(language.replace("_", "-"));
 	} else {
 	    return getRegionalCode(language) != null;
