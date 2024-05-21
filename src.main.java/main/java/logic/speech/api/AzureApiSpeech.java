@@ -78,7 +78,9 @@ public class AzureApiSpeech implements ApiSpeech {
     private void config(String language) {
 	// azure documentation marks languages with hyphen "-"
 
-	if (language.contains("_")) { // Full, available code
+	if (language.split("-").length == 2 || language.contains("_")) { // Full,
+									 // available
+									 // code
 	    this.speech.setSpeechSynthesisLanguage(language.replace("_", "-"));
 	} else { // Global code, with no specifics required by the API
 	    this.speech.setSpeechSynthesisLanguage(getRegionalCode(language));
