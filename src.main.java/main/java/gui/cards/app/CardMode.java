@@ -130,7 +130,7 @@ public class CardMode extends JPanel {
 	// if (btnManual_Mode.isSelected() && selectedLanguages.size() > 1) {
 	// selectedLanguages.remove(0);
 	// }
-	root.setLanguageAndMode(selectedLanguages, btnManual_Mode.isSelected());
+	root.setTranslationMode(selectedLanguages, btnManual_Mode.isSelected());
     }
 
     private void resetSelections(JButton thisButton, JButton otherButton) {

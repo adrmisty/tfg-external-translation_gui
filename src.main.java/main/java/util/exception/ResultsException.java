@@ -17,7 +17,7 @@ public class ResultsException extends IOException {
     private boolean isReview = false;
     private boolean isFilePath = false;
     private String move = "";
-    private ResourceBundle messages;
+    protected ResourceBundle messages;
 
     public ResultsException() {
 	super();
@@ -32,6 +32,11 @@ public class ResultsException extends IOException {
 	this(isReview);
 	this.isFilePath = isFilePath;
 	this.move = move;
+    }
+
+    public ResultsException(ResourceBundle messages) {
+	this();
+	this.messages = messages;
     }
 
     public ResultsException(ResourceBundle messages, boolean isReview) {

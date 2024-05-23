@@ -3,8 +3,7 @@ package main.java.logic.translation.mode;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import main.java.logic.file.SourceFile;
-import main.java.logic.file.TargetFile;
+import main.java.logic.file.LocaleFile;
 import main.java.logic.translation.api.ApiTranslation;
 import main.java.logic.translation.api.openai.OpenAIApiTranslation;
 import main.java.logic.translation.cache.TranslationCache;
@@ -26,15 +25,14 @@ public class AutoTranslation implements TranslationMode {
     private TranslationCache cache;
 
     // Source file
-    private SourceFile source;
-    // Current
-    private TargetFile target;
+    private LocaleFile source;
+    private LocaleFile target;
 
-    public AutoTranslation(SourceFile source)
+    public AutoTranslation(LocaleFile localeFile)
 	    throws ResourceException, SQLException {
 	this.api = new OpenAIApiTranslation(); // API access
 	this.cache = new TranslationCache(); // Translation database
-	this.source = source;
+	this.source = localeFile;
     }
 
     /**
@@ -58,7 +56,7 @@ public class AutoTranslation implements TranslationMode {
      *                              access, timeouts, interruptions
      */
     @Override
-    public Properties translate(TargetFile target) throws TranslationException {
+    public Properties translate(LocaleFile target) throws TranslationException {
 	// New current target file
 	this.target = target;
 	Properties results;
@@ -66,14 +64,14 @@ public class AutoTranslation implements TranslationMode {
 	// If they are the same language, return the same content
 	if (areSameLanguage(source, target)) {
 	    results = source.getContent();
-	    target.setResults(results);
+	    target.setContent(results);
 	} else {
 	    // Checks whether some translations have already been made
 	    fromCache();
 	    // Translate strictly those that have never been translated before
 	    results = getAutoResults(source.getLanguage(),
-		    target.getTargetLanguage());
-	    target.setResults(results);
+		    target.getLanguage());
+	    target.setContent(results);
 	    // Update cache
 	    toCache();
 	}
@@ -101,8 +99,8 @@ public class AutoTranslation implements TranslationMode {
      */
     private void toCache() throws TranslationException {
 	if (api.getResults() != null) {
-	    cache.storeAll(api.getResults(), target.getContent(),
-		    target.getTargetCode());
+	    cache.storeAll(api.getResults(), source.getContent(),
+		    target.getCode());
 	}
     }
 
@@ -114,7 +112,7 @@ public class AutoTranslation implements TranslationMode {
      *                              or retrieving past translations
      */
     private void fromCache() throws TranslationException {
-	cache.match(source.getContent(), target.getTargetCode());
+	cache.match(source.getContent(), target.getCode());
     }
 
     /**
@@ -155,19 +153,17 @@ public class AutoTranslation implements TranslationMode {
     }
 
     /**
-     * @param source source file
-     * @param target target file
+     * @param source2 source file
+     * @param target2 target file
      * @return boolean true if they are in the same language and region
      */
-    private boolean areSameLanguage(SourceFile source, TargetFile target) {
-	String src = source.getLanguage();
-	String tgt = target.getTargetLanguage().replace("(", " from ")
-		.replace(")", "").toLowerCase();
+    private boolean areSameLanguage(LocaleFile source2, LocaleFile target2) {
+	String src = source2.getLanguage();
+	String tgt = target2.getLanguage();
 
-	if (!src.equals(tgt)) // Not completely equal
-	{
+	if (!src.equals(tgt)) {
 	    if (!tgt.contains(" ")) { // Target is global
-		return src.contains(tgt);
+		return src.contains(tgt); // Partially equal or not
 	    }
 	    return false;
 	}

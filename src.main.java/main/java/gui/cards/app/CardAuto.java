@@ -157,10 +157,6 @@ public class CardAuto extends JPanel {
     }
 
     private boolean getSaveFileChooser() {
-	if (root.hasDirectory()) {
-	    return true;
-	}
-
 	fileChooser = new JFileChooser(this.sourcePath);
 	fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 	int returnVal = fileChooser.showSaveDialog(this);

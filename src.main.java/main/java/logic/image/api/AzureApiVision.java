@@ -30,11 +30,7 @@ import main.java.util.exception.ResourceException;
  */
 public class AzureApiVision implements ApiVision {
 
-    // Computer vision abstraction
     private ComputerVision cv;
-
-    // Files
-    private List<File> validFiles = new ArrayList<>();
     private List<File> invalidFiles = new ArrayList<>();
 
     public AzureApiVision() throws ResourceException {
@@ -46,64 +42,28 @@ public class AzureApiVision implements ApiVision {
 	} catch (Exception e) {
 	    throw new ResourceException(e.getLocalizedMessage());
 	}
-
     }
 
     @Override
-    public List<File> setImages(File[] files) throws ImageException {
-	this.validFiles = new ArrayList<>();
-	this.invalidFiles = new ArrayList<>();
-
-	if (files != null) {
-	    for (int i = 0; i < files.length; i++) {
-		try {
-		    validateImage(files[i]);
-		} catch (ImageException e) {
-		    continue;
-		}
-	    }
-
-	    // Throw an exception in case at least 1 of the provided files is
-	    // invalid
-	    if (!this.invalidFiles.isEmpty()) {
-		throw new ImageException(this.invalidFiles);
-	    }
-	}
-
-	return this.validFiles;
-    }
-
-    @Override
-    public List<File> getUnprocessedImages() {
-	return invalidFiles;
-    }
-
-    @Override
-    public Properties caption(File[] file) throws ImageException {
-	setImages(file);
-	return caption();
-    }
-
-    @Override
-    public Properties caption() {
-	if (this.validFiles.isEmpty()) {
+    public Properties describe(List<File> files) {
+	if (files.isEmpty()) {
 	    return null;
 	}
 
+	// Process each image and save its results
 	Properties pr = new Properties();
 	String caption;
 	ImageDescription d;
 
 	int i = 0;
-	for (File f : validFiles) {
+	for (File f : files) {
 	    try {
 		d = cv.describeImageInStream(getBytes(f), null);
 		caption = d.captions().get(0).text();
 		pr.put("image." + i, caption);
 		i++;
-
-		// Image or IO exception, any
 	    } catch (Exception e) {
+		// Image or IO exception, any: pass
 		continue;
 	    }
 	}
@@ -111,10 +71,48 @@ public class AzureApiVision implements ApiVision {
 	return pr;
     }
 
+    @Override
+    public List<File> validateImages(File[] files) throws ImageException {
+	List<File> validFiles = new ArrayList<>();
+	this.invalidFiles = new ArrayList<>();
+
+	if (files != null) {
+	    for (int i = 0; i < files.length; i++) {
+		try {
+		    File f = files[i];
+		    if (validateImage(f)) {
+			validFiles.add(f);
+		    }
+		} catch (ImageException e) {
+		    continue;
+		}
+	    }
+
+	    // At least one of the provided files is invalid
+	    if (!this.invalidFiles.isEmpty()) {
+		throw new ImageException(this.invalidFiles);
+	    }
+	}
+
+	return validFiles;
+    }
+
+    @Override
+    public List<File> getInvalidImages() {
+	return invalidFiles;
+    }
+
+    /*
+     * #########################################################################
+     * Auxiliary methods
+     * #########################################################################
+     */
+
     /**
-     * Confirms whether a given image is valid for automatic description.
+     * Confirms whether a given image is valid for automatic description, and
+     * according to that decision, it is added to the list of valid files.
      * 
-     * @param file file object representing an image
+     * @param file object representing an image saved to a given path
      * @return whether valid or not
      * @throws ImageException in case of providing a file whose size does not
      *                        comply with minimum required pixels, or it cannot
@@ -131,7 +129,6 @@ public class AzureApiVision implements ApiVision {
 		return false;
 	    }
 
-	    this.validFiles.add(file);
 	    return true;
 	} catch (IOException e) {
 	    // In case of issues with input/output of images

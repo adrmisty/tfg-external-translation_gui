@@ -8,8 +8,9 @@ import javax.swing.JOptionPane;
  * interruptions - api time outs and other issues - not found resources -
  * incorrect format of provided resources - etc.
  * 
- * This exception is handling is done through the GUI's point of view, that is,
- * providing a given error message in the application's specified locale.
+ * A specific and context-dependent error message in the application's specified
+ * locale is shown to the user, and measures are taken to either exit the
+ * application or not, based on the exception's severity.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
  * @version April 2024

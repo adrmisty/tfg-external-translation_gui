@@ -32,15 +32,15 @@ import main.java.gui.cards.app.CardMode;
 import main.java.gui.cards.app.CardTextToSpeech;
 import main.java.gui.util.ExceptionHandler;
 import main.java.gui.util.IDE;
-import main.java.gui.util.NumberedJMenuItem;
-import main.java.logic.file.SourceFile;
-import main.java.logic.file.TargetFile;
+import main.java.gui.util.LanguageMenuItem;
+import main.java.logic.file.LocaleFile;
 import main.java.logic.image.Vision;
 import main.java.logic.speech.Speech;
-import main.java.logic.translation.Translator;
+import main.java.logic.translation.TranslationManager;
 import main.java.util.ResourceLoader;
 import main.java.util.exception.IdeException;
 import main.java.util.exception.ImageException;
+import main.java.util.exception.IncompleteResultsException;
 import main.java.util.exception.LanguageException;
 import main.java.util.exception.PropertiesException;
 import main.java.util.exception.ResourceException;
@@ -50,22 +50,20 @@ import main.java.util.exception.TranslationException;
 import main.java.util.exception.UIException;
 
 /**
- * Main Window of the application, which consists of several different views
- * organised and displayed with a Card Layout.
+ * Main Window of the application.
+ * 
+ * In terms of GUI, it consists of several different cards (and their respective
+ * help cards), as well of the flow between components and actions.
+ * 
+ * In terms of logic, it manages all exceptions thrown in the application's
+ * domain logic execution.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version 2.0 (February 2024)
+ * @version May 2024
  */
 public class MainWindow extends JFrame {
 
     private static final long serialVersionUID = 1L;
-
-    /*
-     * ##############################
-     */
-    private Translator translator;
-    private Vision vision;
-    private Speech speech;
 
     // Locale
     private ResourceBundle messages;
@@ -84,15 +82,19 @@ public class MainWindow extends JFrame {
     private CardManual cardManual; // For manual translation
     private CardEnd cardEnd; // For ending the app
 
-    // Files & translation
-    private boolean manualMode = false;
-    private boolean saved = false;
-
-    /*
-     * Language setting
-     */
+    // Language menu
     private JMenuBar menuBar;
     private JMenu mnLanguage;
+
+    // Logic
+    private TranslationManager translator;
+    private Vision vision;
+    private Speech speech;
+
+    // Variables to show on screen
+    private boolean manualMode = false;
+    private boolean saved = false;
+    private List<String> languages = new ArrayList<>();
 
     /**
      * Create the frame.
@@ -219,13 +221,13 @@ public class MainWindow extends JFrame {
 	case "manual":
 	    cardManual.reset();
 	    cardManual.setKeyEventDispatcher(true);
-	    cardManual.setLanguages(translator.getTargetLanguages());
+	    cardManual.setLanguages(this.languages);
 	    currentCard = cardManual;
 	    break;
 	case "tts":
 	    cardTTS.reset();
 	    cardTTS.setKeyEventDispatcher(true);
-	    cardTTS.setTargetFiles(translator.getResults());
+	    cardTTS.setTargetFiles(translator.getTargetFiles());
 	    currentCard = cardTTS;
 	    break;
 	case "auto":
@@ -241,7 +243,7 @@ public class MainWindow extends JFrame {
 	    break;
 	case "end":
 	    // Set name to be shown on screen
-	    cardEnd.setSavedFileName(translator.getSavedDirectory(), saved);
+	    cardEnd.setSavedFileName(translator.getPath(), saved);
 	    currentCard = cardEnd;
 	    break;
 	default:
@@ -249,6 +251,7 @@ public class MainWindow extends JFrame {
 	    ExceptionHandler.handle(this, new UIException(messages), true);
 	}
 
+	speech.stop();
 	getCurrentCard().setVisible(true);
     }
 
@@ -377,7 +380,7 @@ public class MainWindow extends JFrame {
 
 	for (int i = 0; i < items.length; i++) {
 	    String code = items[i].split(" ")[1];
-	    menuItems.add(new NumberedJMenuItem(this, messages, items[i],
+	    menuItems.add(new LanguageMenuItem(this, messages, items[i],
 		    code.substring(1, code.length() - 1)));
 	    mnLanguage.add(menuItems.get(i));
 	}
@@ -398,7 +401,7 @@ public class MainWindow extends JFrame {
 	}
 
 	this.messages = retrieved;
-	this.translator = new Translator(this.messages);
+	this.translator = new TranslationManager(this.messages);
     }
 
     public ResourceBundle getMessages() {
@@ -450,34 +453,36 @@ public class MainWindow extends JFrame {
 
     /**
      * Carries out automatic image captioning.
+     * 
+     * @throws ImageException
      */
-    public void describe() {
-	Properties captions = vision.captions();
+    public void describe() throws ImageException {
+	Properties captions = vision.describe();
 	if (captions != null) {
 	    translator.include(captions);
 	}
     }
 
     /**
-     * Carries out all automatic translations (+ image description).
-     * 
-     * @throws IOException
-     * @throws PropertiesException
-     * @throws TranslationException
+     * Executes image description of input images (if any) and translations of
+     * the texts found in the source file provided by the user.
      */
     public void translate() {
-	describe();
 
 	try {
+	    describe();
 	    translator.translateAll();
 	    if (manualMode) { // Manual translation
 		translator.saveAll();
-		IDE.open(contentPane, translator.getPaths());
+		IDE.open(contentPane, translator.getResultsPaths());
 		saved = true;
 	    }
 	} catch (PropertiesException pe) {
 	    this.showErrorMessage(new PropertiesException(messages,
 		    pe.getFilename(), pe.isContentRelated()), true);
+	} catch (ImageException img) {
+	    this.showErrorMessage(
+		    new ImageException(messages, img.getInvalidFiles()), false);
 	} catch (IOException ide) {
 	    this.showErrorMessage(new IdeException(messages), false);
 	} catch (TranslationException te) {
@@ -496,13 +501,15 @@ public class MainWindow extends JFrame {
     }
 
     /**
-     * Establishes the languages the user has selected for
+     * Establishes the languages the user has selected for a given translation
+     * mode.
      * 
      * @param languages list of strings, with the format "English, United
-     *                  States" @
+     *                  States" or "English", in the app's localized language
      */
-    public void setLanguageAndMode(List<String> languages, boolean isManual) {
+    public void setTranslationMode(List<String> languages, boolean isManual) {
 	try {
+	    this.languages = languages;
 	    if (!isManual) {
 		// Automatic translation
 		cardDefault.setTargetLanguages(languages);
@@ -527,27 +534,18 @@ public class MainWindow extends JFrame {
      * @param defaultLang name of the target language that will be the default -
      *                    if null, no target language is established
      */
-    public void setLanguages(List<String> languages, String defaultLang) {
+    public void setLanguagesForAutomatic(List<String> languages,
+	    String defaultLang) {
 	translator.setTargetLanguages(languages, defaultLang);
     }
 
     /**
-     * @return true if the translator has a directory, false otherwise
+     * @param filePath of the source file that will be processed
      */
-    public boolean hasDirectory() {
-	return translator.getSavedDirectory() != null;
-    }
-
-    /**
-     * Inputs file defined in a given source path, to be processed and checked
-     * for mistakes.
-     * 
-     * @return boolean true if file is accepted by the translator
-     */
-    public boolean inputFile() {
-	String path = translator.getSource().getSourcePath();
+    public boolean inputFile(String path) {
 	try {
-	    translator.input();
+	    translator.input(path);
+
 	    // If everything goes well
 	    cardDefault.setDefaultSource(translator.getSource().isDefault());
 	    cardAuto.setSourcePath(path);
@@ -560,13 +558,7 @@ public class MainWindow extends JFrame {
 	    this.showErrorMessage(io, false);
 	}
 	return false;
-    }
 
-    /**
-     * @param filePath of the source file that will be processed
-     */
-    public void from(String filePath) {
-	translator.from(filePath);
     }
 
     /**
@@ -582,6 +574,7 @@ public class MainWindow extends JFrame {
      */
     public void reset() {
 	translator.reset();
+	vision.reset();
 	manualMode = false;
 	initWindow(null);
 	show("main");
@@ -611,13 +604,13 @@ public class MainWindow extends JFrame {
 	if (!read) {
 	    speech.stop();
 	}
-	SourceFile f = translator.getSource();
+	LocaleFile f = translator.getSource();
 
 	// To read or to stop
 	// Automatically stops if an exception arises
 	if (read) {
 	    try {
-		speech.speak(f.getLanguageCode(), f.getContent());
+		speech.speak(f.getCode(), f.getContent());
 	    } catch (SpeechException e) {
 		// this.showErrorMessage(new SpeechException(messages), false);
 		return false;
@@ -632,7 +625,7 @@ public class MainWindow extends JFrame {
      * @param read whether to read or to stop reading
      * @return boolean true if executed normally, false if an exception arises
      */
-    public boolean readTargetFile(TargetFile f, boolean read) {
+    public boolean readTargetFile(LocaleFile currentFile, boolean read) {
 	if (!read) {
 	    speech.stop();
 	}
@@ -641,7 +634,7 @@ public class MainWindow extends JFrame {
 	// Automatically stops if an exception arises
 	if (read) {
 	    try {
-		speech.speak(f.getTargetCode(), f.getContent());
+		speech.speak(currentFile.getCode(), currentFile.getContent());
 	    } catch (SpeechException e) {
 		// this.showErrorMessage(new SpeechException(messages), false);
 		return false;
@@ -658,8 +651,7 @@ public class MainWindow extends JFrame {
      */
     public boolean isSpeechAvailableFor(String language) {
 	if (language == null) {
-	    return speech
-		    .isAvailableFor(translator.getSource().getLanguageCode());
+	    return speech.isAvailableFor(translator.getSource().getCode());
 	}
 	return speech.isAvailableFor(language);
     }
@@ -669,12 +661,13 @@ public class MainWindow extends JFrame {
      *         completely translated, false otherwise
      */
     public boolean areResultsComplete() {
-	if (!translator.areResultsComplete()) {
-	    this.showErrorMessage(
-		    new Exception(messages.getString("error.incomplete")),
+	try {
+	    translator.areResultsComplete();
+	} catch (IncompleteResultsException e) {
+	    this.showErrorMessage(new IncompleteResultsException(messages),
 		    false);
-	    return false;
 	}
+
 	return true;
     }
 

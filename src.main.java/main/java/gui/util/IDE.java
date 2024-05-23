@@ -10,11 +10,11 @@ import main.java.util.exception.IdeException;
 import main.java.util.exception.ResourceException;
 
 /**
- * Class for managing the opening of a text editing tool/Integrated Development
- * Environment in the user's native Operating System, with the aim of editing
- * one or several files found in specific file paths.
+ * Manages the opening of a text editing tool/Integrated Development Environment
+ * in the user's native Operating System, with the aim of editing one or several
+ * files found in specific file paths.
  * 
- * @author Adriana R.F. - uo282798@uniovi.es
+ * @author Adriana R.F. (uo282798@uniovi.es)
  * @version May 2024
  */
 public class IDE {
@@ -22,8 +22,9 @@ public class IDE {
     /**
      * Opens and IDE for editing several files, in bulk.
      * 
-     * @param panel relative to which the IDE will be opened
+     * @param frame panel relative to which the IDE will be opened
      * @param paths list of the files to edit
+     * 
      * @throws IOException       if text editing tool cannot be opened
      * @throws ResourceException if one of the requested file paths does not
      *                           exist
@@ -38,8 +39,9 @@ public class IDE {
     /**
      * Opens and IDE for editing a file.
      * 
-     * @param panel relative to which the IDE will be opened
+     * @param frame panel relative to which the IDE will be opened
      * @param path  of the file to edit
+     * 
      * @throws IdeException      in case of issues opening text editing tool
      *                           desktop
      * @throws ResourceException in case that requested file path does not exist
@@ -88,7 +90,8 @@ public class IDE {
      * Opens a file with a generic text editor, platform-dependent.
      * 
      * @param file the file to open
-     * @throws IOException if not supported by the user's system
+     * @throws IOException if editing files from desktop is not supported by the
+     *                     user's system
      */
     private static void text(File file) throws IOException {
 	// Use platform-specific method to open the file with default text

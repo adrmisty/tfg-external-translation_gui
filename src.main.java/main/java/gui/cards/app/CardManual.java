@@ -135,10 +135,6 @@ public class CardManual extends JPanel {
     }
 
     private boolean getSaveFileChooser() {
-	if (root.hasDirectory()) {
-	    return true;
-	}
-
 	// By default
 	fileChooser = new JFileChooser(this.sourcePath);
 	fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -395,7 +391,7 @@ public class CardManual extends JPanel {
 	    txtExplanation = new JLabel(
 		    root.getMessages().getString("label.manual.explanation"));
 	    txtExplanation.setHorizontalAlignment(SwingConstants.CENTER);
-	    txtExplanation.setFont(ResourceLoader.getFont().deriveFont(15f));
+	    txtExplanation.setFont(ResourceLoader.getFont().deriveFont(18f));
 	    txtExplanation.setBackground(Color.WHITE);
 	    txtExplanation.setBounds(10, 11, 566, 62);
 	    txtExplanation.setForeground(Color.decode("#0089d6"));

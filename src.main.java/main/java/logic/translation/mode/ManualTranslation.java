@@ -2,7 +2,7 @@ package main.java.logic.translation.mode;
 
 import java.util.Properties;
 
-import main.java.logic.file.TargetFile;
+import main.java.logic.file.LocaleFile;
 import main.java.util.exception.TranslationException;
 
 /**
@@ -26,8 +26,8 @@ public class ManualTranslation implements TranslationMode {
      * @throws TranslationException not to do with logic, but rather with GUI
      */
     @Override
-    public Properties translate(TargetFile f) throws TranslationException {
-	f.setResults(null);
+    public Properties translate(LocaleFile f) throws TranslationException {
+	f.setContent(null);
 	return f.getContent(); // Nothing to save!
     }
 

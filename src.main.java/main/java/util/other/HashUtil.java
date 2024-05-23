@@ -1,5 +1,6 @@
-package main.java.util.db;
+package main.java.util.other;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -7,11 +8,12 @@ import java.security.NoSuchAlgorithmException;
  * Used to compute the 512-bit hash of a string.
  * 
  * @author Adriana R.F. (uo282798@uniovi.es)
- * @version March 2024
+ * @version May 2024
  */
 public class HashUtil {
 
-    private final static String ALGORITHM = "SHA-512"; // others, like "SHA-256"
+    // private final static String ALGORITHM = "SHA-256";
+    private final static String ALGORITHM = "SHA-512";
 
     /**
      * @param text to convert into its hash representation
@@ -19,9 +21,8 @@ public class HashUtil {
      * @throws NoSuchAlgorithmException for when hashing algorithm is not found
      */
     public static String getHash(String text) throws NoSuchAlgorithmException {
-	MessageDigest digest;
-	digest = MessageDigest.getInstance(ALGORITHM);
-	byte[] hashBytes = digest.digest(text.getBytes());
+	MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
+	byte[] hashBytes = digest.digest(text.getBytes(StandardCharsets.UTF_8));
 	StringBuilder hexadecimal = new StringBuilder();
 
 	for (byte hb : hashBytes) {
@@ -31,8 +32,6 @@ public class HashUtil {
 	    }
 	    hexadecimal.append(hex);
 	}
-
 	return hexadecimal.toString();
-
     }
 }

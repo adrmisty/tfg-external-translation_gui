@@ -409,9 +409,8 @@ public class CardFile extends JPanel {
     }
 
     private boolean checkInputFile(String path, String name) {
-	root.from(path);
 	// File accepted by the translator!
-	if (root.inputFile()) {
+	if (root.inputFile(path)) {
 
 	    txtFilePath.setText(name);
 

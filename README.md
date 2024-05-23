@@ -1,18 +1,11 @@
 # tfg-external-translation_gui
 
 ## 💡 Description
-Repository for my **TFG (Final Degree Project)**'s Graphic User Interface: 
-_externalized translation service for programs_, using the large language model ChatGPT 3.5 Turbo provided by the OpenAI API.
+Repository for my **TFG (Final Degree Project)**'s Graphic User Interface and domain logic: 
+_externalized translation service for programs_.
 
 Developed by **Adriana Rodríguez Flórez**, undergraduate student at the BSc in Computer Science
 and Software Engineering at the University of Oviedo (Asturias, Spain).
-
-### (2) 💡 To Do: test
-* Unit tests: tests de parámetros (correctos/incorrectos), manejos de excepciones...
-* Usability tests.
-
-### (3) 💡 To Do: doc
-* DOcumentation + memory.
 
 
 ## 🏛️ Architecture
@@ -20,10 +13,7 @@ and Software Engineering at the University of Oviedo (Asturias, Spain).
 ### Database
 * SQLite.
 
-### Model
-For text translation, the LLM used by the service corresponds with the ChatGPT-3.5 series provided by OpenAI. 
-
-### APIs
+### APIs and Models
 * GUI: Swing
 * Model access: OpenAI ChatCompletionsAPI (Java SDK service, provided by https://github.com/TheoKanning/openai-java).
 * Text to speech: Microsoft Azure AI Speech (https://azure.microsoft.com/en-us/products/ai-services/ai-speech).
@@ -38,7 +28,7 @@ For text translation, the LLM used by the service corresponds with the ChatGPT-3
 <img width="374" alt="image" src="https://github.com/adrmisty/tfg-external-translation_gui/assets/98897794/6db90df1-4b32-4833-bc93-978e70d1aaa3">
 
 
-### Wireframes
+### Initial wireframes
 <img width="374" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/1e6e9412-1052-4e8b-9f26-6095a291be97">
 <img width="304" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/e0ed2138-674e-4068-af20-d09b85968719">
 <img width="334" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/e8adafc2-eaf3-43bc-b66f-8ad02119927d">

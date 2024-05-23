@@ -424,7 +424,7 @@ public class CardImage extends JPanel {
 	    });
 	    btnYesImage.setFocusTraversalKeysEnabled(true);
 	    btnYesImage.setMnemonic('n');
-	    btnYesImage.setFont(btnYesImage.getFont().deriveFont(20f));
+	    btnYesImage.setFont(ResourceLoader.getFont().deriveFont(20f));
 	    btnYesImage.setBackground(SystemColor.window);
 	    btnYesImage.setBounds(139, 59, 21, 42);
 	}
@@ -450,8 +450,8 @@ public class CardImage extends JPanel {
 	    lblImageExpl = new JLabel(
 		    root.getMessages().getString("label.images.explanation"));
 	    lblImageExpl.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblImageExpl.setForeground(Color.BLACK);
-	    lblImageExpl.setFont(ResourceLoader.getFont().deriveFont(15f));
+	    lblImageExpl.setForeground(Color.decode("#0089d6"));
+	    lblImageExpl.setFont(ResourceLoader.getFont().deriveFont(18f));
 	    lblImageExpl.setBounds(10, 3, 566, 41);
 	}
 	return lblImageExpl;

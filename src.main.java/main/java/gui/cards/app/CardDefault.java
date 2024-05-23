@@ -315,7 +315,7 @@ public class CardDefault extends JPanel {
 	    btnNext_Mode.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    root.setLanguages(languages, defaultLanguage);
+		    root.setLanguagesForAutomatic(languages, defaultLanguage);
 		    setKeyEventDispatcher(false);
 		    root.show("image");
 

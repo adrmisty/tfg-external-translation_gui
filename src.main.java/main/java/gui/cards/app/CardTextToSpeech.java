@@ -27,7 +27,7 @@ import javax.swing.SwingConstants;
 
 import main.java.gui.cards.MainWindow;
 import main.java.gui.cards.help.HelpTTS;
-import main.java.logic.file.TargetFile;
+import main.java.logic.file.LocaleFile;
 import main.java.util.ResourceLoader;
 import main.java.util.exception.ResourceException;
 
@@ -55,10 +55,10 @@ public class CardTextToSpeech extends JPanel {
     /*
      * Buttons
      */
-    private List<TargetFile> targets = new ArrayList<>();
+    private List<LocaleFile> targets = new ArrayList<>();
     private ButtonGroup buttonGroup;
     private List<AbstractButton> buttons = new ArrayList<>();
-    private TargetFile currentFile = null;
+    private LocaleFile currentFile = null;
 
     /*
      * Text to speech
@@ -165,8 +165,8 @@ public class CardTextToSpeech extends JPanel {
      * @param languages list of language-country strings
      * @throws ResourceException
      */
-    public void setTargetFiles(List<TargetFile> files) {
-	this.targets = files;
+    public void setTargetFiles(List<LocaleFile> list) {
+	this.targets = list;
 	addButtons();
 	repaint();
 	revalidate();
@@ -248,8 +248,9 @@ public class CardTextToSpeech extends JPanel {
 
 	int availableButtons = 0;
 
-	for (TargetFile file : targets) {
-	    JRadioButton radioButton = new JRadioButton(file.getFileName());
+	for (LocaleFile file : targets) {
+	    JRadioButton radioButton = new JRadioButton(
+		    file.getName() + ".properties");
 
 	    radioButton.addActionListener(new ActionListener() {
 
@@ -260,7 +261,7 @@ public class CardTextToSpeech extends JPanel {
 
 	    });
 	    radioButton.setFocusTraversalKeysEnabled(true);
-	    boolean enabled = root.isSpeechAvailableFor(file.getTargetCode());
+	    boolean enabled = root.isSpeechAvailableFor(file.getCode());
 	    if (enabled) {
 		availableButtons++;
 	    }

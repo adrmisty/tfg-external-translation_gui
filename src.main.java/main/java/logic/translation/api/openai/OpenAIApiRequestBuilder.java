@@ -33,8 +33,8 @@ public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
 	    String sourceLang, String targetLang) {
 
 	String command = String.format(
-		"You speak %s as a native. Translate all sentences to %s:\n",
-		sourceLang, targetLang);
+		"Translate all property values from %s to %s:\n", sourceLang,
+		targetLang);
 	String[] prompts = buildPrompts(command, properties);
 	return buildMessages(prompts);
     }
@@ -87,17 +87,17 @@ public class OpenAIApiRequestBuilder implements ApiRequestBuilder {
 	int batchSize = properties.size() / requestNumber;
 	int remainder = properties.size() % requestNumber;
 
-	List<String> sentences = PropertyLoader.getValues(properties);
-	List<String> subSentences = new ArrayList<>();
+	List<String> keys = PropertyLoader.getKeys(properties);
 	String prompt = "";
 	int index = 0;
 
 	for (int i = 0; i < requestNumber; i++) {
 	    prompt = promptHeader;
 	    int size = batchSize + (i < remainder ? 1 : 0);
-
-	    subSentences = sentences.subList(index, index + size);
-	    prompt += String.join("\n-", subSentences);
+	    for (String key : keys.subList(index, index + size)) {
+		prompt += "\n" + key + "="
+			+ (properties.getProperty(key).replace("\n", ""));
+	    }
 	    index += size;
 	    subPrompts[i] = prompt;
 	}

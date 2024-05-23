@@ -7,19 +7,16 @@ import main.java.logic.speech.api.AzureApiSpeech;
 import main.java.util.exception.SpeechException;
 
 /**
- * Manages text to speech with Windows' Cognitive Speech API. This class allows
- * to read text out loud in a variety of languages and accents, which matches
- * the user's choice in terms of localization.
+ * Manages the text-to-speech functionality by accessing a TTS/speech API, for a
+ * variety of voices and accents, depending on the required localization.
  * 
- * @author Adriana R.F. (uo282798)
- * @version March 2024
+ * @author Adriana R.F. (uo282798@uniovi.es)
+ * @version May 2024
  */
 public class Speech {
 
-    // Azure Cognitive Services API
     private ApiSpeech apiSpeech;
 
-    // Localize
     public Speech(ResourceBundle messages) {
 	this.apiSpeech = new AzureApiSpeech(messages);
     }

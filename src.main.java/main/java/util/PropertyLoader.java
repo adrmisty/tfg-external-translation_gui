@@ -6,9 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -27,22 +27,26 @@ public class PropertyLoader {
      * Parses a .properties file content onto a Properties object.
      * 
      * 
-     * @param file path of the .properties file to load
+     * @param file      path of the .properties file to load
+     * @param forReview whether this loading is done in a temporary-review file
+     * 
      * @return Properties object containing the contents of the file
      * @throws IOException
      * @throws PropertiesException if there is an error while loading properties
      *                             from a given file (formatting/content errors
      *                             inside file)
      */
-    public static Properties load(String filepath)
+    public static Properties load(String filepath, boolean forReview)
 	    throws PropertiesException, IOException {
-	if (isI18N(filepath)) {
+	if (isI18N(filepath, forReview)) {
 	    Properties props = new Properties();
 	    File file = new File(filepath);
 
-	    try (FileInputStream fileStream = new FileInputStream(
-		    file.getAbsolutePath())) {
-		props.load(fileStream); // Ignores comments, etc
+	    // Ensure all alphabets are parsed correctly
+	    try (FileInputStream fileStream = new FileInputStream(file);
+		    InputStreamReader reader = new InputStreamReader(fileStream,
+			    "UTF-8")) {
+		props.load(reader); // Ignores comments, etc
 	    }
 	    return props;
 	} else {
@@ -51,32 +55,33 @@ public class PropertyLoader {
     }
 
     /**
-     * Replaces the values of a given Properties object with those given as
-     * input.
+     * Builds a properties object from a text that should have a Properties-like
+     * format.
      * 
-     * @param properties properties object with respective keys and values
-     * @param values     texts to replace Properties values with
+     * @param values texts to build key-value pairs with
      * 
      * @return properties object containing replacement of property values for
      *         their translations
      */
-    public static Properties replaceValues(Properties properties,
-	    String values) {
+    public static Properties getProperties(String values) {
+	Properties props = new Properties();
 	String[] res = values.split("\n");
-	Properties replaced = new Properties();
-	Enumeration<Object> keys = properties.keys();
-	int i = 0;
+	String[] split;
+	String key;
+	String value;
 
-	while (keys.hasMoreElements()) {
-	    String key = (String) keys.nextElement();
-	    if (i < res.length) {
-		replaced.put(key, res[i]);
-		i++;
-	    } else {
-		break;
+	for (int i = 0; i < res.length; i++) {
+	    split = res[i].split("=", 2);
+	    key = split[0];
+	    try {
+		value = split[1];
+	    } catch (Exception e) {
+		value = "";
 	    }
+
+	    props.put(key, value);
 	}
-	return replaced;
+	return props;
     }
 
     /**
@@ -190,7 +195,7 @@ public class PropertyLoader {
      * @throws IOException
      * @throws FileNotFoundException
      */
-    private static boolean isI18N(String filePath)
+    private static boolean isI18N(String filePath, boolean forReview)
 	    throws FileNotFoundException, IOException {
 
 	try (BufferedReader reader = new BufferedReader(
@@ -210,9 +215,16 @@ public class PropertyLoader {
 
 		// Check if the key and value are separated by '='
 		String[] parts = line.split("=", 2);
-		if (parts.length != 2 || parts[0].trim().isEmpty()
-			|| parts[1].trim().isEmpty()) {
-		    return false;
+		if (!forReview) {
+		    if (parts.length != 2 || parts[0].trim().isEmpty()
+			    || parts[1].trim().isEmpty()) {
+			return false;
+		    }
+		} else {
+		    // Value can be empty
+		    if (parts.length != 2 || parts[0].trim().isEmpty()) {
+			return false;
+		    }
 		}
 	    }
 	}

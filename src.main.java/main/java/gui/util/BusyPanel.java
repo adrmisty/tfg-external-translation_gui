@@ -15,8 +15,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-/*
- * https://stackoverflow.com/questions/48620030/how-to-make-the-youtubes-rotating-spinner-loading-screen-on-java-swing
+/**
+ * Implementation of a rotating, busy panel, to symbolize buffer/wait time in
+ * the execution of another thread.
+ * 
+ * @author https://stackoverflow.com/questions/48620030/how-to-make-the-youtubes-rotating-spinner-loading-screen-on-java-swing
  */
 public class BusyPanel extends JPanel {
 

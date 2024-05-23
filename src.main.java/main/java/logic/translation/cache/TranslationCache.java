@@ -1,5 +1,6 @@
 package main.java.logic.translation.cache;
 
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,8 +13,8 @@ import java.util.Properties;
 
 import main.java.util.PropertyLoader;
 import main.java.util.ResourceLoader;
-import main.java.util.db.HashUtil;
 import main.java.util.exception.TranslationException;
+import main.java.util.other.HashUtil;
 
 /**
  * Builds and manages a database (SQLite) aimed at acting like a caché for
@@ -44,8 +45,8 @@ public class TranslationCache {
 	    + " created_at, language_code) VALUES (?, ?, ?, ?)";
     private String DELETE = "DELETE FROM translation_cache";
 
-    public TranslationCache() {
-	// this.cache.reset();
+    public TranslationCache() throws SQLException {
+	// reset(); // empty database
 	getConnection();
     }
 
@@ -93,8 +94,10 @@ public class TranslationCache {
 	for (String k : PropertyLoader.getKeys(results)) {
 	    String text = originals.getProperty(k);
 	    String translation = results.getProperty(k);
-	    // Will only be stored if not already found in the DB
-	    store(text, translation, language);
+	    if (!translation.isEmpty()) {
+		// Will only be stored if not already found in the DB
+		store(text, translation, language);
+	    }
 	}
 	closeConnection();
     }
@@ -205,7 +208,12 @@ public class TranslationCache {
 		stored = false;
 		return stored;
 	    } // PK
-	    stmnt.setString(2, translation);
+
+	    // Ensure utf-8 encoding
+	    String utf8translation = new String(
+		    translation.getBytes(StandardCharsets.UTF_8),
+		    StandardCharsets.UTF_8);
+	    stmnt.setString(2, utf8translation);
 	    stmnt.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
 	    stmnt.setString(4, targetLanguage.toLowerCase()); // PK
 

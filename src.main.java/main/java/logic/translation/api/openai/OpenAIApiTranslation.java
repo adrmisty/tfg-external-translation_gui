@@ -69,11 +69,6 @@ public class OpenAIApiTranslation implements ApiTranslation {
     @Override
     public Properties translate(Properties properties, String sourceLang,
 	    String targetLang) throws TranslationException {
-
-	if (apiInterface != null) {
-	    return apiInterface.translate(properties, sourceLang, targetLang);
-	}
-
 	return getApiResults(properties, sourceLang, targetLang);
     }
 
@@ -91,8 +86,7 @@ public class OpenAIApiTranslation implements ApiTranslation {
 	List<ChatMessage> messages = getRequests(properties, sourceLang,
 		targetLang);
 	try {
-	    this.results = PropertyLoader.replaceValues(properties,
-		    getResults(messages));
+	    this.results = PropertyLoader.getProperties(getResults(messages));
 	    return this.results;
 	} catch (OpenAiHttpException e) {
 	    // Try again in 30s if rate limit has been reached
