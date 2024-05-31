@@ -59,8 +59,13 @@ public class Vision {
      * @throws ImageException if provided file images are invalid
      */
     public List<File> setImages(File[] imageFiles) throws ImageException {
-	this.images = apiVision.validateImages(imageFiles);
-	return this.images;
+	try {
+	    this.images = apiVision.validateImages(imageFiles);
+	    return this.images;
+	} catch (Exception e) {
+	    this.images = apiVision.getValidImages();
+	    throw e;
+	}
     }
 
     /**
@@ -81,5 +86,4 @@ public class Vision {
 	this.results = null;
 	this.apiVision = new AzureApiVision();
     }
-
 }

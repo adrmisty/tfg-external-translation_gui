@@ -24,8 +24,7 @@ public interface ApiSpeech {
      * @throws SpeechException in case of API execution interruption or issues
      *                         performing speech synthesis
      */
-    public void speak(String language, Properties properties)
-	    throws SpeechException;
+    public void speak(String language, Properties properties);
 
     /**
      * Checks whether a given language is supported by the chosen speech API.

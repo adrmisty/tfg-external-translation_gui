@@ -39,6 +39,14 @@ public interface ApiVision {
     public List<File> validateImages(File[] files) throws ImageException;
 
     /**
+     * Retrieves all valid files that can be processed by the API among the ones
+     * previously given as input by the user.
+     * 
+     * @return list of valid image files
+     */
+    public List<File> getValidImages();
+
+    /**
      * Retrieves all invalid files that cannot be processed by the API (due to
      * insufficient size or format), among the ones previously given as input by
      * the user.

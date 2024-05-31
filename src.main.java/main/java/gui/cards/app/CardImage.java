@@ -28,8 +28,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import main.java.gui.cards.MainWindow;
 import main.java.gui.cards.help.HelpImage;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.ResourceException;
+import main.java.util.resources.ResourceLoader;
 
 public class CardImage extends JPanel {
 
@@ -214,6 +214,8 @@ public class CardImage extends JPanel {
 	    btnBack_Image.setBorder(null);
 	    btnBack_Image.setBackground(SystemColor.window);
 	    btnBack_Image.setBounds(20, 11, 31, 37);
+	    btnBack_Image.setToolTipText(
+		    root.getMessages().getString("tooltip.back"));
 	}
 	return btnBack_Image;
     }

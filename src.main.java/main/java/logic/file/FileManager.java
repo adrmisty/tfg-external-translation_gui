@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import main.java.logic.file.locales.LocaleParser;
+import main.java.logic.file.locales.LocaleFile;
 import main.java.logic.file.locales.SourceFile;
 import main.java.logic.file.locales.TargetFile;
-import main.java.util.PropertyLoader;
 import main.java.util.exception.IncompleteResultsException;
 import main.java.util.exception.PropertiesException;
 import main.java.util.exception.ResourceException;
 import main.java.util.exception.ResultsException;
+import main.java.util.resources.PropertyLoader;
 
 /**
  * Manager for the translation of one source file into one or more languages,
@@ -35,7 +35,7 @@ public class FileManager {
     // Locale files
     private LocaleFile sourceFile;
     private List<LocaleFile> targetFiles = new ArrayList<>();
-    private String path;
+    private String targetPath;
 
     // Alpha2 codes
     private static LocaleParser parser;
@@ -78,8 +78,8 @@ public class FileManager {
      * @return new target file for this language @ if specified Locale is not
      *         supported yet
      */
-    public TargetFile newLanguage(String language, boolean isDefault) {
-	TargetFile f = new TargetFile(this, language, isDefault,
+    public LocaleFile newLanguage(String language, boolean isDefault) {
+	LocaleFile f = new TargetFile(this, language, isDefault,
 		sourceFile.getBundleName());
 	this.targetFiles.add(f);
 	return f;
@@ -89,7 +89,7 @@ public class FileManager {
      * @param path directory where all target files will be saved
      */
     public void to(String path) {
-	this.path = path;
+	this.targetPath = path;
 	for (LocaleFile f : targetFiles) {
 	    f.setPath(path);
 	}
@@ -190,12 +190,17 @@ public class FileManager {
     }
 
     public String getTargetPath() {
-	return this.path;
+	return this.targetPath;
     }
 
     public void reset() {
 	sourceFile = null;
 	targetFiles = new ArrayList<>();
+    }
+
+    public void resetLanguages() {
+	targetFiles = new ArrayList<>();
+	targetPath = null;
     }
 
     public boolean isDone() {

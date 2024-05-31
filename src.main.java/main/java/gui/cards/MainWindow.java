@@ -3,6 +3,8 @@ package main.java.gui.cards;
 import java.awt.CardLayout;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -17,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -33,11 +36,10 @@ import main.java.gui.cards.app.CardTextToSpeech;
 import main.java.gui.util.ExceptionHandler;
 import main.java.gui.util.IDE;
 import main.java.gui.util.LanguageMenuItem;
-import main.java.logic.file.LocaleFile;
+import main.java.logic.file.locales.LocaleFile;
 import main.java.logic.image.Vision;
 import main.java.logic.speech.Speech;
 import main.java.logic.translation.TranslationManager;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.IdeException;
 import main.java.util.exception.ImageException;
 import main.java.util.exception.IncompleteResultsException;
@@ -45,9 +47,9 @@ import main.java.util.exception.LanguageException;
 import main.java.util.exception.PropertiesException;
 import main.java.util.exception.ResourceException;
 import main.java.util.exception.ResultsException;
-import main.java.util.exception.SpeechException;
 import main.java.util.exception.TranslationException;
 import main.java.util.exception.UIException;
+import main.java.util.resources.ResourceLoader;
 
 /**
  * Main Window of the application.
@@ -111,7 +113,6 @@ public class MainWindow extends JFrame {
 	setResizable(false);
 	setAutoRequestFocus(false);
 	setTitle("FileLingual");
-	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setFont(ResourceLoader.getFont());
 	setBounds(100, 100, 600, 450);
 	this.setLocationRelativeTo(null);
@@ -124,6 +125,7 @@ public class MainWindow extends JFrame {
 	contentPane.setLayout(new CardLayout());
 
 	initWindow(Locale.getDefault());
+
     }
 
     /**
@@ -174,6 +176,22 @@ public class MainWindow extends JFrame {
 	currentCard = getCurrentCard();
 	validate();
 	repaint();
+
+	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	addWindowListener(new WindowAdapter() {
+	    @Override
+	    public void windowClosing(WindowEvent e) {
+
+		if (JOptionPane.showConfirmDialog(null,
+			getMessages().getString("label.exit.app"),
+			"FileLingual",
+			JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+		    // Close the application
+		    dispose();
+		}
+	    }
+	});
+
     }
 
     private JPanel getCurrentCard() {
@@ -212,6 +230,7 @@ public class MainWindow extends JFrame {
 	    break;
 	case "mode":
 	    cardMode.setKeyEventDispatcher(true);
+	    translator.resetLanguages();
 	    currentCard = cardMode;
 	    break;
 	case "automode":
@@ -609,12 +628,7 @@ public class MainWindow extends JFrame {
 	// To read or to stop
 	// Automatically stops if an exception arises
 	if (read) {
-	    try {
-		speech.speak(f.getCode(), f.getContent());
-	    } catch (SpeechException e) {
-		// this.showErrorMessage(new SpeechException(messages), false);
-		return false;
-	    }
+	    speech.speak(f.getCode(), f.getContent());
 	}
 	return true;
     }
@@ -633,12 +647,7 @@ public class MainWindow extends JFrame {
 	// To read or to stop
 	// Automatically stops if an exception arises
 	if (read) {
-	    try {
-		speech.speak(currentFile.getCode(), currentFile.getContent());
-	    } catch (SpeechException e) {
-		// this.showErrorMessage(new SpeechException(messages), false);
-		return false;
-	    }
+	    speech.speak(currentFile.getCode(), currentFile.getContent());
 	}
 	return true;
     }
@@ -651,7 +660,11 @@ public class MainWindow extends JFrame {
      */
     public boolean isSpeechAvailableFor(String language) {
 	if (language == null) {
-	    return speech.isAvailableFor(translator.getSource().getCode());
+	    String code = translator.getSource().getCode();
+	    if (code != null) {
+		return speech.isAvailableFor(translator.getSource().getCode());
+	    }
+	    return false;
 	}
 	return speech.isAvailableFor(language);
     }

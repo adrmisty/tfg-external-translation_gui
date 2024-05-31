@@ -15,7 +15,7 @@ import main.java.util.exception.SpeechException;
  */
 public class Speech {
 
-    private ApiSpeech apiSpeech;
+    ApiSpeech apiSpeech;
 
     public Speech(ResourceBundle messages) {
 	this.apiSpeech = new AzureApiSpeech(messages);
@@ -28,8 +28,7 @@ public class Speech {
      *               language
      * @throws SpeechException
      */
-    public void speak(String code, Properties properties)
-	    throws SpeechException {
+    public void speak(String code, Properties properties) {
 	try {
 	    apiSpeech.speak(code, properties);
 	} catch (Exception e) {

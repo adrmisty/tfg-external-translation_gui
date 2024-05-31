@@ -10,9 +10,9 @@ import com.microsoft.cognitiveservices.speech.SpeechConfig;
 import com.microsoft.cognitiveservices.speech.SpeechSynthesizer;
 
 import main.java.logic.speech.ApiSpeech;
-import main.java.util.PropertyLoader;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.ResourceException;
+import main.java.util.resources.PropertyLoader;
+import main.java.util.resources.ResourceLoader;
 
 /**
  * API access for text-to-speech functionality provided by Cognitive Speech

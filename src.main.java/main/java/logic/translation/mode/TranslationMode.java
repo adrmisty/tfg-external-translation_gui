@@ -2,7 +2,7 @@ package main.java.logic.translation.mode;
 
 import java.util.Properties;
 
-import main.java.logic.file.LocaleFile;
+import main.java.logic.file.locales.LocaleFile;
 import main.java.util.exception.TranslationException;
 
 /**

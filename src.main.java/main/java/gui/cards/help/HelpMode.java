@@ -11,8 +11,8 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 
 import main.java.gui.cards.MainWindow;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.ResourceException;
+import main.java.util.resources.ResourceLoader;
 
 public class HelpMode extends JFrame {
 

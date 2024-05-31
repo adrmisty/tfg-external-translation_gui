@@ -9,7 +9,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import main.java.gui.cards.MainWindow;
-import main.java.util.ResourceLoader;
+import main.java.util.resources.ResourceLoader;
 
 public class FileLingualApp {
 

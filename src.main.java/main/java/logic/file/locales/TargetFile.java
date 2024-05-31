@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.Properties;
 
 import main.java.logic.file.FileManager;
-import main.java.logic.file.LocaleFile;
-import main.java.util.PropertyLoader;
-import main.java.util.other.FileUtil;
+import main.java.util.resources.FileUtil;
+import main.java.util.resources.PropertyLoader;
 
 /**
  * Translation of a source file into a given target language, which can be

@@ -25,8 +25,8 @@ import javax.swing.SwingConstants;
 
 import main.java.gui.cards.MainWindow;
 import main.java.gui.cards.help.HelpDefault;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.ResourceException;
+import main.java.util.resources.ResourceLoader;
 
 public class CardDefault extends JPanel {
 
@@ -43,7 +43,7 @@ public class CardDefault extends JPanel {
     private JLabel lblDefault;
     private JPanel backPanel_AutoMode;
     private JLabel lblBack_Mode;
-    private JButton btnBack_Mode;
+    private JButton btnBack_Default;
     private JButton btnNext_Mode;
     private JButton btnHelp_Mode;
 
@@ -265,7 +265,7 @@ public class CardDefault extends JPanel {
 	    backPanel_AutoMode.setBackground(SystemColor.window);
 	    backPanel_AutoMode.setLayout(null);
 	    backPanel_AutoMode.add(getLblBack_Mode());
-	    backPanel_AutoMode.add(getBtnBack_Mode());
+	    backPanel_AutoMode.add(getBtnBack_Default());
 	    backPanel_AutoMode.add(getBtnNext_Mode());
 	    backPanel_AutoMode.add(getBtnHelp_Default());
 	}
@@ -275,11 +275,11 @@ public class CardDefault extends JPanel {
     private JLabel getLblBack_Mode() throws ResourceException {
 	if (lblBack_Mode == null) {
 	    lblBack_Mode = new JLabel("<");
-	    lblBack_Mode.setLabelFor(getBtnBack_Mode());
+	    lblBack_Mode.setLabelFor(getBtnBack_Default());
 	    lblBack_Mode.addMouseListener(new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
-		    btnBack_Mode.doClick();
+		    btnBack_Default.doClick();
 		}
 	    });
 	    lblBack_Mode.setBounds(10, 11, 31, 37);
@@ -288,24 +288,26 @@ public class CardDefault extends JPanel {
 	return lblBack_Mode;
     }
 
-    private JButton getBtnBack_Mode() {
-	if (btnBack_Mode == null) {
-	    btnBack_Mode = new JButton("");
-	    btnBack_Mode.addActionListener(new ActionListener() {
+    private JButton getBtnBack_Default() {
+	if (btnBack_Default == null) {
+	    btnBack_Default = new JButton("");
+	    btnBack_Default.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		    reset();
 		    root.show("mode");
 		}
 	    });
-	    btnBack_Mode.setIcon(new ImageIcon(
+	    btnBack_Default.setIcon(new ImageIcon(
 		    MainWindow.class.getResource("/img/home-icon.png")));
-	    btnBack_Mode.setBounds(20, 11, 31, 37);
-	    btnBack_Mode.setMnemonic('b');
-	    btnBack_Mode.setBorder(null);
-	    btnBack_Mode.setBackground(SystemColor.window);
+	    btnBack_Default.setBounds(20, 11, 31, 37);
+	    btnBack_Default.setMnemonic('b');
+	    btnBack_Default.setBorder(null);
+	    btnBack_Default.setBackground(SystemColor.window);
+	    btnBack_Default.setToolTipText(
+		    root.getMessages().getString("tooltip.back"));
 	}
-	return btnBack_Mode;
+	return btnBack_Default;
     }
 
     private JButton getBtnNext_Mode() throws ResourceException {

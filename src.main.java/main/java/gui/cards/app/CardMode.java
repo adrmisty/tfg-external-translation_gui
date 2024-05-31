@@ -35,8 +35,8 @@ import javax.swing.event.ListSelectionListener;
 
 import main.java.gui.cards.MainWindow;
 import main.java.gui.cards.help.HelpMode;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.ResourceException;
+import main.java.util.resources.ResourceLoader;
 
 public class CardMode extends JPanel {
 
@@ -489,6 +489,9 @@ public class CardMode extends JPanel {
 	    btnBack_Mode.setMnemonic('b');
 	    btnBack_Mode.setBorder(null);
 	    btnBack_Mode.setBackground(SystemColor.window);
+	    btnBack_Mode.setToolTipText(
+		    root.getMessages().getString("tooltip.back"));
+
 	}
 	return btnBack_Mode;
     }

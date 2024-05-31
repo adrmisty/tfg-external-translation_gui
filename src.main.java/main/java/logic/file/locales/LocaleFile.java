@@ -1,9 +1,10 @@
-package main.java.logic.file;
+package main.java.logic.file.locales;
 
 import java.util.Locale;
 import java.util.Properties;
 
-import main.java.logic.file.locales.LocaleParser;
+import main.java.logic.file.FileManager;
+import main.java.logic.file.LocaleParser;
 
 /**
  * Localization file, abstraction of a .properties key-value pair file
@@ -90,7 +91,13 @@ public class LocaleFile {
      */
     public String getCode() {
 	if (code == null) {
-	    setCode(locale);
+	    try {
+		setCode(locale);
+	    } catch (NullPointerException e) {
+		this.locale = Locale.getDefault();
+		this.code = null;
+		this.language = null;
+	    }
 	}
 	return code;
     }
@@ -151,7 +158,7 @@ public class LocaleFile {
 
     public void setName(String fullName, String name) {
 	this.name = name;
-	this.fullName = name; // Contains the code
+	this.fullName = name + ".properties"; // Contains the extension
     }
 
     /**

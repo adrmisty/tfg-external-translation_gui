@@ -7,7 +7,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import main.java.logic.file.FileManager;
-import main.java.logic.file.LocaleFile;
+import main.java.logic.file.locales.LocaleFile;
 import main.java.logic.translation.mode.AutoTranslation;
 import main.java.logic.translation.mode.ManualTranslation;
 import main.java.logic.translation.mode.TranslationMode;
@@ -137,6 +137,11 @@ public class TranslationManager {
 	files.reset();
     }
 
+    public void resetLanguages() {
+	translator = null;
+	files.resetLanguages();
+    }
+
     /**
      * @return boolean true if translation process is over successfully, false
      *         otherwise
@@ -185,6 +190,11 @@ public class TranslationManager {
 
     public void setAutoMode() throws ResourceException, SQLException {
 	this.translator = new AutoTranslation(files.getSourceFile());
+    }
+
+    public void setAutoMode(TranslationMode automaticTranslator)
+	    throws ResourceException, SQLException {
+	this.translator = automaticTranslator;
     }
 
     public void setManualMode() {

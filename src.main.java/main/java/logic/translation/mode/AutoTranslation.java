@@ -3,13 +3,13 @@ package main.java.logic.translation.mode;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import main.java.logic.file.LocaleFile;
+import main.java.logic.file.locales.LocaleFile;
 import main.java.logic.translation.api.ApiTranslation;
 import main.java.logic.translation.api.openai.OpenAIApiTranslation;
 import main.java.logic.translation.cache.TranslationCache;
-import main.java.util.PropertyLoader;
 import main.java.util.exception.ResourceException;
 import main.java.util.exception.TranslationException;
+import main.java.util.resources.PropertyLoader;
 
 /**
  * Automatic translation mode (translates content to a specific language via
@@ -33,6 +33,13 @@ public class AutoTranslation implements TranslationMode {
 	this.api = new OpenAIApiTranslation(); // API access
 	this.cache = new TranslationCache(); // Translation database
 	this.source = localeFile;
+    }
+
+    public AutoTranslation(LocaleFile sourceFile, ApiTranslation api,
+	    TranslationCache cache) {
+	this.cache = cache;
+	this.api = api;
+	this.source = sourceFile;
     }
 
     /**
@@ -161,12 +168,16 @@ public class AutoTranslation implements TranslationMode {
 	String src = source2.getLanguage();
 	String tgt = target2.getLanguage();
 
-	if (!src.equals(tgt)) {
-	    if (!tgt.contains(" ")) { // Target is global
-		return src.contains(tgt); // Partially equal or not
+	try {
+	    if (!src.equals(tgt)) {
+		if (!tgt.contains(" ")) { // Target is global
+		    return src.contains(tgt); // Partially equal or not
+		}
+		return false;
 	    }
+	    return true;
+	} catch (Exception e) {
 	    return false;
 	}
-	return true;
     }
 }

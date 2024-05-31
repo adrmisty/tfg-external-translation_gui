@@ -3,11 +3,10 @@ package main.java.logic.file.locales;
 import java.io.IOException;
 
 import main.java.logic.file.FileManager;
-import main.java.logic.file.LocaleFile;
-import main.java.util.PropertyLoader;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.PropertiesException;
-import main.java.util.other.FileUtil;
+import main.java.util.resources.FileUtil;
+import main.java.util.resources.PropertyLoader;
+import main.java.util.resources.ResourceLoader;
 
 /**
  * Source localization file, which is saved in the user's storage system, and
@@ -44,14 +43,19 @@ public class SourceFile extends LocaleFile {
 	    throw new PropertiesException(filepath, false);
 	}
 
+	// Process file name and language
+	String[] name = FileUtil.unformat(filepath);
+	setBundleName(name[0]);
+	if (name[1] == null) {
+	    setDefault(true);
+	} else {
+	    setCode(name[1]);
+	}
+
 	// Validate both path and contents
 	setPath(filepath);
 	setContent(PropertyLoader.load(filepath, false));
 
-	// Process file name and language
-	String[] name = FileUtil.unformat(filepath);
-	setBundleName(name[0]);
-	setCode(name[1]);
     }
 
 }

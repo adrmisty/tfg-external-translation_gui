@@ -22,8 +22,8 @@ import javax.swing.SwingUtilities;
 import main.java.gui.cards.MainWindow;
 import main.java.gui.cards.help.HelpResults;
 import main.java.gui.util.BusyPanel;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.ResourceException;
+import main.java.util.resources.ResourceLoader;
 
 public class CardAuto extends JPanel {
 

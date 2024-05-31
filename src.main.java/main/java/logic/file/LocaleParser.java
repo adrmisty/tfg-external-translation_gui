@@ -1,4 +1,4 @@
-package main.java.logic.file.locales;
+package main.java.logic.file;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -7,8 +7,8 @@ import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
 
-import main.java.util.ResourceLoader;
 import main.java.util.exception.ResourceException;
+import main.java.util.resources.ResourceLoader;
 
 /**
  * Parser for localization alpha-2 codes and language names.
@@ -112,7 +112,8 @@ public class LocaleParser {
     public String getLanguage(String inputCode) {
 
 	// Map processing
-	inputCode = inputCode.replace("_", "-");
+	inputCode = inputCode.replace("_", "-").replace("-Latn", "")
+		.replace("Cyrl", "");
 	String key = "";
 	String code = "";
 	Locale value;
@@ -124,8 +125,13 @@ public class LocaleParser {
 		continue;
 	    }
 
+	    ;
 	    value = entry.getValue();
 	    code = value.toLanguageTag();
+	    if (code.contains("Latn") || code.contains("Cyrl")) {
+		code = code.replace("-Latn", "");
+		code = code.replace("Cyrl", "");
+	    }
 	    if (code.equals(inputCode)) {
 		break;
 	    }

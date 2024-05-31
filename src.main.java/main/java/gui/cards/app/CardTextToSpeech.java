@@ -27,9 +27,9 @@ import javax.swing.SwingConstants;
 
 import main.java.gui.cards.MainWindow;
 import main.java.gui.cards.help.HelpTTS;
-import main.java.logic.file.LocaleFile;
-import main.java.util.ResourceLoader;
+import main.java.logic.file.locales.LocaleFile;
 import main.java.util.exception.ResourceException;
+import main.java.util.resources.ResourceLoader;
 
 public class CardTextToSpeech extends JPanel {
 
@@ -363,6 +363,8 @@ public class CardTextToSpeech extends JPanel {
 	    btnBack_TTS.setMnemonic('b');
 	    btnBack_TTS.setBorder(null);
 	    btnBack_TTS.setBackground(SystemColor.window);
+	    btnBack_TTS.setToolTipText(
+		    root.getMessages().getString("tooltip.back"));
 	}
 	return btnBack_TTS;
     }

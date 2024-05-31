@@ -14,11 +14,11 @@ import com.theokanning.openai.service.OpenAiService;
 import main.java.gui.util.ExceptionHandler;
 import main.java.logic.translation.api.ApiRequestBuilder;
 import main.java.logic.translation.api.ApiTranslation;
-import main.java.util.PropertyLoader;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.PropertiesException;
 import main.java.util.exception.ResourceException;
 import main.java.util.exception.TranslationException;
+import main.java.util.resources.PropertyLoader;
+import main.java.util.resources.ResourceLoader;
 
 /**
  * Provides access to OpenAI'S ChatCompletions API in order to request the
@@ -28,9 +28,6 @@ import main.java.util.exception.TranslationException;
  * @version May 2024
  */
 public class OpenAIApiTranslation implements ApiTranslation {
-
-    // ApiTranslation interface
-    private ApiTranslation apiInterface;
 
     // Translation resultzs
     private Properties results;
@@ -58,12 +55,6 @@ public class OpenAIApiTranslation implements ApiTranslation {
 	service = new OpenAiService(ResourceLoader.getApiKey(),
 		Duration.ofSeconds(TIMEOUT));
 	apiReq = new OpenAIApiRequestBuilder();
-    }
-
-    // Mock testing
-    public OpenAIApiTranslation(ApiTranslation api) {
-	this();
-	this.apiInterface = api;
     }
 
     @Override

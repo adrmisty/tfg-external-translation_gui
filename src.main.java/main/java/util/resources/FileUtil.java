@@ -1,7 +1,9 @@
-package main.java.util.other;
+package main.java.util.resources;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import main.java.util.exception.PropertiesException;
 
 /**
  * Used to extract information from files.
@@ -10,6 +12,8 @@ import java.util.regex.Pattern;
  * @version May 2024
  */
 public class FileUtil {
+
+    private static final String PROPERTIES_FILE_REGEX = "^[a-zA-Z0-9_/.-]+(_[a-z]{2}(_[A-Z]{2})?)?\\.properties$";
 
     /**
      * Eliminate those instances in locale filenames of the type: "-Latn",
@@ -59,7 +63,10 @@ public class FileUtil {
      */
     public static String[] unformat(String filepath) {
 	int extension = filepath.lastIndexOf('.');
-	int name = filepath.lastIndexOf("\\");
+	int name = filepath.lastIndexOf("/");
+	if (!filepath.substring(name + 1).matches(PROPERTIES_FILE_REGEX)) {
+	    throw new PropertiesException(filepath);
+	}
 	String bundleName = filepath.substring(name + 1, extension);
 	String codes;
 

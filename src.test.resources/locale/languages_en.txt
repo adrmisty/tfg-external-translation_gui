@@ -1,0 +1,120 @@
+Afrikaans
+Afrikaans, Namibia
+Afrikaans, South Africa
+Albanian
+Albanian, Albania
+Albanian, North Macedonia
+Arabic
+Arabic, Egypt
+Arabic, Morocco
+Arabic, Tunisia
+Arabic, Palestinian Territories
+Armenian
+Azerbaijani
+Basque
+Belarusian
+Bosnian
+Bulgarian
+Catalan
+Chinese
+Chinese, China
+Chinese, Singapore
+Chinese, Taiwan
+Croatian
+Czech
+Danish
+Danish, Denmark
+Danish, Greenland
+Dogri
+Dutch
+Dutch, Netherlands
+English
+English, United Kingdom
+English, United States
+Estonian
+Faroese
+Finnish
+French
+French, Belgium
+French, France
+French, Morocco
+French, Senegal
+Galician
+Georgian
+German
+German, Austria
+German, Germany
+Greek
+Greek, Greece
+Greek, Cyprus
+Gujarati
+Hebrew
+Hindi
+Hungarian
+Indonesian
+Icelandic
+Irish
+Italian
+Italian, Italy
+Italian, Switzerland
+Japanese
+Javanese
+Kashmiri
+Kazakh
+Korean
+Korean, North Korea
+Korean, South Korea
+Kyrgyz
+Latvian
+Lithuanian
+Macedonian
+Malay
+Maltese
+Mongolian
+Nepali
+Norwegian
+Pashto
+Pashto, Afghanistan
+Pashto, Pakistan
+Persian
+Persian, Afghanistan
+Persian, Iran
+Polish
+Portuguese
+Portuguese, Brazil
+Portuguese, Portugal
+Punjabi, India
+Romanian
+Romanian, Moldova
+Romanian, Romania
+Russian
+Russian, Belarus
+Russian, Kazakhstan
+Russian, Kyrgyzstan
+Russian, Moldova
+Russian, Russia
+Russian, Ukraine
+Sanskrit
+Serbian
+Serbian, Bosnia & Herzegovina
+Serbian, Montenegro
+Serbian, Serbia
+Sindhi
+Sinhala
+Slovak
+Slovenian
+Spanish
+Spanish, Argentina
+Spanish, Chile
+Spanish, Colombia
+Spanish, Mexico
+Spanish, Spain
+Swiss German
+Thai
+Turkmen
+Ukrainian
+Urdu
+Uzbek
+Vietnamese
+Welsh
+Yiddish

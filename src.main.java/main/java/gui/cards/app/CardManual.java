@@ -25,8 +25,8 @@ import javax.swing.SwingConstants;
 
 import main.java.gui.cards.MainWindow;
 import main.java.gui.cards.help.HelpManual;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.ResourceException;
+import main.java.util.resources.ResourceLoader;
 
 public class CardManual extends JPanel {
 
@@ -257,6 +257,8 @@ public class CardManual extends JPanel {
 	    btnBack_Manual.setBorder(null);
 	    btnBack_Manual.setBackground(SystemColor.window);
 	    btnBack_Manual.setBounds(20, 11, 31, 37);
+	    btnBack_Manual.setToolTipText(
+		    root.getMessages().getString("tooltip.back"));
 	}
 	return btnBack_Manual;
     }

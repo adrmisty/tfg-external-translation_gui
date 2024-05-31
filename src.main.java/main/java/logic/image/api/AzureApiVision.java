@@ -17,9 +17,9 @@ import com.microsoft.azure.cognitiveservices.vision.computervision.ComputerVisio
 import com.microsoft.azure.cognitiveservices.vision.computervision.models.ImageDescription;
 
 import main.java.logic.image.ApiVision;
-import main.java.util.ResourceLoader;
 import main.java.util.exception.ImageException;
 import main.java.util.exception.ResourceException;
+import main.java.util.resources.ResourceLoader;
 
 /**
  * API access for image description functionality provided by Computer Vision
@@ -32,6 +32,7 @@ public class AzureApiVision implements ApiVision {
 
     private ComputerVision cv;
     private List<File> invalidFiles = new ArrayList<>();
+    private List<File> validFiles = new ArrayList<>();
 
     public AzureApiVision() throws ResourceException {
 	try {
@@ -73,7 +74,7 @@ public class AzureApiVision implements ApiVision {
 
     @Override
     public List<File> validateImages(File[] files) throws ImageException {
-	List<File> validFiles = new ArrayList<>();
+	this.validFiles = new ArrayList<>();
 	this.invalidFiles = new ArrayList<>();
 
 	if (files != null) {
@@ -100,6 +101,11 @@ public class AzureApiVision implements ApiVision {
     @Override
     public List<File> getInvalidImages() {
 	return invalidFiles;
+    }
+
+    @Override
+    public List<File> getValidImages() {
+	return validFiles;
     }
 
     /*
