@@ -64,6 +64,9 @@ public class FileUtil {
     public static String[] unformat(String filepath) {
 	int extension = filepath.lastIndexOf('.');
 	int name = filepath.lastIndexOf("/");
+	if (name < 0) {
+	    name = filepath.lastIndexOf("\\");
+	}
 	if (!filepath.substring(name + 1).matches(PROPERTIES_FILE_REGEX)) {
 	    throw new PropertiesException(filepath);
 	}

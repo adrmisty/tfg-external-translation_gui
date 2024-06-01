@@ -9,9 +9,6 @@
 	  <!-- Source code -->
     <sourceDirectory>src/main/java</sourceDirectory>
     
-    <!-- Unit tests --> 
-    <!--<testSourceDirectory>src/test/java</testSourceDirectory> -->
-    
     <!-- Resources -->
     <resources>
       <resource>
@@ -19,13 +16,6 @@
       </resource>
     </resources>
     
-    <!-- Test resources --> 
-    <!--<testResources>
-		<testResource>
-        	<directory>src/test/resources</directory>
-		</testResource>
-	</testResources>-->
-	
 	
     <plugins>
       <plugin>

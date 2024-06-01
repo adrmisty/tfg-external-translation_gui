@@ -1,8 +1,7 @@
 # tfg-external-translation_gui
 
 ## 💡 Description
-Repository for my **TFG (Final Degree Project)**'s Graphic User Interface and domain logic: 
-_externalized translation service for programs_.
+Repository for my **TFG (Final Degree Project)**: _externalized translation service for programs_.
 
 Developed by **Adriana Rodríguez Flórez**, undergraduate student at the BSc in Computer Science
 and Software Engineering at the University of Oviedo (Asturias, Spain).
@@ -13,25 +12,11 @@ and Software Engineering at the University of Oviedo (Asturias, Spain).
 ### Database
 * SQLite.
 
-### APIs and Models
+### Frameworks and APIs
+(All needed libraries and dependencies are specified in the pom.xml file!)
+
 * GUI: Swing
 * Model access: OpenAI ChatCompletionsAPI (Java SDK service, provided by https://github.com/TheoKanning/openai-java).
 * Text to speech: Microsoft Azure AI Speech (https://azure.microsoft.com/en-us/products/ai-services/ai-speech).
 * Image description: Microsoft Azure AI Vision (https://azure.microsoft.com/en-us/products/ai-services/ai-vision).
 * Database management: JDBC (Java Database Connectivity) for SQLite.
-
-
-
-## 📅 Design
-
-### Database E-R
-<img width="374" alt="image" src="https://github.com/adrmisty/tfg-external-translation_gui/assets/98897794/6db90df1-4b32-4833-bc93-978e70d1aaa3">
-
-
-### Initial wireframes
-<img width="374" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/1e6e9412-1052-4e8b-9f26-6095a291be97">
-<img width="304" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/e0ed2138-674e-4068-af20-d09b85968719">
-<img width="334" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/e8adafc2-eaf3-43bc-b66f-8ad02119927d">
-<img width="296" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/9ccb9496-4504-4ca0-b4f4-be3a0af3935c">
-<img width="456" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/b9a9cbd1-b9f5-46b3-a3c0-fb4abd9a116f">
-<img width="287" alt="image" src="https://github.com/adrmisty/tfg-external-translation/assets/98897794/e71691e9-f336-49dd-bf53-001d0f10b97d">

@@ -40,7 +40,7 @@ public class PropertiesException extends ResourceException {
 	if (this.isContentRelated()) {
 	    return messages.getString("error.file") + this.fileName;
 	} else {
-	    return messages.getString("error.property.fileName")
+	    return messages.getString("error.property.filename")
 		    + this.fileName;
 	}
     }

@@ -70,13 +70,17 @@ public class TranslationCache {
     private void setUp() throws SQLException {
 
 	// Reset
-	try (Statement stmt = connection.createStatement()) {
+	try (Statement stmt = getConnection().createStatement()) {
 	    stmt.executeUpdate(DROP);
+	} catch (Exception e) {
+	    return;
 	}
 
 	// Create table from scratch
-	try (Statement stmt = connection.createStatement()) {
+	try (Statement stmt = getConnection().createStatement()) {
 	    stmt.executeUpdate(CREATE);
+	} catch (Exception e) {
+	    return;
 	}
     }
 
@@ -198,6 +202,7 @@ public class TranslationCache {
 	    if (JDBC_URL == null) {
 		JDBC_URL = ResourceLoader.getJdbcUrl();
 	    }
+
 	    if (connection == null || connection.isClosed()) {
 		connection = DriverManager.getConnection(JDBC_URL);
 	    }
